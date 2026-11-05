@@ -7,6 +7,8 @@
 // common code snippet for cornix left and right boards
 // dongle should not use this file
 #include <nordic/nrf52840_qiaa.dtsi>
+/* Lets &bootloader enter the UF2 bootloader instead of a plain reboot. */
+#include <common/nordic/nrf52840_uf2_boot_mode.dtsi>
 #include <dt-bindings/led/led.h>
 #include "cornix-pinctrl.dtsi"
 #include "cornix-layouts.dtsi"

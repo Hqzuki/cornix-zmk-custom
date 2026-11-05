@@ -71,10 +71,12 @@
 #include <zephyr/dt-bindings/pinctrl/nrf-pinctrl.h>
 &pinctrl {
     corex_pwm0: corex_pwm0 { group1 { psels = <NRF_PSEL(PWM_OUT0, 0, 16)>, <NRF_PSEL(PWM_OUT1, 0, 19)>, <NRF_PSEL(PWM_OUT2, 0, 25)>; }; };
+    corex_pwm0_sleep: corex_pwm0_sleep { group1 { psels = <NRF_PSEL(PWM_OUT0, 0, 16)>, <NRF_PSEL(PWM_OUT1, 0, 19)>, <NRF_PSEL(PWM_OUT2, 0, 25)>; low-power-enable; }; };
     corex_pwm1: corex_pwm1 { group1 { psels = <NRF_PSEL(PWM_OUT0, 0, 20)>, <NRF_PSEL(PWM_OUT1, 0, 11)>, <NRF_PSEL(PWM_OUT2, 0, 23)>; }; };
+    corex_pwm1_sleep: corex_pwm1_sleep { group1 { psels = <NRF_PSEL(PWM_OUT0, 0, 20)>, <NRF_PSEL(PWM_OUT1, 0, 11)>, <NRF_PSEL(PWM_OUT2, 0, 23)>; low-power-enable; }; };
 };
-&pwm0 { status = "okay"; pinctrl-0 = <&corex_pwm0>; pinctrl-names = "default"; };
-&pwm1 { status = "okay"; pinctrl-0 = <&corex_pwm1>; pinctrl-names = "default"; };
+&pwm0 { status = "okay"; pinctrl-0 = <&corex_pwm0>; pinctrl-1 = <&corex_pwm0_sleep>; pinctrl-names = "default", "sleep"; };
+&pwm1 { status = "okay"; pinctrl-0 = <&corex_pwm1>; pinctrl-1 = <&corex_pwm1_sleep>; pinctrl-names = "default", "sleep"; };
 / {
     corex_leds { compatible = "pwm-leds";
         corex_inner_r: inner_r { pwms = <&pwm0 0 PWM_USEC(1000) PWM_POLARITY_INVERTED>; };

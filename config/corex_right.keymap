@@ -286,10 +286,10 @@
         NUM_FN {
             display-name = "NUM / FN";
             bindings = <
-&trans  &trans        &trans  &trans  &trans  &trans                  &kp F1         &kp F2       &kp F3        &kp F4       &kp F5          &kp F6
-&trans  &kp N1        &kp N2  &kp N3  &kp N4  &kp N5                  &kp F7         &kp F8       &kp F9        &kp F10      &kp F11         &kp F12
-&trans  &kp NUMBER_6  &kp N7  &kp N8  &kp N9  &kp N0  &trans  &trans  &kp BACKSLASH  &pair_paren  &pair_square  &pair_brace  &trans          &trans
-&trans  &trans        &trans  &trans  &trans  &trans                  &trans         &trans                     &kp TILDE    &kp UNDERSCORE  &trans
+&kp F1 &kp F2 &kp F3 &kp F4 &kp F5 &kp F6 &trans &trans &trans &trans &trans &trans
+&kp F7 &kp F8 &kp F9 &kp F10 &kp F11 &kp F12 &trans &kp N1 &kp N2 &kp N3 &kp N4 &kp N5
+&trans &pair_paren &pair_square &pair_brace &trans &trans &kp BACKSLASH &trans &trans &kp NUMBER_6 &kp N7 &kp N8 &kp N9 &kp N0
+&trans &kp UNDERSCORE &kp TILDE &trans &trans &trans &trans &trans &trans &trans &trans
             >;
 
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;

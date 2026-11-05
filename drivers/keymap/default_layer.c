@@ -71,7 +71,7 @@ static void zmk_default_layers_save_state_work(struct k_work *_work) {
 
 static int apply_default_layer_config(struct zmk_endpoint_instance endpoint) {
     if (layer_endpoint_index(endpoint) < 0) { return 0; }
-    uint8_t layer_index = zmk_default_layer_get(endpoint);
+    int layer_index = zmk_default_layer_get(endpoint);
     if (layer_index < CONFIG_ZMK_DEFAULT_LAYER_MIN_INDEX ||
         layer_index > CONFIG_ZMK_DEFAULT_LAYER_MAX_INDEX || layer_index >= ZMK_KEYMAP_LAYERS_LEN) {
         return -EINVAL;

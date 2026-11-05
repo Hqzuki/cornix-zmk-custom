@@ -22,7 +22,7 @@ Knowing both roles is necessary to understand why the same repo provides `build.
 
 This fork intentionally diverges from `hitsmaxft/zmk-keyboard-cornix` in narrow, deliberate ways. Preserve these when merging from upstream:
 
-- **All dongle build targets are commented out in `build.yaml`** — dongles are not sold in Japan, the keyboard runs as a plain split. Keep `cornix_dongle_*`, `cornix_ph_left`, and `reset_nicenano_nosd` targets commented; only `cornix_left`, `cornix_right`, and `cornix_reset` are active. The shields `cornix_dongle_adapter` / `cornix_dongle_eyelash` still exist on disk but are unreferenced by the active build matrix.
+- **All dongle build targets are commented out in `build.yaml`** — dongles are not sold in Japan, the keyboard runs as a plain split. Keep `cornix_dongle_*`, `cornix_ph_left`, and `reset_nicenano_nosd` targets commented; stock Cornix targets remain active alongside the dedicated `corex_right` R A14 targets (J3/J4, S140 v6/v7 and reset). The shields `cornix_dongle_adapter` / `cornix_dongle_eyelash` still exist on disk but are unreferenced by the active build matrix.
 - **ZMK Studio is enabled on `cornix_right`** via the `studio-rpc-usb-uart nrf52840-nosd` snippet line in `build.yaml`. Defconfigs (`CONFIG_ZMK_STUDIO=y`, `CONFIG_ZMK_STUDIO_LOCKING=n`) come from upstream — only the snippet wiring is local.
 
 When `git pull`ing or merging upstream, expect conflicts in `build.yaml`; resolve by keeping dongle targets commented and the Studio snippet present.
@@ -63,3 +63,7 @@ The Justfile expects `ZMK_LIB_PREFIX` (defaults to `zmk_exts`) pointing to the p
 - Version numbers and release filenames the user mentions: cross-check against actual GitHub Releases / the current `build.yaml` artifact-names — don't trust from memory.
 - If suggesting a flash, confirm which `.uf2` and which half, and wait for explicit "OK".
 - If a code/config change is needed, prefer editing this fork's files; never propose opening a PR upstream.
+
+## CoreX R A14
+
+See `docs/corex.md`. CoreX uses a separate `corex_right` board and `corex_j3`/`corex_j4` shields, GPIO half-duplex PAW3222, and a dedicated six-layer keymap. Never use stock Cornix right UF2s on CoreX or add `nrf52840-nosd` to CoreX targets. Revisions 6.0.0 and 7.0.0 select installed S140 application offsets. Test the transport with `cc -std=c11 -Wall -Wextra -Werror tests/corex/wire_test.c -o /tmp/corex-wire-test` and run the binary; validate firmware through Actions.

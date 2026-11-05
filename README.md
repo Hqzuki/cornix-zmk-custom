@@ -1,20 +1,32 @@
 # CoreX ZMK
 
-[日本語](README_ja.md)
+[English](README_en.md) | [中文](README_zh.md)
 
-ZMK firmware for a **CoreX R A14 right PCB with a PAW3222 trackball**, paired with a **stock Cornix left PCB**.
-The right half is the central and provides USB, Bluetooth and ZMK Studio connectivity.
+**CoreX右基板 R A14＋PAW3222トラックボールと、純正Cornix左基板**を使うためのZMKファームウェアです。
+右をCentral、左をPeripheralとして動作させます。USB・Bluetooth・ZMK Studioの接続先は右です。
 
-Features include cursor movement, an automatic mouse layer (J/K/L clicks), hold-I scrolling, encoders, battery reporting and RGB connection indicators.
+## 機能
 
-Push to any branch to build automatically. Download `firmware` from the successful [GitHub Actions run](https://github.com/Hqzuki/cornix-zmk-custom/actions).
+- PAW3222によるカーソル移動
+- 自動マウスレイヤー：Jで左クリック、Kで中クリック、Lで右クリック
+- Iの長押し＋ボールで縦横スクロール
+- 左右のキー、エンコーダー、電池測定、接続状態のRGB表示
+- ZMK Studioでのキー編集
 
-- Left: `corex_stock_left.uf2`
-- Right: `corex_r_a14_j3_s140v6.uf2` or the J4/S140 v7 variant matching your hardware.
-- Settings reset: `corex_stock_left_reset.uf2` for the left, or the matching `corex_r_a14_reset_s140v6.uf2` / `v7` for the right.
+## ファームウェアの取得
 
-See [installation, controls, configuration and wiring](docs/corex.md). Hardware operation has not yet been verified.
+pushするとGitHub Actionsでビルドします。[Actions](https://github.com/Hqzuki/cornix-zmk-custom/actions)の成功した実行から、Artifactsの`firmware`を取得してください。
 
-`build.yaml` contains only the CoreX pair and its reset images. Shared Cornix definitions remain as dependencies.
-CoreX Studio/Vial configuration, RMK gesture configuration, TrackPoint and trackpad support are not implemented.
-This is an unofficial firmware project, derived from the Cornix ZMK configuration and referencing CoreX's published hardware definitions.
+- 左：`corex_stock_left.uf2`
+- 右：`corex_r_a14_j3_s140v6.uf2`など。J3／J4と、搭載ブートローダーのS140 v6／v7に合わせて選びます。
+- 設定消去：左は`corex_stock_left_reset.uf2`、右は対応する`corex_r_a14_reset_s140v6.uf2`または`v7`。
+
+[導入・操作・設定・配線の詳細](docs/corex.md)を確認してください。実機動作は未確認です。
+
+## 開発
+
+`build.yaml`はCoreX構成に必要な成果物だけを生成します。`boards/jzf/cornix/`には純正左とCoreXから参照する共通定義を保持しています。
+CoreXの基板定義は`boards/jzf/corex/`、センサードライバーは`drivers/corex/`、右のキーマップは`config/corex_right.keymap`です。
+
+CoreX Studio／Vialの設定通信、RMKのジェスチャー設定、トラックポイント、トラックパッドには対応していません。
+CornixメーカーおよびCoreX作者による公式ZMKファームウェアではありません。

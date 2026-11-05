@@ -1,4 +1,4 @@
-/* CoreX adaptation of Hqzuki/zmk-config-coron, LowprofileTrackBallcase.
+/* CoreX NUM/FN adaptation of Hqzuki/zmk-config-coron, LowprofileTrackBallcase.
  * 49 positions: dedicated arrow keys removed, BT-layer/screenshot on inner
  * switches, three spare bottom-right keys disabled in WIN/MAC.
  * LED and CoreX hardware configuration are independent of this keymap.
@@ -58,10 +58,10 @@
     input-processors =
         <&zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)>,
         <&zip_xy_scaler 4 5>,
-        <&zip_temp_layer 7 300>;
+        <&zip_temp_layer 6 300>;
 
     pan_win_scroll {
-        layers = <4>;
+        layers = <3>;
         input-processors = <
             &zip_xy_transform INPUT_TRANSFORM_X_INVERT
             &zip_axis_lock
@@ -74,7 +74,7 @@
     };
 
     pan_mac_scroll {
-        layers = <5>;
+        layers = <4>;
         input-processors = <
             &zip_xy_transform INPUT_TRANSFORM_X_INVERT
             &zip_axis_lock
@@ -88,7 +88,7 @@
     };
 
     desktop_layer_gesture {
-        layers = <6>;
+        layers = <5>;
         input-processors = <
             &zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)
             &zip_mouse_gesture
@@ -109,7 +109,7 @@
         compatible = "zmk,input-processor-scroll-inertia";
         #input-processor-cells = <0>;
         axis = <0>;
-        layer = <4>;
+        layer = <3>;
         scale = <1>;
         scale-div = <12>;
 
@@ -127,7 +127,7 @@
         compatible = "zmk,input-processor-scroll-inertia";
         #input-processor-cells = <0>;
         axis = <0>;
-        layer = <5>;
+        layer = <4>;
         scale = <1>;
         scale-div = <12>;
         start = <16>;
@@ -144,7 +144,7 @@
         compatible = "zmk,layer-listeners";
 
         desktop_gesture_auto_toggle {
-            layers = <6>;
+            layers = <5>;
             bindings = <&mouse_gesture_on &mouse_gesture_off>;
         };
     };
@@ -155,14 +155,14 @@
         jk_scroll {
             bindings = <&corex_pan>;
             key-positions = <19 20>;
-            layers = <0 1 7>;
+            layers = <0 1 6>;
             slow-release;
         };
 
         kl_mission_control {
             bindings = <&mo 6>;
             key-positions = <20 21>;
-            layers = <0 1 7>;
+            layers = <0 1 6>;
             slow-release;
         };
     };
@@ -235,8 +235,8 @@
             bindings = <
 &kp ESC         &kp Q         &kp W         &kp E        &kp R        &kp T                                                &kp Y      &kp U      &kp I      &kp O    &mt SEMICOLON SQT  &kp BACKSPACE
 &kp TAB         &kp A         &kp S         &kp D        &kp F        &kp G                                                &kp H      &kp J      &kp K      &kp L    &kp P              &kp ENTER
-&kp LEFT_SHIFT  &kp Z         &kp X         &kp C        &kp V        &kp B      &lt (8) LG(LS(S))  &kp LC(N0)  &kp N      &kp M      &kp COMMA  &kp DOT  &mt EQUAL MINUS    &kp SLASH
-&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &lt 2 SPACE  &lt 3 LANG1  &kp LANG1                                            &kp LANG2  &kp LANG2             &none    &none              &kp DELETE
+&kp LEFT_SHIFT  &kp Z         &kp X         &kp C        &kp V        &kp B      &lt (7) LG(LS(S))  &kp LC(N0)  &kp N      &kp M      &kp COMMA  &kp DOT  &mt EQUAL MINUS    &kp SLASH
+&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &lt 2 SPACE  &kp LANG1  &kp LANG1                                            &kp LANG2  &kp LANG2             &none    &none              &kp DELETE
             >;
 
             sensor-bindings =
@@ -249,32 +249,20 @@
             bindings = <
 &kp ESC         &kp Q      &kp W         &kp E  &kp R        &kp T                                       &kp Y      &kp U      &kp I      &kp O    &mt SEMICOLON SQT  &kp BACKSPACE
 &kp TAB         &kp A      &kp S         &kp D  &kp F        &kp G                                       &kp H      &kp J      &kp K      &kp L    &kp P              &kp ENTER
-&kp LEFT_SHIFT  &kp Z      &kp X         &kp C  &kp V        &kp B      &mo 8  &kp LG(N0)  &kp N      &kp M      &kp COMMA  &kp DOT  &mt EQUAL MINUS    &kp SLASH
-&kp LEFT_GUI    &kp LCTRL  &kp LEFT_ALT  &lt 2 SPACE  &lt 3 LANG1  &kp LANG1                                   &kp LANG2  &kp LANG2             &none    &none              &none
+&kp LEFT_SHIFT  &kp Z      &kp X         &kp C  &kp V        &kp B      &mo 7  &kp LG(N0)  &kp N      &kp M      &kp COMMA  &kp DOT  &mt EQUAL MINUS    &kp SLASH
+&kp LEFT_GUI    &kp LCTRL  &kp LEFT_ALT  &lt 2 SPACE  &kp LANG1  &kp LANG1                                   &kp LANG2  &kp LANG2             &none    &none              &none
             >;
 
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
         };
 
-        FUNCTION {
-            display-name = "FUNCTION";
+        NUM_FN {
+            display-name = "NUM / FN";
             bindings = <
-&trans  &trans  &trans  &trans  &trans  &trans                  &kp F1  &kp F2  &kp F3  &kp F4   &kp F5   &kp F6
-&trans  &trans  &trans  &trans  &trans  &trans                  &kp F7  &kp F8  &kp F9  &kp F10  &kp F11  &kp F12
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans   &trans   &trans
-&trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans          &trans   &trans   &trans
-            >;
-
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
-        };
-
-        NUM {
-            display-name = "NUM";
-            bindings = <
-&trans  &trans        &trans  &trans  &trans  &trans                       &kp TILDE      &kp AMPERSAND    &kp CARET       &kp RIGHT_PARENTHESIS  &kp LEFT_PARENTHESIS  &trans
-&trans  &kp N1        &kp N2  &kp N3  &kp N4  &kp N5                       &kp DOLLAR     &kp HASH         &kp AT_SIGN     &kp EXCLAMATION        &kp UNDERSCORE        &trans
-&trans  &kp NUMBER_6  &kp N7  &kp N8  &kp N9  &kp N0  &trans  &trans  &kp BACKSLASH  &kp RIGHT_BRACE  &kp LEFT_BRACE  &kp RIGHT_BRACKET      &kp LEFT_BRACKET      &trans
-&trans  &trans        &trans  &trans  &trans  &trans                       &trans         &trans                           &trans                 &trans                &trans
+&trans &trans &trans &trans &trans &trans &kp F1 &kp F2 &kp F3 &kp F4 &kp F5 &kp F6
+&trans &kp N1 &kp N2 &kp N3 &kp N4 &kp N5 &kp F7 &kp F8 &kp F9 &kp F10 &kp F11 &kp F12
+&trans &kp NUMBER_6 &kp N7 &kp N8 &kp N9 &kp N0 &trans &trans &kp BACKSLASH &kp RIGHT_BRACE &kp LEFT_BRACE &kp RIGHT_BRACKET &kp LEFT_BRACKET &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &kp TILDE &kp UNDERSCORE &trans
             >;
 
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;

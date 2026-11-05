@@ -22,7 +22,7 @@ Never add `nrf52840-nosd` to CoreX right targets: board revisions 6.0.0/7.0.0 se
 - `drivers/keymap/`: CoronLP default base-layer persistence and OS-aware scroll behavior.
 - `drivers/status/`: shared LED patterns, right PWM / left WS2812 and split profile synchronization.
 - `boards/shields/corex_j3`, `corex_j4`, `corex_common.dtsi`: connector selection and input processing.
-- `config/corex_right.keymap`: nine CoronLP-style layers; no standalone arrows.
+- `config/corex_right.keymap`: eight CoreX layers; no standalone arrows.
 - `docs/corex.md`: installation, controls, known limitations and hardware sources.
 
 ## Validation

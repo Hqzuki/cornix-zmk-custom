@@ -16,6 +16,10 @@ struct status_state {
     uint8_t profile, battery;
     int64_t profile_since, low_since, full_since, charge_since;
     bool powered, full_shown;
+    /* CoreX right: outer LED shows the active layer and the inner LED only
+     * this half's battery/charging; the split link is shown on the left. */
+    bool layer_mode;
+    uint8_t layer;
 };
 #define STATUS_STATE_INIT {.low_since = -1, .full_since = -1}
 static inline void status_peer(struct status_state *s, bool connected, int64_t now) {
@@ -47,6 +51,28 @@ static inline void status_power(struct status_state *s, bool powered, int64_t no
     s->full_shown = powered && s->battery >= 95;
     s->full_since = s->full_shown ? now : -1;
 }
+/* Host BT profiles 0-4 (BLUETOOTH layer selects all five). */
+static inline struct status_rgb status_profile_color(uint8_t profile) {
+    static const struct status_rgb colors[] = {
+        {0,16,0}, {16,0,0}, {0,0,16}, {16,10,0}, {12,0,16},
+    };
+    return profile < 5 ? colors[profile] : (struct status_rgb){8,8,8};
+}
+/* Layer ids follow config/corex_right.keymap definition order. */
+static inline struct status_rgb status_layer_color(uint8_t layer) {
+    static const struct status_rgb colors[] = {
+        {0,0,16},   /* 0 WIN: blue */
+        {10,10,10}, /* 1 MAC: white */
+        {16,10,0},  /* 2 NUM: yellow */
+        {12,0,16},  /* 3 FN: purple */
+        {0,16,0},   /* 4 PAN_WIN: green */
+        {0,16,0},   /* 5 PAN_MAC: green */
+        {0,12,12},  /* 6 GESTURE: cyan */
+        {16,4,0},   /* 7 MOUSE: orange */
+        {16,0,0},   /* 8 BLUETOOTH: red */
+    };
+    return layer < 9 ? colors[layer] : (struct status_rgb){0};
+}
 static inline struct status_frame status_render(const struct status_state *s, int64_t now) {
     struct status_frame f = {0};
     const struct status_rgb red = {16,0,0}, blue = {0,0,16}, green = {0,16,0};
@@ -54,7 +80,7 @@ static inline struct status_frame status_render(const struct status_state *s, in
     /* Reserve the whole low-battery pattern, including its dark gaps. */
     if (s->low_since >= 0 && low >= 0 && low < 1200) {
         if (low < 400 || low >= 800) { f.inner = red; }
-    } else if (s->peer_known && peer >= 0 &&
+    } else if (!s->layer_mode && s->peer_known && peer >= 0 &&
                peer < (s->peer_connected ? 3000 : 10000)) {
         if (s->peer_connected || peer % 1000 < 400) { f.inner = blue; }
     } else if (s->powered) {
@@ -69,12 +95,14 @@ static inline struct status_frame status_render(const struct status_state *s, in
             f.inner.g = breath[((now - s->charge_since) % 2000) * 60 / 2000];
         }
     }
-    if (s->profile_valid) {
+    if (s->layer_mode) {
+        f.outer = status_layer_color(s->layer);
+    } else if (s->profile_valid) {
         int64_t host = now - s->profile_since;
         bool on = s->host_connected || !s->host_open ? host < 600 :
                   host < 10000 && host % 1000 < 400;
         if (host >= 0 && on) {
-            f.outer = s->profile == 0 ? green : s->profile == 1 ? red : blue;
+            f.outer = status_profile_color(s->profile);
         }
     }
     return f;

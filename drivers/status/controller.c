@@ -9,6 +9,7 @@
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
 #include <zmk/ble.h>
 #include <zmk/split/central.h>
+#include <zmk/keymap.h>
 #include <zmk/events/ble_active_profile_changed.h>
 #else
 #include <zmk/events/split_peripheral_status_changed.h>
@@ -45,6 +46,8 @@ static void render(struct k_work *work) {
             zmk_ble_active_profile_is_connected(), zmk_ble_active_profile_is_open(), now)) {
         next_sync = 0;
     }
+    state.layer_mode = true;
+    state.layer = zmk_keymap_layer_index_to_id(zmk_keymap_highest_layer_active());
 #endif
     status_power(&state, usb_powered(), now);
     struct status_state snapshot = state;

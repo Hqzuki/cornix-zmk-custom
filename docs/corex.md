@@ -5,18 +5,19 @@ CoreXの右交換基板 **R A14** とPAW3222トラックボールを、純正Cor
 
 ## ビルド成果物
 
-GitHub Actionsの`firmware`アーティファクトに次のUF2を追加しています。
+GitHub Actionsの`firmware`アーティファクトに次のCoreX構成用UF2を生成します。
 
 | 用途 | artifact-name |
 | --- | --- |
-| 純正Cornix左 | `cornix_left_default_nosd` |
+| 純正Cornix左 | `corex_stock_left` |
+| 純正Cornix左のZMK設定消去 | `corex_stock_left_reset` |
 | CoreX右・J3・S140 v6 | `corex_r_a14_j3_s140v6` |
 | CoreX右・J4・S140 v6 | `corex_r_a14_j4_s140v6` |
 | CoreX右・J3・S140 v7 | `corex_r_a14_j3_s140v7` |
 | CoreX右・J4・S140 v7 | `corex_r_a14_j4_s140v7` |
 | CoreX右のZMK設定消去・v6 / v7 | `corex_r_a14_reset_s140v6` / `corex_r_a14_reset_s140v7` |
 
-**CoreX右には`cornix_right_nosd`や`cornix_reset`を使用しないでください。**
+**右には`corex_r_a14_*`、純正左には`corex_stock_left*`を使用します。左右のUF2は別物です。**
 CoreX右用は既存のSoftDeviceを保持し、v6ではアプリを`0x26000`、v7では`0x27000`から配置します。
 `nrf52840-nosd`スニペットは使用しません。UF2はブートローダー領域へ書き込みません。
 設定領域はCoreX RMKと同じ`0xb0000–0xcffff`を予約しますが、設定の内容は互換ではありません。
@@ -26,7 +27,7 @@ RESETを2回押したときのドライブ内`INFO_UF2.TXT`にあるSoftDevice�
 接続位置が分からない場合も両方の成果物は生成されますが、使用するのは接続先に合う1つです。
 
 RMKとZMKは左右通信に互換性がないため、左右とも同じZMKビルドのファームへ切り替える必要があります。
-初回はPCの旧Bluetooth登録を削除し、右には対応するCoreX用設定消去UF2、左にはCornix用設定消去UF2を書き込んだ後、
+初回はPCの旧Bluetooth登録を削除し、右には対応するCoreX用設定消去UF2、左には`corex_stock_left_reset.uf2`を書き込んだ後、
 各側の本来のUF2を書き込み、左右を再起動・ペアリングします。右の設定消去UF2だけでは左側の登録は消えません。
 本実装による実機確認は未実施です。基板の型番・ブートローダーを確認してから書き込みます。
 

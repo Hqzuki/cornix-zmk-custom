@@ -19,11 +19,13 @@ manifest:
     - name: zmk
       remote: zmkfirmware
       revision: 4dd95d7840eb3d5a3f59bb29fbf1ab054715ef85
+      clone-depth: 1
       import:
         file: app/west.yml
     - name: zmk-helpers
       remote: urob
       revision: 7bcba18fc8df27303eb92a435d33ea870cc51f98
+      clone-depth: 1
     - name: zmk-mouse-gesture
       remote: Hqzuki
       revision: 97332d356ac07df09b68df3f4d60029388d908f5
@@ -42,6 +44,7 @@ manifest:
     - name: zmk-dongle-display
       remote: englmaxi
       revision: 2bb333f87136d33e94a49d86236ed9ec254a8060
+      clone-depth: 1
     #- name: zmk-dongle-screen
     #  remote: janpfischer
     #  revision: main

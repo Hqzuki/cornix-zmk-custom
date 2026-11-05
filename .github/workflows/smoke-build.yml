@@ -1,10 +1,9 @@
 # Scheduled smoke build — issue #1 対策案2.
 #
-# config/west.yml の外部依存 (zmk / zmk-helpers / zmk-dongle-display) は
-# すべて `revision: main` 追従のため、ローカル変更ゼロでも upstream の
-# 任意 commit で Actions ビルドが突然壊れうる。この workflow は定期的に
-# build.yaml の全ターゲットをビルドし、壊れたら GitHub が失敗を通知する
-# (= Studio 接続中やキーマップ編集中に初めて発覚する事態を避ける早期検知)。
+# config/west.yml と build.yml は ZMK・モジュールを commit SHA に固定している。
+# この workflow は固定した構成のまま定期的に build.yaml の全ターゲットをビルドし、
+# 外部要因（Docker イメージや GitHub 側の変更など）で壊れていないかを確認する。
+# ZMK を上げるときは west.yml と両 workflow の SHA を同時に更新する。
 #
 # 注意:
 #  - cron は UTC。`0 0 * * 1` = 毎週月曜 00:00 UTC = 09:00 JST。
@@ -20,4 +19,4 @@ on:
 
 jobs:
   build:
-    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
+    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@4dd95d7840eb3d5a3f59bb29fbf1ab054715ef85

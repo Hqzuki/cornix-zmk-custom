@@ -230,11 +230,6 @@
             bindings = <&none>, <&none>;
         };
 
-        corex_pan: corex_pan {
-            compatible = "corex,coron-pan";
-            #binding-cells = <0>;
-        };
-
         lt_to_layer_0: lt_to_layer_0 {
             compatible = "zmk,behavior-hold-tap";
             label = "LAYER_TAP_TO_0";
@@ -343,7 +338,7 @@
 &trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans              &trans    &trans  &trans
             >;
 
-            sensor-bindings = <&enc_off &enc_off>;
+            /* No sensor-bindings: knobs fall through to the WIN/MAC base layer. */
         };
 
         BLUETOOTH {

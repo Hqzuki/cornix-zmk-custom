@@ -45,8 +45,7 @@ int main(void) {
         dark(status_render(&s, t+11600).outer);
     }
     /* Right (central): outer = host profile, inner = own battery only. */
-    struct status_state r = STATUS_STATE_INIT;
-    r.hide_peer = true;
+    struct status_state r = STATUS_STATE_INIT_ROLE(true);
     status_peer(&r, false, 0);
     dark(status_render(&r, 0).inner);
     status_layer(&r, true, 7);
@@ -58,8 +57,7 @@ int main(void) {
     assert(status_render(&r, 211000).inner.g == 32);
 
     /* Left (peripheral): outer = synced layer colour, always on; inner unchanged. */
-    struct status_state l = STATUS_STATE_INIT;
-    l.layer_outer = true;
+    struct status_state l = STATUS_STATE_INIT_ROLE(false);
     status_peer(&l, true, 0);
     assert(status_render(&l, 0).inner.b == 16);
     dark(status_render(&l, 0).outer);

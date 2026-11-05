@@ -26,7 +26,12 @@ struct status_state {
      * is active (remote_active from the right). */
     bool idle, remote_active;
 };
-#define STATUS_STATE_INIT {.low_since = -1, .full_since = -1}
+/* Single source of defaults for firmware and tests. ROLE: central = CoreX
+ * right (host profile outside), peripheral = stock left (layer outside). */
+#define STATUS_STATE_DEFAULTS .low_since = -1, .full_since = -1
+#define STATUS_STATE_INIT {STATUS_STATE_DEFAULTS}
+#define STATUS_STATE_INIT_ROLE(central) \
+    {STATUS_STATE_DEFAULTS, .hide_peer = (central), .layer_outer = !(central)}
 static inline void status_peer(struct status_state *s, bool connected, int64_t now) {
     if (!s->peer_known || s->peer_connected != connected) {
         s->peer_known = true; s->peer_connected = connected; s->peer_since = now;

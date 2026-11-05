@@ -9,7 +9,9 @@
 #include <zmk/events/activity_state_changed.h>
 #include <zmk/events/battery_state_changed.h>
 #include <hal/nrf_power.h>
+#include <zephyr/sys/atomic.h>
 #include <zephyr/drivers/sensor.h>
+#include <zmk/workqueue.h>
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
 #include <zmk/ble.h>
 #include <zmk/split/central.h>
@@ -20,15 +22,16 @@
 #endif
 #include "backend.h"
 LOG_MODULE_REGISTER(corex_led, CONFIG_ZMK_LOG_LEVEL);
-static struct status_state state = {
-    .low_since = -1, .full_since = -1,
-    .hide_peer = IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL),
-    .layer_outer = !IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL),
-};
+static struct status_state state =
+    STATUS_STATE_INIT_ROLE(IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL));
 K_MUTEX_DEFINE(state_lock);
 static bool ready;
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
 static int64_t next_sync;
+static atomic_t resync; /* set on split reconnect */
+/* Changes are pushed at once; this periodic resend is only a safety net. */
+#define SYNC_RETRY_MS   500
+#define SYNC_REFRESH_MS 30000
 #endif
 /* VBUS detection also works with a charger or a charge-only cable, without
  * USB enumeration on the peripheral. Both supported boards use nRF52840. */
@@ -54,6 +57,21 @@ int corex_status_receive(uint32_t profile, uint32_t flags) {
 #if IDLE_CHARGE_SAMPLING
 static const struct device *const battery = DEVICE_DT_GET(DT_CHOSEN(zmk_battery));
 static int64_t next_idle_sample;
+/* Runs on ZMK's low-priority queue, the same one as ZMK's battery work, so
+ * the two never read the voltage divider at the same time. */
+static void idle_sample(struct k_work *work) {
+    ARG_UNUSED(work);
+    struct sensor_value soc;
+    if (zmk_activity_get_state() == ZMK_ACTIVITY_ACTIVE || !device_is_ready(battery) ||
+        sensor_sample_fetch_chan(battery, SENSOR_CHAN_GAUGE_STATE_OF_CHARGE) ||
+        sensor_channel_get(battery, SENSOR_CHAN_GAUGE_STATE_OF_CHARGE, &soc)) { return; }
+    k_mutex_lock(&state_lock, K_FOREVER);
+    /* Only a changed level is news, like ZMK's own events; otherwise a
+     * low battery would re-trigger the red blink every interval. */
+    if (soc.val1 != state.battery) { status_battery(&state, soc.val1, k_uptime_get()); }
+    k_mutex_unlock(&state_lock);
+}
+K_WORK_DEFINE(idle_sample_work, idle_sample);
 static void sample_while_idle_charging(bool powered, int64_t now) {
     if (zmk_activity_get_state() == ZMK_ACTIVITY_ACTIVE || !powered) {
         next_idle_sample = now + CONFIG_ZMK_BATTERY_REPORT_INTERVAL * 1000LL;
@@ -61,13 +79,7 @@ static void sample_while_idle_charging(bool powered, int64_t now) {
     }
     if (now < next_idle_sample) { return; }
     next_idle_sample = now + CONFIG_ZMK_BATTERY_REPORT_INTERVAL * 1000LL;
-    struct sensor_value soc;
-    if (!device_is_ready(battery) ||
-        sensor_sample_fetch_chan(battery, SENSOR_CHAN_GAUGE_STATE_OF_CHARGE) ||
-        sensor_channel_get(battery, SENSOR_CHAN_GAUGE_STATE_OF_CHARGE, &soc)) { return; }
-    k_mutex_lock(&state_lock, K_FOREVER);
-    status_battery(&state, soc.val1, now);
-    k_mutex_unlock(&state_lock);
+    k_work_submit_to_queue(zmk_workqueue_lowprio_work_q(), &idle_sample_work);
 }
 #endif
 
@@ -117,6 +129,7 @@ static void render(struct k_work *work) {
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
     /* Retry after discovery/encryption and resync after reconnect. The receiver
      * ignores unchanged state, so retries never restart a visible pattern. */
+    if (atomic_cas(&resync, 1, 0)) { next_sync = 0; }
     if (snapshot.peer_connected && snapshot.profile_valid && now >= next_sync) {
         struct zmk_behavior_binding binding = {
             .behavior_dev = "ls", .param1 = snapshot.profile,
@@ -124,7 +137,7 @@ static void render(struct k_work *work) {
         };
         struct zmk_behavior_binding_event event = {.timestamp = now};
         int rc = zmk_split_central_invoke_behavior(0, &binding, event, true);
-        next_sync = now + (rc < 0 ? 500 : 2000);
+        next_sync = now + (rc < 0 ? SYNC_RETRY_MS : SYNC_REFRESH_MS);
     }
 #endif
     k_work_reschedule(&render_work, K_MSEC(slow ? RENDER_SLOW_MS : RENDER_FAST_MS));
@@ -161,6 +174,7 @@ static void peer_status(struct bt_conn *conn, bool connected) {
     k_mutex_lock(&state_lock, K_FOREVER);
     status_peer(&state, connected, k_uptime_get());
     k_mutex_unlock(&state_lock);
+    if (connected) { atomic_set(&resync, 1); }
     wake_render();
 }
 static void peer_connected(struct bt_conn *conn, uint8_t err) {

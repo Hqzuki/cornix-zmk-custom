@@ -1,11 +1,10 @@
-# SPDX-License-Identifier: MIT
+# e73 config
 
 CONFIG_ADC_NRFX_SAADC=y
 
 # Enable MPU
 CONFIG_ARM_MPU=y
 
-# Use pinctrl
 CONFIG_PINCTRL=y
 
 # enable GPIO
@@ -15,38 +14,57 @@ CONFIG_USE_DT_CODE_PARTITION=y
 CONFIG_BUILD_OUTPUT_UF2=y
 
 CONFIG_MPU_ALLOW_FLASH_WRITE=y
+
 CONFIG_NVS=y
 CONFIG_SETTINGS_NVS=y
+
 CONFIG_FLASH=y
 CONFIG_FLASH_PAGE_LAYOUT=y
 CONFIG_FLASH_MAP=y
+
 CONFIG_CLOCK_CONTROL_NRF=y
 CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
 
+# e73 config end
+
+CONFIG_ZMK_KEYBOARD_NAME="Cornix"
+CONFIG_ZMK_USB=y
 CONFIG_ZMK_SPLIT=y
+CONFIG_ZMK_SPLIT_ROLE_CENTRAL=y
 
-CONFIG_ZMK_BLE=y
+# 增加键盘的 BLE 无线电的发射功率，用解决延迟和左右通讯不佳的问题
+CONFIG_BT_CTLR_TX_PWR_PLUS_8=y
+# 更改键盘默认显示名称
 
-# never output usb
-CONFIG_ZMK_USB=n
+# 电池电量报告间隔时间单位是秒
+CONFIG_ZMK_BATTERY_REPORT_INTERVAL=60
 
-CONFIG_INPUT=y
-
-# RGB
-#CONFIG_SPI=n
-#CONFIG_ZMK_EXT_POWER=n
+CONFIG_PINCTRL=y
 
 CONFIG_EC11=y
 CONFIG_EC11_TRIGGER_GLOBAL_THREAD=y
 
-# Lower the slave latency the split peripheral asks the central to allow.
-# ZMK's default (app/Kconfig) is BT_PERIPHERAL_PREF_LATENCY=30 with a
-# preferred conn interval of 7.5–15 ms. That lets the peripheral skip up
-# to ~465 ms of conn events for power savings, and produces the "right
-# key arrives after a quickly-following left key" reorder we see at high
-# typing speed (#7). 5 caps the worst-case skip near ~90 ms while still
-# leaving meaningful idle-time radio off; revisit if user testing wants
-# 0 (lowest latency, ~+25% half-current) or 10 (closer to default).
-CONFIG_BT_PERIPHERAL_PREF_LATENCY=5
+# enable display drivers
+CONFIG_ZMK_DISPLAY=n
 
-# vim: set ft=kconfig:
+#BLE-passkey
+CONFIG_ZMK_BLE_PASSKEY_ENTRY=n
+
+#BLE-clean
+CONFIG_ZMK_BLE_CLEAR_BONDS_ON_START=n
+
+CONFIG_ZMK_HID_REPORT_TYPE_NKRO=n
+
+CONFIG_ZMK_POINTING=y
+
+# 3 profiles (n+2)
+CONFIG_BT_MAX_CONN=6
+CONFIG_BT_MAX_PAIRED=6
+
+CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY=y
+CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING=y
+
+# zmk studio相关配置
+CONFIG_ZMK_STUDIO=y
+CONFIG_ZMK_STUDIO_LOCKING=n
+CONFIG_ZMK_STUDIO_LOCK_ON_DISCONNECT=n

@@ -8,9 +8,9 @@
 
 由于在日本 Cornix 是作为**普通的蓝牙分体式键盘**（无适配器/dongle）销售和使用的，本分支有意在以下几个方面与上游不同：
 
-- **禁用了适配器（dongle）构建目标。** 键盘以标准分体方式运行，左半部分作为中心（central）。适配器相关扩展板仍保留在
+- **禁用了适配器（dongle）构建目标。** 键盘以标准分体方式运行，右半部分作为中心（central）。适配器相关扩展板仍保留在
   磁盘上，但不包含在有效的构建矩阵中。
-- **在 `cornix_left` 上启用了 ZMK Studio**，可通过 USB 使用
+- **在 `cornix_right` 上启用了 ZMK Studio**，可通过 USB 使用
   [ZMK Studio](https://zmk.dev/docs/features/studio) 实时编辑键位图。
 - **将 RGB 指示灯（`cornix_indicator`）** 内置到有效的构建目标中。
 
@@ -23,7 +23,7 @@
 > ### 编辑键位图：ZMK Studio Tweaks（定制 Web 编辑器）
 > ZMK Studio 的改版部署在 **https://zmk-studio-tweaks.numachang.com/**
 >（源码：**https://github.com/numachang/zmk-studio-tweaks**）。它通过 Web Serial API 完全在 Chromium 浏览器中运行
->（数据不会离开你的电脑），可直接打开 `cornix_left` 并在其中编辑键位图。
+>（数据不会离开你的电脑），可直接打开 `cornix_right` 并在其中编辑键位图。
 >
 > 它是官方 ZMK Studio 的一个分支，在上游编辑器的基础上增加了：
 > - **键位图导入/导出**（JSON 文件），并提供来自固件的错误反馈。
@@ -42,8 +42,8 @@
 
 ### 开发板
 
-- **`cornix_left`**: Cornix 分体式键盘的左半部分。作为中心（主）侧。此处启用了 ZMK Studio。
-- **`cornix_right`**: Cornix 分体式键盘的右半部分。作为外围（从）侧。
+- **`cornix_left`**: Cornix 分体式键盘的左半部分。作为外围（从）侧。
+- **`cornix_right`**: Cornix 分体式键盘的右半部分。作为中心（主）侧。此处启用了 ZMK Studio。
 - **`cornix_ph_left`**: 用于适配器配置的备用左半部分开发板。**本分支未使用**（为与上游保持一致而保留）。
 
 ### 扩展板
@@ -65,7 +65,7 @@ Cornix 是一款受 Corne 启发的分体式人体工学键盘，具有紧凑的
 - **分体式、列交错布局**（3×6 + 拇指集群）。
 - **可调帐篷支撑** 10°、18°、25°（基于硬件，无需固件黑科技）。
 - **Kailh Choc V2 热插拔插座**，支持 LAK 或 LCK 低轮廓键帽。
-- **双模连接**：有线 USB-C 或蓝牙无线（左半边为中心）。
+- **双模连接**：有线 USB-C 或蓝牙无线（右半边为中心）。
 - **固件**：原厂固件为 RMK（支持 VIAL）；本仓库提供 ZMK 替代方案。
 - 高端 **CNC 加工铝制底盘**、定制减震泡沫和便携存储袋。
 
@@ -93,7 +93,7 @@ Cornix 是一款受 Corne 启发的分体式人体工学键盘，具有紧凑的
    > 推荐 Fork，因为 GitHub Actions 会自动构建你的固件。
 
 2. **编辑你的键位图**
-   - 键位图位于 `config/cornix.keymap`。可直接编辑，或使用 ZMK Studio（在 `cornix_left` 上启用）—
+   - 键位图位于 `config/cornix.keymap`。可直接编辑，或使用 ZMK Studio（在 `cornix_right` 上启用）—
      [官方编辑器](https://zmk.studio/) 或改版
      [zmk-studio-tweaks.numachang.com](https://zmk-studio-tweaks.numachang.com/)（见上文）— 或
      [ZMK 键位图编辑器](https://nickcoutsos.github.io/keymap-editor/)。
@@ -121,15 +121,15 @@ Cornix 是一款受 Corne 启发的分体式人体工学键盘，具有紧凑的
 
 ```yaml
 include:
-  # 左半部分（中心）— RGB 指示灯 + 通过 USB 的 ZMK Studio
+  # 左半部分（外围）— RGB 指示灯
   - board: cornix_left
     shield: cornix_indicator
-    snippet: studio-rpc-usb-uart nrf52840-nosd
     artifact-name: cornix_left_default_nosd
 
-  # 右半部分（外围）— RGB 指示灯
+  # 右半部分（中心）— RGB 指示灯 + 通过 USB 的 ZMK Studio
   - board: cornix_right
     shield: cornix_indicator
+    snippet: studio-rpc-usb-uart nrf52840-nosd
     artifact-name: cornix_right_nosd
 
   # 设置重置（重新配对时刷写到两半）

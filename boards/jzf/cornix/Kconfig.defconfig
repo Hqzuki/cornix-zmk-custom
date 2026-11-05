@@ -3,8 +3,8 @@
 # Copyright (c) 2020 The ZMK Contributors
 # SPDX-License-Identifier: MIT
 
-## Main device (left side)
-if BOARD_CORNIX_LEFT
+## Main device (right side)
+if BOARD_CORNIX_RIGHT
 
 config ZMK_KEYBOARD_NAME
 	default "Cornix"
@@ -30,10 +30,10 @@ config ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING
 config ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY
 	default y
 
-endif # BOARD_CORNIX_LEFT
+endif # BOARD_CORNIX_RIGHT
 
-## Peripheral device (right side)
-if BOARD_CORNIX_RIGHT || BOARD_CORNIX_PH_LEFT
+## Peripheral device (left side)
+if BOARD_CORNIX_LEFT || BOARD_CORNIX_PH_LEFT
 
 config ZMK_SPLIT_ROLE_CENTRAL
     default n
@@ -47,10 +47,10 @@ config ZMK_KSCAN_DEBOUNCE_PRESS_MS
 config ZMK_KSCAN_DEBOUNCE_RELEASE_MS
     default 3
 
-endif # BOARD_CORNIX_RIGHT
+endif # BOARD_CORNIX_LEFT
 
 # Common options for both sides
-if BOARD_CORNIX_LEFT  || BOARD_CORNIX_PH_LEFT || BOARD_CORNIX_RIGHT
+if BOARD_CORNIX_RIGHT  || BOARD_CORNIX_PH_LEFT || BOARD_CORNIX_LEFT
 
 
 #config BT_CTLR
@@ -72,5 +72,5 @@ config ZMK_RGB_UNDERGLOW_EXT_POWER
 	default n
     
 
-endif # BOARD_CORNIX_LEFT || BOARD_CORNIX_RIGHT
+endif # BOARD_CORNIX_RIGHT || BOARD_CORNIX_LEFT
 # vim: set ft=kconfig:

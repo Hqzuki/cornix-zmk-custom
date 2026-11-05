@@ -10,9 +10,9 @@
 日本では Cornix がドングルなしの**プレーンな Bluetooth 分割キーボード**として販売・使用されているため、
 アップストリームから意図的に次の点だけ変更しています。
 
-- **ドングル向けビルドターゲットを無効化**しています。左半分をセントラルとする標準的な分割構成で動作します。
+- **ドングル向けビルドターゲットを無効化**しています。右半分をセントラルとする標準的な分割構成で動作します。
   ドングル用シールドはディスク上に残っていますが、有効なビルドマトリクスには含まれません。
-- **`cornix_left` で ZMK Studio を有効化**しています。USB 経由で
+- **`cornix_right` で ZMK Studio を有効化**しています。USB 経由で
   [ZMK Studio](https://zmk.dev/docs/features/studio) を使い、キーマップをライブ編集できます。
 - **RGB インジケータ（`cornix_indicator`）** を有効なターゲットに組み込んでいます。
 
@@ -25,7 +25,7 @@
 > ### キーマップ編集：ZMK Studio Tweaks（カスタム Web エディタ）
 > ZMK Studio の改変版を **https://zmk-studio-tweaks.numachang.com/** で公開しています
 >（ソース: **https://github.com/numachang/zmk-studio-tweaks**）。Web Serial API を使って Chromium ブラウザ上で
-> 完結して動作し（データは手元の PC から外に出ません）、`cornix_left` を開いてそのままキーマップを編集できます。
+> 完結して動作し（データは手元の PC から外に出ません）、`cornix_right` を開いてそのままキーマップを編集できます。
 >
 > 公式 ZMK Studio のフォークで、アップストリームのエディタに加えて次の機能を追加しています。
 > - **キーマップのインポート/エクスポート**（JSON ファイル）。ファームウェアからのエラーフィードバック付き。
@@ -45,8 +45,8 @@
 
 ### ボード
 
-- **`cornix_left`**: Cornix 分割の左半分。セントラル（マスター）側として動作します。ここで ZMK Studio が有効です。
-- **`cornix_right`**: Cornix 分割の右半分。ペリフェラル（スレーブ）側として動作します。
+- **`cornix_left`**: Cornix 分割の左半分。ペリフェラル（スレーブ）側として動作します。
+- **`cornix_right`**: Cornix 分割の右半分。セントラル（マスター）側として動作します。ここで ZMK Studio が有効です。
 - **`cornix_ph_left`**: ドングル構成向けの代替左半分ボード。**このフォークでは未使用**です
   （アップストリームとの整合のために残しています）。
 
@@ -70,7 +70,7 @@ Cornix は Corne にインスパイアされた分割エルゴノミクスキー
 - **分割・カラムスタッガード配列**（3×6 + 親指クラスター）。
 - **チルト角度の調整**：10°・18°・25°（ハードウェアベースで、ファームウェアの細工は不要）。
 - **Kailh Choc V2 ホットスワップソケット**、LAK / LCK ロープロファイルキーキャップに対応。
-- **デュアルモード接続**：有線 USB-C または Bluetooth ワイヤレス（左半分がセントラル）。
+- **デュアルモード接続**：有線 USB-C または Bluetooth ワイヤレス（右半分がセントラル）。
 - **ファームウェア**：標準は RMK（VIAL 対応）。このリポジトリは ZMK の代替を提供します。
 - 高品質な **CNC 切削アルミシャーシ**、専用の制振フォーム、持ち運び用ポーチ付き。
 
@@ -100,7 +100,7 @@ ZMK が初めてで `west.yml` やモジュール管理に触れたくない場�
    > Fork がおすすめです。GitHub Actions が自動でファームウェアをビルドしてくれます。
 
 2. **キーマップを編集する**
-   - キーマップは `config/cornix.keymap` にあります。直接編集するか、ZMK Studio（`cornix_left` で有効）—
+   - キーマップは `config/cornix.keymap` にあります。直接編集するか、ZMK Studio（`cornix_right` で有効）—
      [公式エディタ](https://zmk.studio/) または改変版
      [zmk-studio-tweaks.numachang.com](https://zmk-studio-tweaks.numachang.com/)（上記参照）— あるいは
      [ZMK Keymap Editor](https://nickcoutsos.github.io/keymap-editor/) を使います。
@@ -131,15 +131,15 @@ ZMK が初めてで `west.yml` やモジュール管理に触れたくない場�
 
 ```yaml
 include:
-  # 左半分（セントラル）— RGB インジケータ + USB 経由の ZMK Studio
+  # 左半分（ペリフェラル）— RGB インジケータ
   - board: cornix_left
     shield: cornix_indicator
-    snippet: studio-rpc-usb-uart nrf52840-nosd
     artifact-name: cornix_left_default_nosd
 
-  # 右半分（ペリフェラル）— RGB インジケータ
+  # 右半分（セントラル）— RGB インジケータ + USB 経由の ZMK Studio
   - board: cornix_right
     shield: cornix_indicator
+    snippet: studio-rpc-usb-uart nrf52840-nosd
     artifact-name: cornix_right_nosd
 
   # 設定リセット（再ペアリング時に両半分へ書き込む）
@@ -262,3 +262,7 @@ Windows ユーザーは GitHub Actions を利用してください。
 Cornix シールドは片側に 2 個の RGB LED を備え、標準ファームウェアでは PWM で制御されています。ZMK では
 `cornix_indicator` シールドがこれらを駆動し、バッテリーと接続状態を表示します。完全にネイティブな
 ツリー外 RGB モジュールも計画中です（issue #2 参照）。
+
+### 右手 Central 構成への切り替え
+
+PC への USB 接続と ZMK Studio は右手側を使います。切り替え時は PC の古い Bluetooth 登録を削除し、両側へ `cornix_reset` を書き込んだ後、同じビルドの左右それぞれのファームウェアを書き込んで両側をリセットし、再ペアリングしてください。

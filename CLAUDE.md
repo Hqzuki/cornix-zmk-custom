@@ -23,7 +23,7 @@ Knowing both roles is necessary to understand why the same repo provides `build.
 This fork intentionally diverges from `hitsmaxft/zmk-keyboard-cornix` in narrow, deliberate ways. Preserve these when merging from upstream:
 
 - **All dongle build targets are commented out in `build.yaml`** — dongles are not sold in Japan, the keyboard runs as a plain split. Keep `cornix_dongle_*`, `cornix_ph_left`, and `reset_nicenano_nosd` targets commented; only `cornix_left`, `cornix_right`, and `cornix_reset` are active. The shields `cornix_dongle_adapter` / `cornix_dongle_eyelash` still exist on disk but are unreferenced by the active build matrix.
-- **ZMK Studio is enabled on `cornix_left`** via the `studio-rpc-usb-uart nrf52840-nosd` snippet line in `build.yaml`. Defconfigs (`CONFIG_ZMK_STUDIO=y`, `CONFIG_ZMK_STUDIO_LOCKING=n`) come from upstream — only the snippet wiring is local.
+- **ZMK Studio is enabled on `cornix_right`** via the `studio-rpc-usb-uart nrf52840-nosd` snippet line in `build.yaml`. Defconfigs (`CONFIG_ZMK_STUDIO=y`, `CONFIG_ZMK_STUDIO_LOCKING=n`) come from upstream — only the snippet wiring is local.
 
 When `git pull`ing or merging upstream, expect conflicts in `build.yaml`; resolve by keeping dongle targets commented and the Studio snippet present.
 

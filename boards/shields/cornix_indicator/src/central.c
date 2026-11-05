@@ -2,7 +2,7 @@
  * Copyright (c) 2026 numachang
  * SPDX-License-Identifier: MIT
  *
- * Stage B5 (central / left half):
+ * Stage B5 (central / right half):
  *   pixel[1] (outer): BT profile colour (BT0=green / BT1=red / BT2=blue).
  *                     - On profile-connected: 600 ms steady, then off.
  *                     - On profile-open (advertising / searching): slow

@@ -9,9 +9,9 @@ firmware configuration plus the board/shield module for the Cornix split keyboar
 It intentionally diverges from upstream in a few narrow ways, because in Japan the Cornix is sold and used as a
 **plain Bluetooth split keyboard** (no dongle):
 
-- **Dongle build targets are disabled.** The keyboard runs as a standard split with the left half as the
+- **Dongle build targets are disabled.** The keyboard runs as a standard split with the right half as the
   central. The dongle shields still exist on disk but are not part of the active build matrix.
-- **ZMK Studio is enabled on `cornix_left`**, so you can edit the keymap live over USB with
+- **ZMK Studio is enabled on `cornix_right`**, so you can edit the keymap live over USB with
   [ZMK Studio](https://zmk.dev/docs/features/studio).
 - **RGB indicator (`cornix_indicator`)** is built into the active targets.
 
@@ -24,7 +24,7 @@ It intentionally diverges from upstream in a few narrow ways, because in Japan t
 > ### Editing keymaps: ZMK Studio Tweaks (custom web editor)
 > A tweaked build of ZMK Studio is hosted at **https://zmk-studio-tweaks.numachang.com/**
 > (source: **https://github.com/numachang/zmk-studio-tweaks**). It runs entirely in a Chromium browser over the
-> Web Serial API — no data leaves your machine — so you can open `cornix_left` and edit the keymap there directly.
+> Web Serial API — no data leaves your machine — so you can open `cornix_right` and edit the keymap there directly.
 >
 > It is a fork of the official ZMK Studio that adds, on top of the upstream editor:
 > - **Keymap import/export** as JSON files, with firmware error feedback.
@@ -44,8 +44,8 @@ It intentionally diverges from upstream in a few narrow ways, because in Japan t
 
 ### Boards
 
-- **`cornix_left`**: Left half of the Cornix split. Acts as the central (master) side. ZMK Studio is enabled here.
-- **`cornix_right`**: Right half of the Cornix split. Acts as the peripheral (slave) side.
+- **`cornix_left`**: Left half of the Cornix split. Acts as the peripheral (slave) side.
+- **`cornix_right`**: Right half of the Cornix split. Acts as the central (master) side. ZMK Studio is enabled here.
 - **`cornix_ph_left`**: Alternative left-half board intended for a dongle setup. **Unused in this fork** (kept for
   parity with upstream).
 
@@ -69,7 +69,7 @@ reduce wrist strain and find a custom ergonomic alignment.
 - **Split, column-staggered layout** (3×6 + thumb cluster).
 - **Adjustable tenting support** at 10°, 18°, 25° (hardware-based, no firmware hacks).
 - **Kailh Choc V2 hot-swap sockets** and support for LAK or LCK low-profile keycaps.
-- **Dual-mode connectivity**: wired USB-C or Bluetooth wireless (left half as central).
+- **Dual-mode connectivity**: wired USB-C or Bluetooth wireless (right half as central).
 - **Firmware**: stock firmware is RMK (VIAL-supported); this repository provides a ZMK alternative.
 - Premium **CNC-machined aluminum chassis**, custom damping foam, and portable storage pouch.
 
@@ -98,7 +98,7 @@ directly to customize your firmware.
    > Forking is recommended, because GitHub Actions will automatically build your firmware.
 
 2. **Edit your keymap**
-   - The keymap lives in `config/cornix.keymap`. Edit it directly, or use ZMK Studio (enabled on `cornix_left`) —
+   - The keymap lives in `config/cornix.keymap`. Edit it directly, or use ZMK Studio (enabled on `cornix_right`) —
      either the [official editor](https://zmk.studio/) or the tweaked build at
      [zmk-studio-tweaks.numachang.com](https://zmk-studio-tweaks.numachang.com/) (see above) — or the
      [ZMK Keymap Editor](https://nickcoutsos.github.io/keymap-editor/).
@@ -129,15 +129,15 @@ This fork ships the following active targets (dongle targets are commented out):
 
 ```yaml
 include:
-  # Left half (central) — RGB indicator + ZMK Studio over USB
+  # Left half (peripheral) — RGB indicator
   - board: cornix_left
     shield: cornix_indicator
-    snippet: studio-rpc-usb-uart nrf52840-nosd
     artifact-name: cornix_left_default_nosd
 
-  # Right half (peripheral) — RGB indicator
+  # Right half (central) — RGB indicator + ZMK Studio over USB
   - board: cornix_right
     shield: cornix_indicator
+    snippet: studio-rpc-usb-uart nrf52840-nosd
     artifact-name: cornix_right_nosd
 
   # Settings reset (flash to both halves when re-pairing)

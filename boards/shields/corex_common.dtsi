@@ -1,7 +1,4 @@
 /* SPDX-License-Identifier: MIT */
-/ {
-    corex_listener: corex_listener {
-        compatible = "zmk,input-listener";
-        device = <&corex_paw>;
-    };
+&corex_listener {
+    status = "okay";
 };

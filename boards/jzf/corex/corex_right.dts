@@ -87,3 +87,13 @@
         corex_outer_b: outer_b { pwms = <&pwm1 2 PWM_USEC(1000) PWM_POLARITY_INVERTED>; };
     };
 };
+
+/* Present even in settings-reset builds so the shared keymap can refer to it.
+ * Only the J3/J4 shields enable the pointing listener. */
+/ {
+    corex_listener: corex_listener {
+        compatible = "zmk,input-listener";
+        device = <&corex_paw>;
+        status = "disabled";
+    };
+};

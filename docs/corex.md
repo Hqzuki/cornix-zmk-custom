@@ -116,3 +116,5 @@ cc -std=c11 -Wall -Wextra -Werror tests/corex/wire_test.c -o /tmp/corex-wire-tes
 ドライバーと同じ通信コードで全256値の送受信、アドレスのRead/Writeビット、
 受信時のSDIO解放、クロックの待機レベルをGPIOモックで検証します。
 このテストは実機の信号品質・ピン配線・無線動作を保証するものではありません。
+
+WIN配列の右手左下の親指キーは、押している間NUM/FNレイヤーを開きます。Space長押しからも引き続き開けます。

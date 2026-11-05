@@ -4,6 +4,7 @@
 #include <zephyr/init.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/logging/log.h>
+#include <zmk/activity.h>
 #include <zmk/event_manager.h>
 #include <zmk/events/battery_state_changed.h>
 #include <hal/nrf_power.h>
@@ -53,10 +54,14 @@ static void render(struct k_work *work) {
         next_sync = 0;
     }
     uint8_t layer = zmk_keymap_layer_index_to_id(zmk_keymap_highest_layer_active());
-    if (!state.layer_valid || state.layer != layer) {
+    bool idle = zmk_activity_get_state() != ZMK_ACTIVITY_ACTIVE;
+    if (!state.layer_valid || state.layer != layer || state.idle != idle) {
         status_layer(&state, true, layer);
-        next_sync = 0; /* push layer changes to the left immediately */
+        state.idle = idle;
+        next_sync = 0; /* push layer and activity changes to the left immediately */
     }
+#else
+    state.idle = zmk_activity_get_state() != ZMK_ACTIVITY_ACTIVE && !state.remote_active;
 #endif
     status_power(&state, usb_powered(), now);
     struct status_state snapshot = state;
@@ -88,6 +93,7 @@ static int status_event(const zmk_event_t *eh) {
         status_peer(&state, peer->connected, now);
         if (!peer->connected) {
             state.profile_valid = false;
+            state.remote_active = false;
             status_layer(&state, false, 0);
         }
     }

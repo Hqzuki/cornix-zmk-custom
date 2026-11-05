@@ -21,6 +21,9 @@ struct status_state {
      * left shows the central's active layer on its outer LED (layer_outer). */
     bool hide_peer, layer_outer, layer_valid;
     uint8_t layer;
+    /* ZMK idle (no keys, encoder or trackball): every LED stays dark. The left
+     * stays lit while either half is active (remote_active from the right). */
+    bool idle, remote_active;
 };
 #define STATUS_STATE_INIT {.low_since = -1, .full_since = -1}
 static inline void status_peer(struct status_state *s, bool connected, int64_t now) {
@@ -40,11 +43,13 @@ static inline void status_layer(struct status_state *s, bool valid, uint8_t laye
     s->layer_valid = valid; s->layer = layer;
 }
 /* Right-to-left sync payload: param2 bit0 host connected, bit1 host open,
- * bit2 layer present, bits 8-15 layer id. */
-#define STATUS_SYNC_LAYER 4u
-#define STATUS_SYNC_MASK  0xff07u
+ * bit2 layer present, bit3 right active, bits 8-15 layer id. */
+#define STATUS_SYNC_LAYER  4u
+#define STATUS_SYNC_ACTIVE 8u
+#define STATUS_SYNC_MASK   0xff0fu
 static inline uint32_t status_sync_flags(const struct status_state *s) {
     return (uint32_t)s->host_connected | ((uint32_t)s->host_open << 1) |
+           (s->idle ? 0 : STATUS_SYNC_ACTIVE) |
            (s->layer_valid ? STATUS_SYNC_LAYER | ((uint32_t)s->layer << 8) : 0);
 }
 static inline bool status_receive(struct status_state *s, uint32_t profile, uint32_t flags,
@@ -52,6 +57,7 @@ static inline bool status_receive(struct status_state *s, uint32_t profile, uint
     if (profile > 255 || (flags & ~STATUS_SYNC_MASK)) { return false; }
     status_profile(s, profile, flags & 1, flags & 2, now);
     status_layer(s, flags & STATUS_SYNC_LAYER, (flags >> 8) & 0xff);
+    s->remote_active = flags & STATUS_SYNC_ACTIVE;
     return true;
 }
 static inline void status_battery(struct status_state *s, uint8_t level, int64_t now) {
@@ -94,6 +100,7 @@ static inline struct status_rgb status_layer_color(uint8_t layer) {
 }
 static inline struct status_frame status_render(const struct status_state *s, int64_t now) {
     struct status_frame f = {0};
+    if (s->idle) { return f; }
     const struct status_rgb red = {16,0,0}, blue = {0,0,16}, green = {0,16,0};
     int64_t low = now - s->low_since, peer = now - s->peer_since;
     /* Reserve the whole low-battery pattern, including its dark gaps. */

@@ -72,5 +72,21 @@ int main(void) {
     assert(!status_receive(&l, 256, 0, 0));
     assert(status_receive(&l, 0, 1, 500000));
     dark(status_render(&l, 500000).outer);
-    puts("LED patterns: peer timing, priority, battery, charging, five profile colors, sync dedup, layer sync and left layer colors passed");
+    /* Idle: every LED dark on both halves; the left wakes on right activity. */
+    status_battery(&r, 15, 600000);
+    r.idle = true;
+    dark(status_render(&r, 600000).inner);
+    dark(status_render(&r, 600000).outer);
+    r.layer = 7;
+    assert(!(status_sync_flags(&r) & STATUS_SYNC_ACTIVE));
+    assert(status_receive(&l, r.profile, status_sync_flags(&r), 600000));
+    assert(!l.remote_active);
+    l.idle = true;
+    dark(status_render(&l, 600000).outer);
+    r.idle = false;
+    assert(status_receive(&l, r.profile, status_sync_flags(&r), 601000));
+    assert(l.remote_active);
+    l.idle = false;
+    assert(same(status_render(&l, 601000).outer, status_layer_color(7)));
+    puts("LED patterns: peer timing, priority, battery, charging, five profile colors, sync dedup, layer sync, left layer colors and idle blanking passed");
 }

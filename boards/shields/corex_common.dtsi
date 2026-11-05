@@ -1,4 +1,0 @@
-/* SPDX-License-Identifier: MIT */
-&corex_listener {
-    status = "okay";
-};

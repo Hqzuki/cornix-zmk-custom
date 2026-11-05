@@ -1,5 +1,7 @@
 # SPDX-License-Identifier: MIT
 # Three-wire half-duplex SDIO, clock idle high, NCS retained low.
+# Each *-gpios property lists one entry per connector, in probe order;
+# input comes from the first connector whose sensor answers.
 description: CoreX PAW3222 optical sensor with GPIO three-wire transport
 compatible: "corex,paw3222-gpio"
 include: base.yaml

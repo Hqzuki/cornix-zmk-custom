@@ -10,7 +10,7 @@ Features include cursor movement, a CoronLP-style nine-layer keymap (without sta
 Push to any branch to build automatically. Download `firmware` from the successful [GitHub Actions run](https://github.com/Hqzuki/cornix-zmk-custom/actions).
 
 - Left: `corex_stock_left.uf2`
-- Right: `corex_r_a14_j3_s140v6.uf2` or the J4/S140 v7 variant matching your hardware.
+- Right: `corex_r_a14_s140v6.uf2` or `corex_r_a14_s140v7.uf2`, matching the installed S140 SoftDevice (the J3/J4 sensor connector is detected automatically).
 - Settings reset: `corex_stock_left_reset.uf2` for the left, or the matching `corex_r_a14_reset_s140v6.uf2` / `v7` for the right.
 
 See [installation, controls, configuration and wiring](docs/corex.md). Hardware operation has not yet been verified.

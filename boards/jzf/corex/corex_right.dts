@@ -46,11 +46,13 @@
     corex_paw: paw3222 {
         compatible = "corex,paw3222-gpio";
         status = "disabled";
-        /* J4 is the default; J3 shield replaces all four pins. */
-        sck-gpios = <&gpio0 5 GPIO_ACTIVE_HIGH>;
-        sdio-gpios = <&gpio1 8 GPIO_ACTIVE_HIGH>;
-        motion-gpios = <&gpio0 7 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
-        auxiliary-gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>;
+        /* Connectors in probe order: J4, then J3 (CoreX-RMK main.rs). The
+         * driver uses whichever one has a responding sensor. */
+        sck-gpios = <&gpio0 5 GPIO_ACTIVE_HIGH>, <&gpio0 8 GPIO_ACTIVE_HIGH>;
+        sdio-gpios = <&gpio1 8 GPIO_ACTIVE_HIGH>, <&gpio0 4 GPIO_ACTIVE_HIGH>;
+        motion-gpios = <&gpio0 7 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>,
+                       <&gpio0 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+        auxiliary-gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>, <&gpio1 9 GPIO_ACTIVE_HIGH>;
     };
 };
 
@@ -89,7 +91,7 @@
 };
 
 /* Present even in settings-reset builds so the shared keymap can refer to it.
- * Only the J3/J4 shields enable the pointing listener. */
+ * Only the corex_trackball shield enables the pointing listener. */
 / {
     corex_listener: corex_listener {
         compatible = "zmk,input-listener";

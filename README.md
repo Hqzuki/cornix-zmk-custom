@@ -19,7 +19,7 @@
 pushするとGitHub Actionsでビルドします。[Actions](https://github.com/Hqzuki/cornix-zmk-custom/actions)の成功した実行から、Artifactsの`firmware`を取得してください。
 
 - 左：`corex_stock_left.uf2`
-- 右：`corex_r_a14_j3_s140v6.uf2`など。J3／J4と、搭載ブートローダーのS140 v6／v7に合わせて選びます。
+- 右：`corex_r_a14_s140v6.uf2`または`corex_r_a14_s140v7.uf2`。搭載ブートローダーのS140 v6／v7に合わせて選びます（センサーのJ3／J4は自動判別）。
 - 設定消去：左は`corex_stock_left_reset.uf2`、右は対応する`corex_r_a14_reset_s140v6.uf2`または`v7`。
 
 [導入・操作・設定・配線の詳細](docs/corex.md)を確認してください。実機動作は未確認です。

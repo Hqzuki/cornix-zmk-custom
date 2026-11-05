@@ -1,3 +1,0 @@
-# SPDX-License-Identifier: MIT
-config SHIELD_COREX_J4
-    def_bool $(shields_list_contains,corex_j4)

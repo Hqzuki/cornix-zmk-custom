@@ -1,9 +1,0 @@
-/* SPDX-License-Identifier: MIT */
-#include "../corex_common.dtsi"
-&corex_paw {
-    status = "okay";
-    sck-gpios = <&gpio0 8 GPIO_ACTIVE_HIGH>;
-    sdio-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
-    motion-gpios = <&gpio0 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
-    auxiliary-gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
-};

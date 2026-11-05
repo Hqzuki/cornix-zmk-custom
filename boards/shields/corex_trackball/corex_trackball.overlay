@@ -1,0 +1,11 @@
+/* SPDX-License-Identifier: MIT
+ * CoreX R A14 PAW3222 on J4 or J3, detected at runtime.
+ * Change CPI here, e.g. `res-cpi = <1216>;` (608-4826 in steps of 38).
+ */
+&corex_paw {
+    status = "okay";
+};
+
+&corex_listener {
+    status = "okay";
+};

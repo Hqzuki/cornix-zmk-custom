@@ -11,10 +11,8 @@ GitHub Actionsの`firmware`アーティファクトに次のCoreX構成用UF2を
 | --- | --- |
 | 純正Cornix左 | `corex_stock_left` |
 | 純正Cornix左のZMK設定消去 | `corex_stock_left_reset` |
-| CoreX右・J3・S140 v6 | `corex_r_a14_j3_s140v6` |
-| CoreX右・J4・S140 v6 | `corex_r_a14_j4_s140v6` |
-| CoreX右・J3・S140 v7 | `corex_r_a14_j3_s140v7` |
-| CoreX右・J4・S140 v7 | `corex_r_a14_j4_s140v7` |
+| CoreX右・S140 v6 | `corex_r_a14_s140v6` |
+| CoreX右・S140 v7 | `corex_r_a14_s140v7` |
 | CoreX右のZMK設定消去・v6 / v7 | `corex_r_a14_reset_s140v6` / `corex_r_a14_reset_s140v7` |
 
 **右には`corex_r_a14_*`、純正左には`corex_stock_left*`を使用します。左右のUF2は別物です。**
@@ -23,8 +21,9 @@ CoreX右用は既存のSoftDeviceを保持し、v6ではアプリを`0x26000`、
 設定領域はCoreX RMKと同じ`0xb0000–0xcffff`を予約しますが、設定の内容は互換ではありません。
 
 RESETを2回押したときのドライブ内`INFO_UF2.TXT`にあるSoftDevice版に合わせてv6/v7を選びます。
-記載が判別できない場合は書き込み前に確認してください。J3/J4は基板のシルク印刷で確認します。
-接続位置が分からない場合も両方の成果物は生成されますが、使用するのは接続先に合う1つです。
+記載が判別できない場合は書き込み前に確認してください。
+センサーの接続先（J3／J4）は起動時と未検出中2秒ごとにJ4→J3の順で確認し、応答した方を使います。
+両方に接続した場合はJ4だけを使います。
 
 RMKとZMKは左右通信に互換性がないため、左右とも同じZMKビルドのファームへ切り替える必要があります。
 初回はPCの旧Bluetooth登録を削除し、右には対応するCoreX用設定消去UF2、左には`corex_stock_left_reset.uf2`を書き込んだ後、
@@ -95,7 +94,7 @@ ZMK Studioの保存済み配列はビルド内の初期配列より優先しま�
 旧9レイヤーなどの設定を保存している場合は、キー配列のリセットが必要です。Bluetoothも含めた全設定消去は任意です。
 導入後はStudioでWIN〜FNの9レイヤーと割り当てを確認してください。
 キー・レイヤー・スクロール・ジェスチャーは`config/corex_right.keymap`、
-CPIはJ3／J4のoverlay内で`&corex_paw { res-cpi = <1216>; };`のように変更できます。
+CPIは`boards/shields/corex_trackball/corex_trackball.overlay`内で`res-cpi = <1216>;`のように変更できます。
 CPIは608〜4826の38刻みです。
 
 ## 対応範囲

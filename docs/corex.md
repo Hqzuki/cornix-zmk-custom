@@ -47,7 +47,8 @@ RMKとZMKは左右通信に互換性がないため、左右とも同じZMKビ�
 | 8 | BLUETOOTH | 左の内側スイッチを押している間、接続先選択・登録消去・ブートローダー操作 |
 
 - Iは通常の文字キーです。従来のI長押しスクロールはJ＋Kへ変更しています。
-- 左右の修飾キー、LANG1／LANG2、Spaceの長押し判定はCoronLPと同じ設定です。
+- 親指キーはWIN／MAC共通で、短押しSpace／長押しFUNCTION、短押しLANG1／長押しNUM、LANG1、LANG2、LANG2です。
+  OSごとのCtrl／GUI配置は維持しています。
 - 基本配列のセミコロン／引用符、イコール／マイナスの押し分けもCoronLPを継承します。
 - 同時押し：Backspace＋Tab＝Tab、Tab＋A＝Shift＋Tab、セミコロン／引用符キー＋Backspace＝無変換＋WINレイヤー、
   H＋J＝二重引用符、Shift＋Z＝イコール。

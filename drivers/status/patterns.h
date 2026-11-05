@@ -21,8 +21,9 @@ struct status_state {
      * left shows the central's active layer on its outer LED (layer_outer). */
     bool hide_peer, layer_outer, layer_valid;
     uint8_t layer;
-    /* ZMK idle (no keys, encoder or trackball): every LED stays dark. The left
-     * stays lit while either half is active (remote_active from the right). */
+    /* ZMK idle (no keys, encoder or trackball): only battery and charging
+     * remain on the inner LED. The left counts as active while either half
+     * is active (remote_active from the right). */
     bool idle, remote_active;
 };
 #define STATUS_STATE_INIT {.low_since = -1, .full_since = -1}
@@ -66,7 +67,8 @@ static inline void status_battery(struct status_state *s, uint8_t level, int64_t
     if (level <= 20) { s->low_since = now; }
     if (s->powered && level >= 95 && !s->full_shown) {
         s->full_shown = true; s->full_since = now;
-    } else if (s->powered && level < 95 && s->full_shown) {
+    } else if (s->powered && level < 90 && s->full_shown) {
+        /* Hysteresis: once full, stay steady green until below 90%. */
         s->full_shown = false; s->full_since = -1; s->charge_since = now;
     }
 }
@@ -100,18 +102,17 @@ static inline struct status_rgb status_layer_color(uint8_t layer) {
 }
 static inline struct status_frame status_render(const struct status_state *s, int64_t now) {
     struct status_frame f = {0};
-    if (s->idle) { return f; }
     const struct status_rgb red = {16,0,0}, blue = {0,0,16}, green = {0,16,0};
     int64_t low = now - s->low_since, peer = now - s->peer_since;
     /* Reserve the whole low-battery pattern, including its dark gaps. */
     if (s->low_since >= 0 && low >= 0 && low < 1200) {
         if (low < 400 || low >= 800) { f.inner = red; }
-    } else if (!s->hide_peer && s->peer_known && peer >= 0 &&
+    } else if (!s->idle && !s->hide_peer && s->peer_known && peer >= 0 &&
                peer < (s->peer_connected ? 3000 : 10000)) {
         if (s->peer_connected || peer % 1000 < 400) { f.inner = blue; }
     } else if (s->powered) {
         if (s->full_shown) {
-            if (now - s->full_since < 3000) { f.inner = green; }
+            f.inner = green; /* charge complete: steady while USB stays connected */
         } else {
             static const uint8_t breath[60] = {
                 0,0,0,1,1,2,3,4,5,7,8,9,11,13,14,16,18,19,21,23,
@@ -121,7 +122,9 @@ static inline struct status_frame status_render(const struct status_state *s, in
             f.inner.g = breath[((now - s->charge_since) % 2000) * 60 / 2000];
         }
     }
-    if (s->layer_outer) {
+    if (s->idle) {
+        /* Outer LED (layer or host profile) stays dark while idle. */
+    } else if (s->layer_outer) {
         if (s->layer_valid) { f.outer = status_layer_color(s->layer); }
     } else if (s->profile_valid) {
         int64_t host = now - s->profile_since;

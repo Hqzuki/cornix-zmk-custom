@@ -6,8 +6,10 @@
 #include <zephyr/logging/log.h>
 #include <zmk/activity.h>
 #include <zmk/event_manager.h>
+#include <zmk/events/activity_state_changed.h>
 #include <zmk/events/battery_state_changed.h>
 #include <hal/nrf_power.h>
+#include <zephyr/drivers/sensor.h>
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
 #include <zmk/ble.h>
 #include <zmk/split/central.h>
@@ -34,15 +36,51 @@ static bool usb_powered(void) {
     return (NRF_POWER->USBREGSTATUS & POWER_USBREGSTATUS_VBUSDETECT_Msk) != 0;
 }
 
+static void wake_render(void);
 int corex_status_receive(uint32_t profile, uint32_t flags) {
     k_mutex_lock(&state_lock, K_FOREVER);
+    bool was_active = state.remote_active;
     bool ok = status_receive(&state, profile, flags, k_uptime_get());
+    bool woke = !was_active && state.remote_active;
     k_mutex_unlock(&state_lock);
+    if (woke) { wake_render(); }
     return ok ? 0 : -EINVAL;
 }
 
+/* ZMK stops battery sampling while idle. While USB powers an idle half, keep
+ * sampling at the normal interval so the charge-complete green still shows. */
+#define IDLE_CHARGE_SAMPLING (DT_HAS_CHOSEN(zmk_battery) && \
+    IS_ENABLED(CONFIG_ZMK_BATTERY_REPORTING_FETCH_MODE_STATE_OF_CHARGE))
+#if IDLE_CHARGE_SAMPLING
+static const struct device *const battery = DEVICE_DT_GET(DT_CHOSEN(zmk_battery));
+static int64_t next_idle_sample;
+static void sample_while_idle_charging(bool powered, int64_t now) {
+    if (zmk_activity_get_state() == ZMK_ACTIVITY_ACTIVE || !powered) {
+        next_idle_sample = now + CONFIG_ZMK_BATTERY_REPORT_INTERVAL * 1000LL;
+        return;
+    }
+    if (now < next_idle_sample) { return; }
+    next_idle_sample = now + CONFIG_ZMK_BATTERY_REPORT_INTERVAL * 1000LL;
+    struct sensor_value soc;
+    if (!device_is_ready(battery) ||
+        sensor_sample_fetch_chan(battery, SENSOR_CHAN_GAUGE_STATE_OF_CHARGE) ||
+        sensor_channel_get(battery, SENSOR_CHAN_GAUGE_STATE_OF_CHARGE, &soc)) { return; }
+    k_mutex_lock(&state_lock, K_FOREVER);
+    status_battery(&state, soc.val1, now);
+    k_mutex_unlock(&state_lock);
+}
+#endif
+
 static void render(struct k_work *work);
 K_WORK_DELAYABLE_DEFINE(render_work, render);
+static void wake_render(void) { k_work_reschedule(&render_work, K_NO_WAIT); }
+/* 30 Hz while anything may be shown. Idle on battery and dark (past the 15 s
+ * strip-rail timeout) drops to 1 Hz, enough to notice USB power; events wake
+ * it at once. */
+#define RENDER_FAST_MS  33
+#define RENDER_SLOW_MS  1000
+#define RENDER_DARK_MS  16000
+static int64_t last_lit;
 static void render(struct k_work *work) {
     ARG_UNUSED(work);
     int64_t now = k_uptime_get();
@@ -64,9 +102,18 @@ static void render(struct k_work *work) {
     state.idle = zmk_activity_get_state() != ZMK_ACTIVITY_ACTIVE && !state.remote_active;
 #endif
     status_power(&state, usb_powered(), now);
+    k_mutex_unlock(&state_lock);
+#if IDLE_CHARGE_SAMPLING
+    sample_while_idle_charging(usb_powered(), now);
+#endif
+    k_mutex_lock(&state_lock, K_FOREVER);
     struct status_state snapshot = state;
     k_mutex_unlock(&state_lock);
-    if (ready) { status_backend_write(status_render(&snapshot, now), now); }
+    struct status_frame frame = status_render(&snapshot, now);
+    if (ready) { status_backend_write(frame, now); }
+    if (frame.inner.r || frame.inner.g || frame.inner.b ||
+        frame.outer.r || frame.outer.g || frame.outer.b) { last_lit = now; }
+    bool slow = snapshot.idle && !snapshot.powered && now - last_lit >= RENDER_DARK_MS;
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
     /* Retry after discovery/encryption and resync after reconnect. The receiver
      * ignores unchanged state, so retries never restart a visible pattern. */
@@ -80,7 +127,7 @@ static void render(struct k_work *work) {
         next_sync = now + (rc < 0 ? 500 : 2000);
     }
 #endif
-    k_work_reschedule(&render_work, K_MSEC(33));
+    k_work_reschedule(&render_work, K_MSEC(slow ? RENDER_SLOW_MS : RENDER_FAST_MS));
 }
 static int status_event(const zmk_event_t *eh) {
     int64_t now = k_uptime_get();
@@ -99,10 +146,12 @@ static int status_event(const zmk_event_t *eh) {
     }
 #endif
     k_mutex_unlock(&state_lock);
+    wake_render(); /* battery, peer link or activity changed */
     return ZMK_EV_EVENT_BUBBLE;
 }
 ZMK_LISTENER(corex_led_status, status_event);
 ZMK_SUBSCRIPTION(corex_led_status, zmk_battery_state_changed);
+ZMK_SUBSCRIPTION(corex_led_status, zmk_activity_state_changed);
 #if !IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
 ZMK_SUBSCRIPTION(corex_led_status, zmk_split_peripheral_status_changed);
 #else
@@ -112,6 +161,7 @@ static void peer_status(struct bt_conn *conn, bool connected) {
     k_mutex_lock(&state_lock, K_FOREVER);
     status_peer(&state, connected, k_uptime_get());
     k_mutex_unlock(&state_lock);
+    wake_render();
 }
 static void peer_connected(struct bt_conn *conn, uint8_t err) {
     if (!err) { peer_status(conn, true); }

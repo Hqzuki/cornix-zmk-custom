@@ -23,9 +23,12 @@ int main(void) {
     assert(status_render(&s, 17200).inner.g > 0);
     status_battery(&s, 95, 18000);
     assert(status_render(&s, 18000).inner.g == 16);
-    dark(status_render(&s, 21000).inner);
-    status_battery(&s, 94, 22000);
-    assert(status_render(&s, 23000).inner.g == 32);
+    assert(status_render(&s, 21000).inner.g == 16); /* steady, no 3 s cutoff */
+    assert(status_render(&s, 900000).inner.g == 16);
+    status_battery(&s, 94, 21500);
+    assert(status_render(&s, 21500).inner.g == 16); /* hysteresis keeps full */
+    status_battery(&s, 89, 22000);
+    assert(status_render(&s, 23000).inner.g == 32); /* back to breathing */
     status_power(&s, false, 24000);
     dark(status_render(&s, 24000).inner);
     for (int p = 0; p < 5; p++) {
@@ -72,11 +75,17 @@ int main(void) {
     assert(!status_receive(&l, 256, 0, 0));
     assert(status_receive(&l, 0, 1, 500000));
     dark(status_render(&l, 500000).outer);
-    /* Idle: every LED dark on both halves; the left wakes on right activity. */
+    /* Idle: outer dark on both halves, battery/charging still shown inside;
+     * the left wakes on right activity. */
     status_battery(&r, 15, 600000);
     r.idle = true;
-    dark(status_render(&r, 600000).inner);
+    assert(status_render(&r, 600000).inner.r == 16);
     dark(status_render(&r, 600000).outer);
+    status_battery(&r, 50, 601200);
+    assert(status_render(&r, 603000).inner.g > 0); /* still charging (powered) */
+    status_peer(&l, false, 600000);
+    l.idle = true;
+    dark(status_render(&l, 600000).inner); /* no peer blink while idle */
     r.layer = 7;
     assert(!(status_sync_flags(&r) & STATUS_SYNC_ACTIVE));
     assert(status_receive(&l, r.profile, status_sync_flags(&r), 600000));
@@ -88,5 +97,5 @@ int main(void) {
     assert(l.remote_active);
     l.idle = false;
     assert(same(status_render(&l, 601000).outer, status_layer_color(7)));
-    puts("LED patterns: peer timing, priority, battery, charging, five profile colors, sync dedup, layer sync, left layer colors and idle blanking passed");
+    puts("LED patterns: peer timing, priority, battery, charging (breath until full, then steady), five profile colors, sync dedup, layer sync, left layer colors and idle battery-only display passed");
 }

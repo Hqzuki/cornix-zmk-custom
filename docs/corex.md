@@ -117,6 +117,6 @@ cc -std=c11 -Wall -Wextra -Werror tests/corex/wire_test.c -o /tmp/corex-wire-tes
 受信時のSDIO解放、クロックの待機レベルをGPIOモックで検証します。
 このテストは実機の信号品質・ピン配線・無線動作を保証するものではありません。
 
-WIN／MAC配列の右手左下の親指キーは、短押しでLANG2、長押しでNUM/FNレイヤーを開きます。左手のSpaceは通常のSpace入力のみです。
+WIN／MAC配列の右手左下はNUM/FN専用、その右隣は短押しLANG2／長押しNUM/FNです。左手のSpaceは通常のSpace入力のみです。
 
 通常配列（WIN／MAC）の右端下段にあった`/`は右Shiftに変更し、`/`はトラックボール横の空きキー（右Shiftの左下、位置47）へ移しています。

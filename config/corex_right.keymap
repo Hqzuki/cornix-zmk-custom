@@ -1,95 +1,352 @@
-/*
- * Copyright (c) 2020 The ZMK Contributors
- *
- * SPDX-License-Identifier: MIT
+/* CoreX adaptation of Hqzuki/zmk-config-coron, LowprofileTrackBallcase.
+ * 50 positions: dedicated arrow keys removed, BT-layer/screenshot on inner
+ * switches, three spare bottom-right keys disabled in WIN/MAC.
+ * LED and CoreX hardware configuration are independent of this keymap.
  */
 
-/*
- * 2026-05-23: Replaced upstream's complex 8-layer keymap (custom homerow
- * mods, combos, conditional_layers, Win / Adjust / Navi / NumPad / Debug
- * layers) with a slim 4-layer default matching the day-to-day ZMK Studio
- * working state. Intent: a fresh flash or settings reset (cornix_reset.uf2)
- * should land close to actual usage, not the upstream author's untouched
- * setup.
- *
- * 2026-06-02: Re-synced the per-layer `bindings` to the live ZMK Studio
- * working state, captured via the keymap export from zmk-studio-tweaks
- * (Cornix-2026-06-02T14-47-56.keymap). Notable changes vs the 2026-05-23
- * default: Bluetooth keys consolidated onto the Symbols layer only (removed
- * from Number/Functions), the Base-layer right-pinky `!`/`?` dropped to
- * &none, and several JIS symbol slots on Number/Symbols remapped. After a
- * reset, a fresh flash now lands on this exact working state.
- *
- * ZMK Studio interaction:
- *   - Studio overrides per-layer `bindings` via NVS at runtime; the
- *     `bindings` here are the post-reset / pre-Studio-edit defaults.
- *   - Studio does NOT cover `sensor-bindings` (encoders), combos,
- *     behaviors, conditional_layers or macros — those keep being
- *     controlled by this file at runtime regardless of Studio state.
- *     The Studio export omits sensor-bindings, so they are preserved
- *     here by hand.
- */
-
+#include <dt-bindings/zmk/input_transform.h>
+#include <input/processors.dtsi>
+#include <mouse-gesture.dtsi>
+#include <dt-bindings/zmk_behavior_default_layer/default_layer.h>
 #include <behaviors.dtsi>
+#include <behaviors/default_layer.dtsi>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/pointing.h>
 
+&zip_temp_layer {
+    excluded-positions = <19 20 21 32 33>;
+};
+
+&mt {
+    flavor = "balanced";
+    quick-tap-ms = <0>;
+};
+
+&zip_mouse_gesture {
+    mac-layer = <1>;
+    stroke-size = <100>;
+    movement-threshold = <6>;
+    gesture-cooldown-ms = <250>;
+    enable-eager-mode;
+
+    desktop_left {
+        pattern = <GESTURE_LEFT>;
+        win-bindings = <&kp LC(LG(LEFT_ARROW))>;
+        mac-bindings = <&kp LC(LEFT_ARROW)>;
+    };
+
+    desktop_right {
+        pattern = <GESTURE_RIGHT>;
+        win-bindings = <&kp LC(LG(RIGHT_ARROW))>;
+        mac-bindings = <&kp LC(RIGHT_ARROW)>;
+    };
+
+    desktop_overview_up {
+        pattern = <GESTURE_UP>;
+        win-bindings = <&kp LG(TAB)>;
+        mac-bindings = <&kp LC(UP_ARROW)>;
+    };
+
+    desktop_overview_down {
+        pattern = <GESTURE_DOWN>;
+        win-bindings = <&kp LG(TAB)>;
+        mac-bindings = <&kp LC(DOWN_ARROW)>;
+    };
+};
+
+&corex_listener {
+    status = "okay";
+    input-processors = <&zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)>,
+                       <&zip_xy_scaler 4 5>, <&zip_temp_layer 7 300>;
+
+    pan_win_scroll {
+        layers = <4>;
+        input-processors = <
+            &zip_xy_transform INPUT_TRANSFORM_X_INVERT
+            &zip_axis_lock
+            &zip_xy_to_scroll_mapper
+#if defined(CORON_SCROLL_INERTIA)
+            &scroll_inertia_win
+#endif
+            &zip_scroll_scaler 1 12
+        >;
+    };
+
+    pan_mac_scroll {
+        layers = <5>;
+        input-processors = <
+            &zip_xy_transform INPUT_TRANSFORM_X_INVERT
+            &zip_axis_lock
+            &zip_xy_to_scroll_mapper
+            &zip_scroll_transform INPUT_TRANSFORM_X_INVERT
+#if defined(CORON_SCROLL_INERTIA)
+            &scroll_inertia_mac
+#endif
+            &zip_scroll_scaler 1 12
+        >;
+    };
+
+    desktop_layer_gesture {
+        layers = <6>;
+        input-processors = <
+            &zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)
+            &zip_mouse_gesture
+            &zip_xy_scaler 0 1
+        >;
+    };
+
+};
+
 / {
+#if defined(CORON_SCROLL_INERTIA)
+    /* Inertia emits directly to HID: apply direction transforms before it,
+     * and keep scale/scale-div equal to the downstream scroll scaler.
+     * Only the right (central) half can emit mouse HID reports.
+     */
+    scroll_inertia_win: scroll_inertia_win {
+        compatible = "zmk,input-processor-scroll-inertia";
+        #input-processor-cells = <0>;
+        axis = <0>;
+        layer = <4>;
+        scale = <1>;
+        scale-div = <12>;
+        /* Initial thresholds for the 400 CPI, 125 Hz sensor. */
+        start = <16>;
+        move = <32>;
+        stop = <1>;
+        tick = <8>;
+        release = <24>;
+        span = <5000>;
+    };
+
+    scroll_inertia_mac: scroll_inertia_mac {
+        compatible = "zmk,input-processor-scroll-inertia";
+        #input-processor-cells = <0>;
+        axis = <0>;
+        layer = <5>;
+        scale = <1>;
+        scale-div = <12>;
+        start = <16>;
+        move = <32>;
+        stop = <1>;
+        tick = <8>;
+        release = <24>;
+        span = <5000>;
+    };
+#endif
+
+    layer_listeners {
+        compatible = "zmk,layer-listeners";
+
+        desktop_gesture_auto_toggle {
+            layers = <6>;
+            bindings = <&mouse_gesture_on &mouse_gesture_off>;
+        };
+    };
+
+    combos {
+        compatible = "zmk,combos";
+
+        tab {
+            bindings = <&kp TAB>;
+            key-positions = <11 12>;
+        };
+
+        shift_tab {
+            bindings = <&kp LS(TAB)>;
+            key-positions = <12 13>;
+        };
+
+        muhennkann {
+            bindings = <&to_layer_0 INT_MUHENKAN>;
+            key-positions = <11 10>;
+        };
+
+        double_quotation {
+            bindings = <&kp DOUBLE_QUOTES>;
+            key-positions = <18 19>;
+        };
+
+        eq {
+            bindings = <&kp EQUAL>;
+            key-positions = <22 23>;
+        };
+
+        jk_scroll {
+            bindings = <&corex_pan>;
+            key-positions = <19 20>;
+            layers = <0 1 7>;
+            slow-release;
+        };
+
+
+        kl_mission_control {
+            bindings = <&mo 6>;
+            key-positions = <20 21>;
+            layers = <0 1 7>;
+            slow-release;
+        };
+    };
+
+    macros {
+        to_layer_0: to_layer_0 {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            bindings = <&to 0 &macro_param_1to1 &kp MACRO_PLACEHOLDER>;
+            label = "TO_LAYER_0";
+        };
+
+        bt0_mac: bt0_mac {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&bt BT_SEL 0 &df DF_SEL 1>;
+            label = "BT0_MAC";
+        };
+
+        bt1_win: bt1_win {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&bt BT_SEL 1 &df DF_SEL 0>;
+            label = "BT1_WIN";
+        };
+
+        bt2_win: bt2_win {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&bt BT_SEL 2 &df DF_SEL 0>;
+            label = "BT2_WIN";
+        };
+
+        bt3_win: bt3_win {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&bt BT_SEL 3 &df DF_SEL 0>;
+            label = "BT3_WIN";
+        };
+
+        bt4_win: bt4_win {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&bt BT_SEL 4 &df DF_SEL 0>;
+            label = "BT4_WIN";
+        };
+    };
+
+    behaviors {
+        corex_pan: corex_pan {
+            compatible = "corex,coron-pan";
+            #binding-cells = <0>;
+        };
+        lt_to_layer_0: lt_to_layer_0 {
+            compatible = "zmk,behavior-hold-tap";
+            label = "LAYER_TAP_TO_0";
+            bindings = <&mo>, <&to_layer_0>;
+
+            #binding-cells = <2>;
+            tapping-term-ms = <200>;
+        };
+    };
+
     keymap {
         compatible = "zmk,keymap";
 
-        Base {
-            display-name = "Base";
+        WIN {
+            display-name = "WIN";
             bindings = <
-&kp PRSC   &kp Q     &kp W     &kp E      &kp R        &kp T                                                &kp Y            &kp U     &lt 5 I    &kp O     &kp P     &kp MINUS
-&kp CAPS   &kp A     &kp S     &kp D      &kp F        &kp G                                                &kp H            &kp J     &kp K      &kp L     &kp RET   &none
-&kp LSHFT  &kp Z     &kp X     &kp C      &kp V        &kp B            &none            &mkp MCLK          &kp N            &kp M     &kp COMMA  &kp DOT   &kp UP    &none
-&kp LCTL   &kp LGUI  &kp LALT  &lt 1 TAB  &lt 2 SPACE  &mt LSHFT LANG2                                      &mt RSHFT LANG1  &kp BSPC  &mo 2      &kp LEFT  &kp DOWN  &kp RIGHT
+&kp ESC &kp Q &kp W &kp E &kp R &kp T &kp Y &kp U &kp I &kp O &mt SEMICOLON SQT &kp BACKSPACE
+&kp TAB &kp A &kp S &kp D &kp F &kp G &kp H &kp J &kp K &kp L &kp P &kp ENTER
+&kp LEFT_SHIFT &kp Z &kp X &kp C &kp V &kp B &mo 8 &kp LG(LS(S)) &kp N &kp M &kp COMMA &kp DOT &mt EQUAL MINUS &kp SLASH
+&kp LCTRL &kp LEFT_WIN &kp LEFT_ALT &mo 2 &lt 3 SPACE &kp LANG1 &kp LANG2 &kp SLASH &kp DEL &none &none &none
             >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };
 
-        Symbols {
-            display-name = "Symbols";
+        MAC {
+            display-name = "MAC";
             bindings = <
-&bt BT_CLR    &kp LS(N2)  &kp LS(N7)  &none       &none   &none                          &kp LS(COMMA)  &kp LS(DOT)  &kp RBKT      &kp NUHS      &kp LS(N5)  &none
-&bt BT_SEL 0  &kp LBKT    &kp LS(N3)  &kp LS(N4)  &none   &none                          &none          &none        &kp LS(RBKT)  &kp LS(NUHS)  &none       &none
-&bt BT_SEL 1  &none       &none       &none       &none   &none      &trans   &trans    &none          &none        &kp LS(N1)    &kp LS(FSLH)  &none       &none
-&bt BT_SEL 2  &none       &none       &none       &trans  &trans                         &trans         &trans       &none         &none         &none       &none
+&kp ESC &kp Q &kp W &kp E &kp R &kp T &kp Y &kp U &kp I &kp O &mt SEMICOLON SQT &kp BACKSPACE
+&kp TAB &kp A &kp S &kp D &kp F &kp G &kp H &kp J &kp K &kp L &kp P &kp ENTER
+&kp LEFT_SHIFT &kp Z &kp X &kp C &kp V &kp B &mo 8 &kp LC(LS(LG(NUMBER_4))) &kp N &kp M &kp COMMA &kp DOT &mt EQUAL MINUS &kp SLASH
+&kp LEFT_GUI &kp LCTRL &kp LEFT_ALT &mo 2 &lt 3 SPACE &kp LANG1 &kp LANG2 &kp SLASH &kp DEL &none &none &none
             >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };
 
-        Number {
-            display-name = "Number";
+        FUNCTION {
+            display-name = "FUNCTION";
             bindings = <
-&none  &kp LS(SEMI)  &kp N7  &kp N8  &kp N9  &kp LS(SQT)                  &none      &none     &kp UP    &none      &none         &none
-&none  &kp MINUS     &kp N4  &kp N5  &kp N6  &kp FSLH                     &none      &kp LEFT  &kp DOWN  &kp RIGHT  &kp LS(MINUS)  &none
-&none  &kp N0        &kp N1  &kp N2  &kp N3  &kp DOT      &none   &none   &none      &none     &none     &none      &none         &none
-&none  &none         &none   &none   &none   &none                        &kp RSHFT  &mo 3     &none     &none      &none         &none
+&trans &trans &trans &trans &trans &trans &kp F1 &kp F2 &kp F3 &kp F4 &kp F5 &kp F6
+&trans &trans &trans &trans &trans &trans &kp F7 &kp F8 &kp F9 &kp F10 &kp F11 &kp F12
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
             >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };
 
-        Functions {
-            display-name = "Functions";
+        NUM {
+            display-name = "NUM";
             bindings = <
-&none  &none  &kp F7  &kp F8  &kp F9  &kp F12                  &none  &none  &none  &none  &none  &none
-&none  &none  &kp F4  &kp F5  &kp F6  &kp F11                  &none  &none  &none  &none  &none  &none
-&none  &none  &kp F1  &kp F2  &kp F3  &kp F10  &none  &none    &none  &none  &none  &none  &none  &none
-&none  &none  &none   &none   &none   &none                    &none  &none  &none  &none  &none  &none
+&trans &trans &trans &trans &trans &trans &kp TILDE &kp AMPERSAND &kp CARET &kp RIGHT_PARENTHESIS &kp LEFT_PARENTHESIS &trans
+&trans &kp N1 &kp N2 &kp N3 &kp N4 &kp N5 &kp DOLLAR &kp HASH &kp AT_SIGN &kp EXCLAMATION &kp UNDERSCORE &trans
+&trans &kp NUMBER_6 &kp N7 &kp N8 &kp N9 &kp N0 &trans &kp PERCENT &kp BACKSLASH &kp RIGHT_BRACE &kp LEFT_BRACE &kp RIGHT_BRACKET &kp LEFT_BRACKET &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
             >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };
-        Mouse {
-            display-name = "Mouse";
-            bindings = <&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &mkp LCLK &mkp MCLK &mkp RCLK &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans>;
+
+        PAN_WIN {
+            display-name = "PAN_WIN";
+            bindings = <
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+            >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };
-        Scroll {
-            display-name = "Scroll";
-            bindings = <&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &mkp LCLK &mkp MCLK &mkp RCLK &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans>;
+
+        PAN_MAC {
+            display-name = "PAN_MAC";
+            bindings = <
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+            >;
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+        };
+
+        GESTURE {
+            display-name = "GESTURE";
+            bindings = <
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+            >;
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+        };
+
+        MOUSE {
+            display-name = "MOUSE";
+            bindings = <
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &mkp MB1 &mkp MB3 &mkp MB2 &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &mkp MB4 &mkp MB5 &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+            >;
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+        };
+
+        BLUETOOTH {
+            display-name = "BLUETOOTH";
+            bindings = <
+&trans &trans &trans &trans &trans &trans &bt0_mac &bt1_win &bt2_win &bt3_win &bt4_win &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+&trans &trans &trans &kp NUMBER_1 &kp NUMBER_2 &kp NUMBER_3 &trans &trans &bootloader &trans &trans &trans &trans &bt BT_CLR
+&trans &trans &trans &trans &trans &trans &trans &trans &bt BT_CLR_ALL &trans &trans &trans
+            >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };
     };

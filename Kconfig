@@ -8,3 +8,15 @@ config COREX_LED_STATUS
     bool "Shared CoreX and Cornix LED status"
     default y if SHIELD_CORNIX_INDICATOR || (BOARD_COREX_RIGHT && ZMK_BLE)
     depends on ZMK_BLE
+
+config COREX_CORON_KEYMAP
+    bool "CoronLP keymap support"
+    default y if BOARD_COREX_RIGHT && ZMK_BLE
+
+config ZMK_DEFAULT_LAYER_MIN_INDEX
+    int
+    default 0
+
+config ZMK_DEFAULT_LAYER_MAX_INDEX
+    int
+    default 1

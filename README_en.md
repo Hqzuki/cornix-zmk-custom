@@ -5,7 +5,7 @@
 ZMK firmware for a **CoreX R A14 right PCB with a PAW3222 trackball**, paired with a **stock Cornix left PCB**.
 The right half is the central and provides USB, Bluetooth and ZMK Studio connectivity.
 
-Features include cursor movement, an automatic mouse layer (J/K/L clicks), hold-I scrolling, encoders, battery reporting and RGB connection indicators.
+Features include cursor movement, a CoronLP-style nine-layer keymap (without standalone arrows), an automatic mouse layer (J/K/L clicks), J+K scrolling, K+L desktop gestures, encoders, battery reporting and RGB connection indicators.
 
 Push to any branch to build automatically. Download `firmware` from the successful [GitHub Actions run](https://github.com/Hqzuki/cornix-zmk-custom/actions).
 

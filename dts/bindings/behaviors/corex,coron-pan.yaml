@@ -1,0 +1,4 @@
+# SPDX-License-Identifier: MIT
+description: Hold the WIN or MAC scroll layer matching the active base layer
+compatible: "corex,coron-pan"
+include: zero_param.yaml

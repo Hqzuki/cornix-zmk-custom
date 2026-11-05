@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include "../../drivers/status/patterns.h"
 static void dark(struct status_rgb c) { assert(!c.r && !c.g && !c.b); }
@@ -65,10 +66,15 @@ int main(void) {
         r.layer = k;
         assert(status_receive(&l, r.profile, status_sync_flags(&r), 300000 + k));
         struct status_rgb c = status_render(&l, 400000).outer;
-        assert(c.r || c.g || c.b);
+        assert(k == 7 ? !(c.r || c.g || c.b) : (c.r || c.g || c.b)); /* MOUSE dark */
         assert(same(c, status_layer_color(k)));
     }
     assert(!same(status_layer_color(0), status_layer_color(1)));
+    for (int a = 0; a < 9; a++) {
+        for (int b = a + 1; b < 9; b++) {
+            if (!(a == 4 && b == 5)) { assert(!same(status_layer_color(a), status_layer_color(b))); }
+        }
+    }
     assert(!status_receive(&l, 0, 1u << 16, 0));
     assert(!status_receive(&l, 256, 0, 0));
     assert(status_receive(&l, 0, 1, 500000));
@@ -84,7 +90,7 @@ int main(void) {
     status_peer(&l, false, 600000);
     l.idle = true;
     dark(status_render(&l, 600000).inner); /* no peer blink while idle */
-    r.layer = 7;
+    r.layer = 2;
     assert(!(status_sync_flags(&r) & STATUS_SYNC_ACTIVE));
     assert(status_receive(&l, r.profile, status_sync_flags(&r), 600000));
     assert(!l.remote_active);
@@ -94,6 +100,6 @@ int main(void) {
     assert(status_receive(&l, r.profile, status_sync_flags(&r), 601000));
     assert(l.remote_active);
     l.idle = false;
-    assert(same(status_render(&l, 601000).outer, status_layer_color(7)));
+    assert(same(status_render(&l, 601000).outer, status_layer_color(2)));
     puts("LED patterns: peer timing, priority, battery, charging (breath until full, then steady), five profile colors, sync dedup, layer sync, left layer colors and idle battery-only display passed");
 }

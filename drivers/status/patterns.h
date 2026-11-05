@@ -92,16 +92,19 @@ static inline struct status_rgb status_profile_color(uint8_t profile) {
 }
 /* Layer ids follow config/corex_right.keymap definition order. */
 static inline struct status_rgb status_layer_color(uint8_t layer) {
+    /* The seven primary/secondary mixes stay distinguishable at this
+     * brightness. MOUSE is dark: it can persist, and dark means "mouse mode"
+     * while letting the left LED rail switch off. */
     static const struct status_rgb colors[] = {
-        {0,0,16},   /* 0 WIN: blue */
-        {10,10,10}, /* 1 MAC: white */
-        {16,10,0},  /* 2 NUM: yellow */
-        {12,0,16},  /* 3 FN: purple */
-        {0,16,0},   /* 4 PAN_WIN: green */
-        {0,16,0},   /* 5 PAN_MAC: green */
+        {16,0,0},   /* 0 WIN: red */
+        {0,0,16},   /* 1 MAC: blue */
+        {0,16,0},   /* 2 NUM: green */
+        {16,10,0},  /* 3 FN: yellow */
+        {16,0,16},  /* 4 PAN_WIN: magenta */
+        {16,0,16},  /* 5 PAN_MAC: magenta */
         {0,12,12},  /* 6 GESTURE: cyan */
-        {16,4,0},   /* 7 MOUSE: orange */
-        {16,0,0},   /* 8 BLUETOOTH: red */
+        {0,0,0},    /* 7 MOUSE: dark */
+        {10,10,10}, /* 8 BLUETOOTH: white */
     };
     return layer < 9 ? colors[layer] : (struct status_rgb){0};
 }

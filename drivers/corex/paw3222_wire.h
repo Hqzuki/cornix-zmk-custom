@@ -1,4 +1,6 @@
 /* SPDX-License-Identifier: Apache-2.0
+ * Copyright 2024 Google LLC; modifications 2025 sekigon-gonnoc.
+ * Rust adaptation 2026 CoreX prototype; GPIO implementation 2026.
  * GPIO transport for the CoreX PAW3222; included by the driver and host tests.
  */
 #pragma once

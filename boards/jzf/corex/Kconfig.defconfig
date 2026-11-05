@@ -12,4 +12,14 @@ config USB_NRFX
     default y if USB
 config USB_DEVICE_STACK
     default y if USB
+config BT_MAX_CONN
+    default 6 if ZMK_BLE
+config BT_MAX_PAIRED
+    default 6 if ZMK_BLE
+config ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING
+    default y if ZMK_SPLIT_BLE
+config ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY
+    default y if ZMK_SPLIT_BLE
+config ZMK_STUDIO
+    default y if !SHIELD_SETTINGS_RESET
 endif

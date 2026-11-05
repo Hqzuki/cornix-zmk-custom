@@ -1,4 +1,6 @@
 # SPDX-License-Identifier: MIT
-zephyr_library()
-zephyr_library_sources(board.c)
-zephyr_library_sources_ifdef(CONFIG_COREX_PAW3222 paw3222.c)
+# Share ZMK application headers and generated includes (event manager, BLE).
+target_sources(app PRIVATE board.c)
+if(CONFIG_COREX_PAW3222)
+  target_sources(app PRIVATE paw3222.c)
+endif()

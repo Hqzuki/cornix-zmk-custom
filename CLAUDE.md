@@ -12,7 +12,8 @@ Push to any branch triggers firmware builds. `build.yaml` generates only the Cor
 Left artifacts: `corex_stock_left`, `corex_stock_left_reset`.
 Right artifacts: one per S140 v6/v7 (J3/J4 sensor connector is auto-detected), plus reset for each SoftDevice revision.
 `config/west.yml` and `.github/workflows/{build,smoke-build,release_with_tag}.yml` pin ZMK to the same commit SHA; bump them together and confirm CI.
-Do not restore stock Cornix right or dongle targets. Keep shared Cornix source definitions required by the CoreX board and stock left.
+Do not restore stock Cornix right targets. Keep shared Cornix source definitions required by the CoreX board and stock left.
+Dongle shields (`cornix_dongle_*`, `zmk-dongle-display`) are kept for possible future use but are not built; a dongle setup would also need a peripheral CoreX right build.
 Never add `nrf52840-nosd` to CoreX right targets: board revisions 6.0.0/7.0.0 select offsets 0x26000/0x27000.
 
 ## Layout

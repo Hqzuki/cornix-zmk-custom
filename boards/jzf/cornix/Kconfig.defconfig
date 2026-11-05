@@ -3,61 +3,8 @@
 # Copyright (c) 2020 The ZMK Contributors
 # SPDX-License-Identifier: MIT
 
-## Main device (right side)
-if BOARD_CORNIX_RIGHT
-
-config ZMK_KEYBOARD_NAME
-	default "Cornix"
-
-if USB
-
-config USB_NRFX
-    default y
-
-config USB_DEVICE_STACK
-    default y
-
-endif # USB
-config ZMK_SPLIT_ROLE_CENTRAL
-    default y
-
-config ZMK_SPLIT_BLE_ROLE_CENTRAL
-	default y
-
-config ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING
-	default y
-
-config ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY
-	default y
-
-endif # BOARD_CORNIX_RIGHT
-
-## Peripheral device (left side)
-if BOARD_CORNIX_LEFT || BOARD_CORNIX_PH_LEFT
-
-config ZMK_SPLIT_ROLE_CENTRAL
-    default n
-
-config ZMK_SPLIT_BLE_ROLE_CENTRAL
-	default n
-
-# Add keyboard debouncing
-config ZMK_KSCAN_DEBOUNCE_PRESS_MS
-    default 3
-config ZMK_KSCAN_DEBOUNCE_RELEASE_MS
-    default 3
-
-endif # BOARD_CORNIX_LEFT
-
-# Common options for both sides
-if BOARD_CORNIX_RIGHT  || BOARD_CORNIX_PH_LEFT || BOARD_CORNIX_LEFT
-
-
-#config BT_CTLR
-#    default BT
-
-config BOARD_CORNIX_CHARGER
-    default y
+## Stock Cornix left: split peripheral of the CoreX right central
+if BOARD_CORNIX_LEFT
 
 config ZMK_SPLIT
 	default y
@@ -65,12 +12,25 @@ config ZMK_SPLIT
 config ZMK_BLE
 	default y
 
+config ZMK_SPLIT_ROLE_CENTRAL
+    default n
+
+config ZMK_SPLIT_BLE_ROLE_CENTRAL
+	default n
+
+config BOARD_CORNIX_CHARGER
+    default y
+
+# Add keyboard debouncing
+config ZMK_KSCAN_DEBOUNCE_PRESS_MS
+    default 3
+config ZMK_KSCAN_DEBOUNCE_RELEASE_MS
+    default 3
+
 ## disable rgb by default
 config ZMK_RGB_UNDERGLOW
 	default n
 config ZMK_RGB_UNDERGLOW_EXT_POWER
 	default n
-    
 
-endif # BOARD_CORNIX_RIGHT || BOARD_CORNIX_LEFT
-# vim: set ft=kconfig:
+endif # BOARD_CORNIX_LEFT

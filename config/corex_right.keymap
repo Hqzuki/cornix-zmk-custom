@@ -278,7 +278,7 @@
 &kp LEFT_GUI    &kp LCTRL  &kp LEFT_ALT  &mo 2  &lt 3 SPACE  &kp LANG1                                   &kp LANG2  &kp SLASH             &none    &none              &none
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
         };
 
         FUNCTION {
@@ -290,7 +290,7 @@
 &trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans          &trans   &trans   &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
         };
 
         NUM {
@@ -302,7 +302,7 @@
 &trans  &trans        &trans  &trans  &trans  &trans                       &trans         &trans                           &trans                 &trans                &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
         };
 
         PAN_WIN {
@@ -314,7 +314,7 @@
 &trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans          &trans  &trans  &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
         };
 
         PAN_MAC {
@@ -326,7 +326,7 @@
 &trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans          &trans  &trans  &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
         };
 
         GESTURE {
@@ -338,7 +338,7 @@
 &trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans          &trans  &trans  &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
         };
 
         MOUSE {
@@ -350,7 +350,7 @@
 &trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans              &trans    &trans  &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
         };
 
         BLUETOOTH {
@@ -362,7 +362,7 @@
 &trans  &trans  &trans  &trans        &trans        &trans                        &trans       &trans              &trans    &trans    &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
         };
     };
 };

@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - "**"
-    paths:
-      - "boards/**"
-      - "config/**"
 
 jobs:
   build:

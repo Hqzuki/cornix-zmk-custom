@@ -29,7 +29,7 @@ When `git pull`ing or merging upstream, expect conflicts in `build.yaml`; resolv
 
 ## Build & flash workflow
 
-**Primary path: GitHub Actions on this fork.** Push to `main` (only when paths under `boards/*` or `config/*` change) or use `workflow_dispatch` → Actions tab → "Build ZMK firmware" → Run workflow. Note: changes to `build.yaml` alone do **not** trigger Actions automatically — they need a manual `workflow_dispatch`. Artifacts download as `firmware.zip` containing one `.uf2` per `artifact-name`.
+**Primary path: GitHub Actions on this fork.** Push to any branch to build automatically, or use `workflow_dispatch` → Actions tab → "Build ZMK firmware" → Run workflow. All file changes, including `build.yaml` and the workflow itself, trigger the build. Artifacts download as `firmware.zip` containing one `.uf2` per `artifact-name`.
 
 **Flashing (irreversible — always wait for user "OK" before drag-and-drop):**
 - Use a **data-capable USB-C cable** (not charge-only).
@@ -56,7 +56,7 @@ The Justfile expects `ZMK_LIB_PREFIX` (defaults to `zmk_exts`) pointing to the p
 - `config/cornix.keymap` + `config/cornix.json` — the keymap and its editor metadata. `cornix42.*` is the alternate 42-key layout variant.
 - `config/west.yml` — manifest pulling `zmk@main`, `urob/zmk-helpers@main`, `englmaxi/zmk-dongle-display@main`. When a build breaks after upstream churn, suspect this file.
 - `zephyr/module.yml` — what makes this repo loadable as a Zephyr module.
-- `.github/workflows/build.yml` — thin wrapper delegating to ZMK's shared `build-user-config.yml`. Workflow only triggers on paths `boards/*` and `config/*`.
+- `.github/workflows/build.yml` — thin wrapper delegating to ZMK's shared `build-user-config.yml`. Workflow triggers on pushes to any branch, without path filters.
 
 ## Things to verify before recommending action
 

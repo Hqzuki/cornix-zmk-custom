@@ -11,6 +11,7 @@ The origin is Hqzuki/cornix-zmk-custom. Never push, open PRs or issues against u
 Push to any branch triggers firmware builds. `build.yaml` generates only the CoreX pair and reset images.
 Left artifacts: `corex_stock_left`, `corex_stock_left_reset`.
 Right artifacts: J3/J4 × S140 v6/v7, plus reset for each SoftDevice revision.
+`config/west.yml` pins ZMK and modules to commit SHAs; bump them deliberately and confirm CI.
 Do not restore stock Cornix right or dongle targets. Keep shared Cornix source definitions required by the CoreX board and stock left.
 Never add `nrf52840-nosd` to CoreX right targets: board revisions 6.0.0/7.0.0 select offsets 0x26000/0x27000.
 

@@ -15,16 +15,15 @@ manifest:
     - name: ssbb
       url-base: https://github.com/ssbb
   projects:
+    # Pinned: last ZMK main verified by CI (2026-10-09). Bump deliberately.
     - name: zmk
       remote: zmkfirmware
-      revision: main
-      clone-depth: 1
+      revision: 4dd95d7840eb3d5a3f59bb29fbf1ab054715ef85
       import:
         file: app/west.yml
     - name: zmk-helpers
       remote: urob
-      revision: main
-      clone-depth: 1
+      revision: 7bcba18fc8df27303eb92a435d33ea870cc51f98
     - name: zmk-mouse-gesture
       remote: Hqzuki
       revision: 97332d356ac07df09b68df3f4d60029388d908f5
@@ -42,8 +41,7 @@ manifest:
     # driving led_strip directly. See issue #2 stage B.
     - name: zmk-dongle-display
       remote: englmaxi
-      revision: main
-      clone-depth: 1
+      revision: 2bb333f87136d33e94a49d86236ed9ec254a8060
     #- name: zmk-dongle-screen
     #  remote: janpfischer
     #  revision: main

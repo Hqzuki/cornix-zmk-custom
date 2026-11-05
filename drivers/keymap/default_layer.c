@@ -9,6 +9,7 @@
  */
 #define DT_DRV_COMPAT zmk_behavior_default_layer
 
+#include <errno.h>
 #include <drivers/behavior.h>
 #include <dt-bindings/zmk_behavior_default_layer/default_layer.h>
 #include <zephyr/device.h>
@@ -16,9 +17,11 @@
 #include <zephyr/settings/settings.h>
 #include <zmk/behavior.h>
 #include <zmk/endpoints.h>
+#include <zmk/ble.h>
+#include "endpoint_policy.h"
 #include <zmk/event_manager.h>
 #include <zmk/events/ble_active_profile_changed.h>
-#include <zmk/events/usb_conn_state_changed.h>
+#include <zmk/events/endpoint_changed.h>
 #include <zmk/keymap.h>
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
@@ -33,13 +36,32 @@ static struct default_layer_settings_t default_layers = {0};
 
 static struct k_work_delayable df_layers_save_work;
 
-static zmk_keymap_layer_id_t zmk_default_layer_get(
-    struct zmk_endpoint_instance endpoint) {
-    uint8_t index = zmk_endpoint_instance_to_index(endpoint);
-    return default_layers.endpoint_defaults[index];
+/* Resolve after BT_SEL from the active profile directly: the selected
+ * endpoint may still reference the previous link or report NONE until paired.
+ * USB remains independent when it is the actual output transport. */
+static struct zmk_endpoint_instance layer_endpoint(bool explicit_ble) {
+    struct zmk_endpoint_instance selected = zmk_endpoint_get_selected();
+    int slot = default_layer_target_slot(selected.transport == ZMK_TRANSPORT_USB,
+                                         zmk_ble_active_profile_index(), explicit_ble);
+    if (slot < 0) { return (struct zmk_endpoint_instance){.transport = ZMK_TRANSPORT_NONE}; }
+    if (slot == 0) { return (struct zmk_endpoint_instance){.transport = ZMK_TRANSPORT_USB}; }
+    return (struct zmk_endpoint_instance){.transport = ZMK_TRANSPORT_BLE,
+                                         .ble.profile_index = slot - 1};
 }
-static zmk_keymap_layer_id_t zmk_default_layer_get_current() {
-    return zmk_default_layer_get(zmk_endpoint_get_preferred());
+
+static int layer_endpoint_index(struct zmk_endpoint_instance endpoint) {
+    if (endpoint.transport == ZMK_TRANSPORT_NONE) { return -ENODEV; }
+    if (endpoint.transport == ZMK_TRANSPORT_BLE &&
+        (endpoint.ble.profile_index < 0 || endpoint.ble.profile_index >= ZMK_BLE_PROFILE_COUNT)) {
+        return -EINVAL;
+    }
+    int index = zmk_endpoint_instance_to_index(endpoint);
+    return index >= 0 && index < ARRAY_SIZE(default_layers.endpoint_defaults) ? index : -EINVAL;
+}
+
+static zmk_keymap_layer_id_t zmk_default_layer_get(struct zmk_endpoint_instance endpoint) {
+    int index = layer_endpoint_index(endpoint);
+    return index < 0 ? CONFIG_ZMK_DEFAULT_LAYER_MIN_INDEX : default_layers.endpoint_defaults[index];
 }
 
 static void zmk_default_layers_save_state_work(struct k_work *_work) {
@@ -48,7 +70,12 @@ static void zmk_default_layers_save_state_work(struct k_work *_work) {
 }
 
 static int apply_default_layer_config(struct zmk_endpoint_instance endpoint) {
+    if (layer_endpoint_index(endpoint) < 0) { return 0; }
     uint8_t layer_index = zmk_default_layer_get(endpoint);
+    if (layer_index < CONFIG_ZMK_DEFAULT_LAYER_MIN_INDEX ||
+        layer_index > CONFIG_ZMK_DEFAULT_LAYER_MAX_INDEX || layer_index >= ZMK_KEYMAP_LAYERS_LEN) {
+        return -EINVAL;
+    }
     // deactivate other layers first
     zmk_keymap_layer_id_t global_default_layer_index =
         zmk_keymap_layer_default();  // TODO: zmk_keymap_layer_id_to_index()?
@@ -120,9 +147,8 @@ static int default_layer_init(void) {
 
     settings_load_subtree("default_layer");
 
-    // NOTE: endpoint is not initialized yet. zmk_endpoints_selected doesn't
-    // return proper value.
-    return apply_default_layer_config(zmk_endpoint_get_preferred());
+    /* Endpoint events will reapply after transport initialization. */
+    return apply_default_layer_config(layer_endpoint(false));
 }
 SYS_INIT(default_layer_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 
@@ -136,16 +162,19 @@ static int zmk_default_layer_set(struct zmk_endpoint_instance endpoint,
         return -EINVAL;
     }
 
-    uint8_t index = zmk_endpoint_instance_to_index(endpoint);
+    int index = layer_endpoint_index(endpoint);
+    if (index < 0) { return index; }
     default_layers.endpoint_defaults[index] = layer;
 
     char endpoint_str[ZMK_ENDPOINT_STR_LEN];
     zmk_endpoint_instance_to_str(endpoint, endpoint_str, sizeof(endpoint_str));
     LOG_INF("Updated default layer (%d) for %s.", layer, endpoint_str);
 
-    int ret = apply_default_layer_config(endpoint);
-    if (ret < 0) {
-        return ret;
+    /* Saving a BLE profile while USB is active must not change USB's layout. */
+    int ret = 0;
+    if (zmk_endpoint_instance_eq(endpoint, layer_endpoint(false))) {
+        ret = apply_default_layer_config(endpoint);
+        if (ret < 0) { return ret; }
     }
 
     ret = k_work_reschedule(&df_layers_save_work,
@@ -157,21 +186,22 @@ static int behavior_default_layer_init(const struct device *dev) { return 0; }
 
 static int on_keymap_binding_pressed(struct zmk_behavior_binding *binding,
                                      struct zmk_behavior_binding_event event) {
-    int ret                               = 0;
-    struct zmk_endpoint_instance endpoint = zmk_endpoint_get_preferred();
+    struct zmk_endpoint_instance endpoint =
+        layer_endpoint(binding->param1 == DEFAULT_LAYER_CMD_SELECT_BLE);
 
     switch (binding->param1) {
         case DEFAULT_LAYER_CMD_SELECT:
+        case DEFAULT_LAYER_CMD_SELECT_BLE:
             return zmk_default_layer_set(endpoint, binding->param2);
             break;
-        case DEFAULT_LAYER_CMD_NEXT:
+        case DEFAULT_LAYER_CMD_NEXT: {
             zmk_keymap_layer_id_t current = zmk_default_layer_get(endpoint);
             zmk_keymap_layer_id_t next =
                 current >= CONFIG_ZMK_DEFAULT_LAYER_MAX_INDEX
                     ? CONFIG_ZMK_DEFAULT_LAYER_MIN_INDEX
                     : current + 1;
             return zmk_default_layer_set(endpoint, next);
-            break;
+        }
         default:
             LOG_ERR("Unknown command for df: %d", binding->param1);
     }
@@ -191,6 +221,11 @@ static const struct behavior_parameter_value_metadata select_param1_values[] = {
         .type         = BEHAVIOR_PARAMETER_VALUE_TYPE_VALUE,
         .value        = DEFAULT_LAYER_CMD_SELECT,
     },
+};
+
+static const struct behavior_parameter_value_metadata ble_select_param1_values[] = {
+    {.display_name = "Select default layer for active Bluetooth profile",
+     .type = BEHAVIOR_PARAMETER_VALUE_TYPE_VALUE, .value = DEFAULT_LAYER_CMD_SELECT_BLE},
 };
 
 static const struct behavior_parameter_value_metadata select_param2_values[] = {
@@ -226,7 +261,9 @@ static const struct behavior_parameter_metadata_set next_metadata_set = {
 };
 
 static const struct behavior_parameter_metadata_set metadata_sets[] = {
-    select_metadata_set, next_metadata_set};
+    select_metadata_set, next_metadata_set,
+    {.param1_values = ble_select_param1_values, .param1_values_len = ARRAY_SIZE(ble_select_param1_values),
+     .param2_values = select_param2_values, .param2_values_len = ARRAY_SIZE(select_param2_values)}};
 
 static const struct behavior_parameter_metadata metadata = {
     .sets_len = ARRAY_SIZE(metadata_sets),
@@ -248,15 +285,14 @@ BEHAVIOR_DT_INST_DEFINE(0, behavior_default_layer_init, NULL, NULL, NULL,
                         &behavior_default_layer_driver_api);
 
 static int endpoint_changed_cb(const zmk_event_t *eh) {
-    if (as_zmk_ble_active_profile_changed(eh) ||
-        as_zmk_usb_conn_state_changed(eh)) {
-        apply_default_layer_config(zmk_endpoint_get_preferred());
+    if (as_zmk_ble_active_profile_changed(eh) || as_zmk_endpoint_changed(eh)) {
+        apply_default_layer_config(layer_endpoint(false));
     }
     return ZMK_EV_EVENT_BUBBLE;
 }
 
 ZMK_LISTENER(default_layer, endpoint_changed_cb);
-ZMK_SUBSCRIPTION(default_layer, zmk_usb_conn_state_changed);
+ZMK_SUBSCRIPTION(default_layer, zmk_endpoint_changed);
 ZMK_SUBSCRIPTION(default_layer, zmk_ble_active_profile_changed);
 
 #endif

@@ -16,3 +16,8 @@ jobs:
         run: |
           cc -std=c11 -Wall -Wextra -Werror tests/corex/status_test.c -o /tmp/corex-status-test
           /tmp/corex-status-test
+      - name: Verify default-layer endpoint routing and persistence
+        run: |
+          cc -std=c11 -Wall -Wextra -Werror tests/corex/endpoint_policy_test.c -o /tmp/corex-endpoint-test
+          /tmp/corex-endpoint-test
+          python3 tests/corex/default_layer_test.py

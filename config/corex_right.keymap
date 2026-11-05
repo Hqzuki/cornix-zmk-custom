@@ -149,24 +149,6 @@
         };
     };
 
-    combos {
-        compatible = "zmk,combos";
-
-        jk_scroll {
-            bindings = <&corex_pan>;
-            key-positions = <19 20>;
-            layers = <0 1 7>;
-            slow-release;
-        };
-
-        kl_mission_control {
-            bindings = <&mo 6>;
-            key-positions = <20 21>;
-            layers = <0 1 7>;
-            slow-release;
-        };
-    };
-
     macros {
         pair_paren: pair_paren {
             compatible = "zmk,behavior-macro";

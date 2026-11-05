@@ -1,2 +1,7 @@
 /dts-v1/;
 #include "cornix_left_common.dtsi"
+/ {
+    behaviors {
+        led_sync: ls { compatible = "corex,led-sync"; #binding-cells = <2>; };
+    };
+};

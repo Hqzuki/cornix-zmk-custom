@@ -12,3 +12,7 @@ jobs:
         run: |
           cc -std=c11 -Wall -Wextra -Werror tests/corex/wire_test.c -o /tmp/corex-wire-test
           /tmp/corex-wire-test
+      - name: Verify shared LED timing and priorities
+        run: |
+          cc -std=c11 -Wall -Wextra -Werror tests/corex/status_test.c -o /tmp/corex-status-test
+          /tmp/corex-status-test

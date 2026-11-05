@@ -1,3 +1,5 @@
 add_subdirectory_ifdef(CONFIG_SHIELD_CORNIX_INDICATOR boards/shields/cornix_indicator)
 
 add_subdirectory_ifdef(CONFIG_BOARD_COREX_RIGHT drivers/corex)
+
+add_subdirectory(drivers/status)

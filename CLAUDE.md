@@ -18,7 +18,8 @@ Never add `nrf52840-nosd` to CoreX right targets: board revisions 6.0.0/7.0.0 se
 
 - `boards/jzf/corex/`: R A14 board and SoftDevice revisions.
 - `boards/jzf/cornix/`: shared hardware/layout definitions and stock left.
-- `drivers/corex/`: PAW3222 GPIO half-duplex transport, battery enable and RGB indicators.
+- `drivers/corex/`: PAW3222 GPIO half-duplex transport, battery enable.
+- `drivers/status/`: shared LED patterns, right PWM / left WS2812 and split profile synchronization.
 - `boards/shields/corex_j3`, `corex_j4`, `corex_common.dtsi`: connector selection and input processing.
 - `config/corex_right.keymap`: six layers including Mouse and Scroll.
 - `docs/corex.md`: installation, controls, known limitations and hardware sources.

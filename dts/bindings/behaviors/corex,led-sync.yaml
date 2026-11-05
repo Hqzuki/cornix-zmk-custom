@@ -1,0 +1,4 @@
+# SPDX-License-Identifier: MIT
+description: Internal right-to-left Bluetooth profile status synchronization
+compatible: "corex,led-sync"
+include: two_param.yaml

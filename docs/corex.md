@@ -119,4 +119,4 @@ cc -std=c11 -Wall -Wextra -Werror tests/corex/wire_test.c -o /tmp/corex-wire-tes
 
 WIN／MAC配列の右手左下の親指キーは、押している間NUM/FNレイヤーを開きます。左手のSpaceは通常のSpace入力のみです。
 
-通常配列（WIN／MAC）の右端下段にあった`/`は右Shiftに変更し、`/`はトラックボール横の空きキー（ドットの下、位置46）へ移しています。
+通常配列（WIN／MAC）の右端下段にあった`/`は右Shiftに変更し、`/`はトラックボール横の空きキー（右Shiftの左下、位置47）へ移しています。

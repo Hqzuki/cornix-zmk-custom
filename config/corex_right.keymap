@@ -221,6 +221,15 @@
     };
 
     behaviors {
+        /* Consumes rotation without output; an omitted binding would fall
+         * through to the WIN/MAC base layer.
+         */
+        enc_off: enc_off {
+            compatible = "zmk,behavior-sensor-rotate";
+            #sensor-binding-cells = <0>;
+            bindings = <&none>, <&none>;
+        };
+
         corex_pan: corex_pan {
             compatible = "corex,coron-pan";
             #binding-cells = <0>;
@@ -274,7 +283,7 @@
 &trans  &trans  &trans  &trans  &trans  &trans                  &trans         &trans                        &kp N0  &trans  &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
+            sensor-bindings = <&enc_off &enc_off>;
         };
 
         FN {
@@ -286,7 +295,7 @@
 &trans  &trans  &trans  &trans  &trans  &trans                  &trans         &trans                        &kp F10  &kp F11  &kp F12
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
+            sensor-bindings = <&enc_off &enc_off>;
         };
 
         PAN_WIN {
@@ -298,7 +307,7 @@
 &trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans          &trans  &trans  &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
+            sensor-bindings = <&enc_off &enc_off>;
         };
 
         PAN_MAC {
@@ -310,7 +319,7 @@
 &trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans          &trans  &trans  &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
+            sensor-bindings = <&enc_off &enc_off>;
         };
 
         GESTURE {
@@ -322,7 +331,7 @@
 &trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans          &trans  &trans  &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
+            sensor-bindings = <&enc_off &enc_off>;
         };
 
         MOUSE {
@@ -334,7 +343,7 @@
 &trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans              &trans    &trans  &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
+            sensor-bindings = <&enc_off &enc_off>;
         };
 
         BLUETOOTH {
@@ -346,7 +355,7 @@
 &trans  &trans  &trans  &trans  &trans  &trans                  &trans       &trans              &trans    &trans    &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
+            sensor-bindings = <&enc_off &enc_off>;
         };
     };
 };

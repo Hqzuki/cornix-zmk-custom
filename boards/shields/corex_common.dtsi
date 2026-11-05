@@ -1,0 +1,19 @@
+/* SPDX-License-Identifier: MIT */
+#include <input/processors.dtsi>
+#include <dt-bindings/zmk/input_transform.h>
+&zip_temp_layer {
+    excluded-positions = <8 19 20 21 31>;
+};
+/ {
+    corex_listener: corex_listener {
+        compatible = "zmk,input-listener";
+        device = <&corex_paw>;
+        input-processors = <&zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)>,
+                           <&zip_xy_scaler 4 5>, <&zip_temp_layer 4 700>;
+        scroll {
+            layers = <5>;
+            input-processors = <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>,
+                               <&zip_xy_to_scroll_mapper>, <&zip_scroll_scaler 1 12>;
+        };
+    };
+};

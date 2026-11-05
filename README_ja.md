@@ -266,3 +266,7 @@ Cornix シールドは片側に 2 個の RGB LED を備え、標準ファーム�
 ### 右手 Central 構成への切り替え
 
 PC への USB 接続と ZMK Studio は右手側を使います。切り替え時は PC の古い Bluetooth 登録を削除し、両側へ `cornix_reset` を書き込んだ後、同じビルドの左右それぞれのファームウェアを書き込んで両側をリセットし、再ペアリングしてください。
+
+### CoreX R A14＋PAW3222
+
+[CoreX向けビルド・操作・導入手順](docs/corex.md)を参照してください。純正Cornixとは異なる専用UF2を使用します。

@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: MIT
+config COREX_PAW3222
+    bool "CoreX PAW3222 three-wire GPIO driver"
+    default y if DT_HAS_COREX_PAW3222_GPIO_ENABLED
+    depends on GPIO && INPUT

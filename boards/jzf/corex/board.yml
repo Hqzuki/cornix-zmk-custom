@@ -1,0 +1,9 @@
+boards:
+  - name: corex_right
+    vendor: jzf
+    revision:
+      format: major.minor.patch
+      default: 7.0.0
+      revisions:
+        - name: 6.0.0
+        - name: 7.0.0

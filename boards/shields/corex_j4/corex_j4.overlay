@@ -1,0 +1,5 @@
+/* SPDX-License-Identifier: MIT */
+#include "../corex_common.dtsi"
+&corex_paw {
+    status = "okay";
+};

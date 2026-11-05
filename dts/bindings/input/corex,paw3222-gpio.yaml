@@ -1,0 +1,25 @@
+# SPDX-License-Identifier: MIT
+# Three-wire half-duplex SDIO, clock idle high, NCS retained low.
+description: CoreX PAW3222 optical sensor with GPIO three-wire transport
+compatible: "corex,paw3222-gpio"
+include: base.yaml
+properties:
+  sck-gpios:
+    type: phandle-array
+    required: true
+  sdio-gpios:
+    type: phandle-array
+    required: true
+  motion-gpios:
+    type: phandle-array
+    required: true
+  auxiliary-gpios:
+    type: phandle-array
+    required: true
+  poll-interval-ms:
+    type: int
+    default: 15
+  res-cpi:
+    type: int
+    default: 1216
+    description: Resolution in multiples of 38 CPI, from 608 to 4826

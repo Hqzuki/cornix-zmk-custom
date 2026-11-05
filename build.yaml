@@ -52,3 +52,27 @@ include:
   #   shield: settings_reset
   #   snippet: studio-rpc-usb-uart nrf52840-nosd
   #   artifact-name: reset_nicenano_nosd
+
+  # CoreX R A14 + stock Cornix left; select the installed SoftDevice and port.
+  - board: corex_right@6.0.0
+    shield: corex_j3
+    snippet: studio-rpc-usb-uart
+    artifact-name: corex_r_a14_j3_s140v6
+  - board: corex_right@6.0.0
+    shield: corex_j4
+    snippet: studio-rpc-usb-uart
+    artifact-name: corex_r_a14_j4_s140v6
+  - board: corex_right@6.0.0
+    shield: settings_reset
+    artifact-name: corex_r_a14_reset_s140v6
+  - board: corex_right@7.0.0
+    shield: corex_j3
+    snippet: studio-rpc-usb-uart
+    artifact-name: corex_r_a14_j3_s140v7
+  - board: corex_right@7.0.0
+    shield: corex_j4
+    snippet: studio-rpc-usb-uart
+    artifact-name: corex_r_a14_j4_s140v7
+  - board: corex_right@7.0.0
+    shield: settings_reset
+    artifact-name: corex_r_a14_reset_s140v7

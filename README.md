@@ -262,3 +262,7 @@ Windows users should rely on GitHub Actions instead.
 The Cornix shield has 2 RGB LEDs on each side, controlled by PWM in the stock firmware. In ZMK these are driven by
 the `cornix_indicator` shield to indicate battery and connection status. A fully native out-of-tree RGB module is
 planned (see issue #2).
+
+### CoreX R A14 + PAW3222
+
+See [CoreX build and usage notes](docs/corex.md) for the dedicated board, connector and bootloader variants.

@@ -9,7 +9,7 @@ static uint8_t held_layer;
 static int pressed(struct zmk_behavior_binding *binding,
                    struct zmk_behavior_binding_event event) {
     ARG_UNUSED(binding); ARG_UNUSED(event);
-    held_layer = zmk_keymap_layer_active(1) ? 4 : 3;
+    held_layer = zmk_keymap_layer_active(1) ? 5 : 4;
     return zmk_keymap_layer_activate(held_layer, false);
 }
 static int released(struct zmk_behavior_binding *binding,

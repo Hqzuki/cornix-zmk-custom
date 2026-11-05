@@ -58,10 +58,10 @@
     input-processors =
         <&zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)>,
         <&zip_xy_scaler 4 5>,
-        <&zip_temp_layer 6 300>;
+        <&zip_temp_layer 7 300>;
 
     pan_win_scroll {
-        layers = <3>;
+        layers = <4>;
         input-processors = <
             &zip_xy_transform INPUT_TRANSFORM_X_INVERT
             &zip_axis_lock
@@ -74,7 +74,7 @@
     };
 
     pan_mac_scroll {
-        layers = <4>;
+        layers = <5>;
         input-processors = <
             &zip_xy_transform INPUT_TRANSFORM_X_INVERT
             &zip_axis_lock
@@ -88,7 +88,7 @@
     };
 
     desktop_layer_gesture {
-        layers = <5>;
+        layers = <6>;
         input-processors = <
             &zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)
             &zip_mouse_gesture
@@ -109,7 +109,7 @@
         compatible = "zmk,input-processor-scroll-inertia";
         #input-processor-cells = <0>;
         axis = <0>;
-        layer = <3>;
+        layer = <4>;
         scale = <1>;
         scale-div = <12>;
 
@@ -127,7 +127,7 @@
         compatible = "zmk,input-processor-scroll-inertia";
         #input-processor-cells = <0>;
         axis = <0>;
-        layer = <4>;
+        layer = <5>;
         scale = <1>;
         scale-div = <12>;
         start = <16>;
@@ -144,7 +144,7 @@
         compatible = "zmk,layer-listeners";
 
         desktop_gesture_auto_toggle {
-            layers = <5>;
+            layers = <6>;
             bindings = <&mouse_gesture_on &mouse_gesture_off>;
         };
     };
@@ -286,10 +286,10 @@
         NUM {
             display-name = "NUM";
             bindings = <
-&kp BACKSLASH  &pair_paren  &pair_square  &pair_brace  &kp UNDERSCORE  &kp TILDE                  &trans  &trans  &trans  &kp N7  &kp N8  &kp N9
-&trans         &trans       &trans        &trans       &trans          &trans                     &trans  &trans  &trans  &kp N4  &kp N5  &kp N6
-&trans         &trans       &trans        &trans       &trans          &trans     &trans  &trans  &trans  &trans  &trans  &kp N1  &kp N2  &kp N3
-&trans         &trans       &trans        &trans       &trans          &trans                     &trans  &trans          &kp N0  &none   &trans
+&trans &trans &trans &trans &trans &trans &kp BACKSLASH &pair_paren &pair_square &kp N1 &kp N2 &kp N3
+&trans &trans &trans &trans &trans &trans &pair_brace &kp UNDERSCORE &kp TILDE &kp N4 &kp N5 &kp N6
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &kp N7 &kp N8 &kp N9
+&trans &trans &trans &trans &trans &trans &trans &trans &kp N0 &none &trans
             >;
 
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
@@ -298,10 +298,10 @@
         FN {
             display-name = "FN";
             bindings = <
-&trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans  &trans  &kp F1   &kp F2   &kp F3
-&trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans  &trans  &kp F4   &kp F5   &kp F6
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &kp F7   &kp F8   &kp F9
-&trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans          &kp F10  &kp F11  &kp F12
+&trans &trans &trans &trans &trans &trans &kp BACKSLASH &pair_paren &pair_square &kp F1 &kp F2 &kp F3
+&trans &trans &trans &trans &trans &trans &pair_brace &kp UNDERSCORE &kp TILDE &kp F4 &kp F5 &kp F6
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &kp F7 &kp F8 &kp F9
+&trans &trans &trans &trans &trans &trans &trans &trans &kp F10 &kp F11 &kp F12
             >;
 
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;

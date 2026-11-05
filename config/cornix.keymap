@@ -44,7 +44,7 @@
 &kp PRSC   &kp Q     &kp W     &kp E      &kp R        &kp T                                                &kp Y            &kp U     &kp I      &kp O     &kp P     &kp MINUS
 &kp CAPS   &kp A     &kp S     &kp D      &kp F        &kp G                                                &kp H            &kp J     &kp K      &kp L     &kp RET   &none
 &kp LSHFT  &kp Z     &kp X     &kp C      &kp V        &kp B            &none            &none              &kp N            &kp M     &kp COMMA  &kp DOT   &kp UP    &none
-&kp LCTL   &kp LGUI  &kp LALT  &lt 1 TAB  &lt 2 SPACE  &mt LSHFT LANG2                                      &mt RSHFT LANG1  &kp BSPC  &mo 2      &kp LEFT  &kp DOWN  &kp RIGHT
+&kp LCTL   &kp LGUI  &kp LALT  &lt 1 TAB  &lt 2 SPACE  &mt LSHFT LANG2                                      &mt RSHFT LANG1  &kp BSPC        &kp LEFT  &kp DOWN  &kp RIGHT
             >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };
@@ -55,7 +55,7 @@
 &bt BT_CLR    &kp LS(N2)  &kp LS(N7)  &none       &none   &none                          &kp LS(COMMA)  &kp LS(DOT)  &kp RBKT      &kp NUHS      &kp LS(N5)  &none
 &bt BT_SEL 0  &kp LBKT    &kp LS(N3)  &kp LS(N4)  &none   &none                          &none          &none        &kp LS(RBKT)  &kp LS(NUHS)  &none       &none
 &bt BT_SEL 1  &none       &none       &none       &none   &none      &trans   &trans    &none          &none        &kp LS(N1)    &kp LS(FSLH)  &none       &none
-&bt BT_SEL 2  &none       &none       &none       &trans  &trans                         &trans         &trans       &none         &none         &none       &none
+&bt BT_SEL 2  &none       &none       &none       &trans  &trans                         &trans         &trans                &none         &none       &none
             >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };
@@ -66,7 +66,7 @@
 &none  &kp LS(SEMI)  &kp N7  &kp N8  &kp N9  &kp LS(SQT)                  &none      &none     &kp UP    &none      &none         &none
 &none  &kp MINUS     &kp N4  &kp N5  &kp N6  &kp FSLH                     &none      &kp LEFT  &kp DOWN  &kp RIGHT  &kp LS(MINUS)  &none
 &none  &kp N0        &kp N1  &kp N2  &kp N3  &kp DOT      &none   &none   &none      &none     &none     &none      &none         &none
-&none  &none         &none   &none   &none   &none                        &kp RSHFT  &mo 3     &none     &none      &none         &none
+&none  &none         &none   &none   &none   &none                        &kp RSHFT  &mo 3          &none      &none         &none
             >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };
@@ -77,7 +77,7 @@
 &none  &none  &kp F7  &kp F8  &kp F9  &kp F12                  &none  &none  &none  &none  &none  &none
 &none  &none  &kp F4  &kp F5  &kp F6  &kp F11                  &none  &none  &none  &none  &none  &none
 &none  &none  &kp F1  &kp F2  &kp F3  &kp F10  &none  &none    &none  &none  &none  &none  &none  &none
-&none  &none  &none   &none   &none   &none                    &none  &none  &none  &none  &none  &none
+&none  &none  &none   &none   &none   &none                    &none  &none    &none  &none  &none
             >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };

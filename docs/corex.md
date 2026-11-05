@@ -33,8 +33,8 @@ RMKとZMKは左右通信に互換性がないため、左右とも同じZMKビ�
 
 ## 操作
 
-[CoronLPのキーマップ](https://github.com/Hqzuki/zmk-config-coron/blob/LowprofileTrackBallcase/config/coron.keymap)をCoreXの50キーへ移植しています。
-単独の上下左右キーは削除しています。LED・センサー配線・CPI・通常カーソル速度はCoreXの設定です。
+[CoronLPのキーマップ](https://github.com/Hqzuki/zmk-config-coron/blob/LowprofileTrackBallcase/config/coron.keymap)をCoreXの49キーへ移植しています。
+単独の上下左右キーは削除しています。トラックボール位置のキー枠（旧Delete）も削除しています。LED・センサー配線・CPI・通常カーソル速度はCoreXの設定です。
 
 | 番号 | レイヤー | 操作 |
 | --- | --- | --- |

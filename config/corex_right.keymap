@@ -1,5 +1,5 @@
 /* CoreX adaptation of Hqzuki/zmk-config-coron, LowprofileTrackBallcase.
- * 50 positions: dedicated arrow keys removed, BT-layer/screenshot on inner
+ * 49 positions: dedicated arrow keys removed, BT-layer/screenshot on inner
  * switches, three spare bottom-right keys disabled in WIN/MAC.
  * LED and CoreX hardware configuration are independent of this keymap.
  */
@@ -257,7 +257,7 @@
 &kp ESC &kp Q &kp W &kp E &kp R &kp T &kp Y &kp U &kp I &kp O &mt SEMICOLON SQT &kp BACKSPACE
 &kp TAB &kp A &kp S &kp D &kp F &kp G &kp H &kp J &kp K &kp L &kp P &kp ENTER
 &kp LEFT_SHIFT &kp Z &kp X &kp C &kp V &kp B &mo 8 &kp LG(LS(S)) &kp N &kp M &kp COMMA &kp DOT &mt EQUAL MINUS &kp SLASH
-&kp LCTRL &kp LEFT_WIN &kp LEFT_ALT &mo 2 &lt 3 SPACE &kp LANG1 &kp LANG2 &kp SLASH &none &none &none &none
+&kp LCTRL &kp LEFT_WIN &kp LEFT_ALT &mo 2 &lt 3 SPACE &kp LANG1 &kp LANG2 &kp SLASH &none &none &none
             >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };
@@ -268,7 +268,7 @@
 &kp ESC &kp Q &kp W &kp E &kp R &kp T &kp Y &kp U &kp I &kp O &mt SEMICOLON SQT &kp BACKSPACE
 &kp TAB &kp A &kp S &kp D &kp F &kp G &kp H &kp J &kp K &kp L &kp P &kp ENTER
 &kp LEFT_SHIFT &kp Z &kp X &kp C &kp V &kp B &mo 8 &kp LC(LS(LG(NUMBER_4))) &kp N &kp M &kp COMMA &kp DOT &mt EQUAL MINUS &kp SLASH
-&kp LEFT_GUI &kp LCTRL &kp LEFT_ALT &mo 2 &lt 3 SPACE &kp LANG1 &kp LANG2 &kp SLASH &none &none &none &none
+&kp LEFT_GUI &kp LCTRL &kp LEFT_ALT &mo 2 &lt 3 SPACE &kp LANG1 &kp LANG2 &kp SLASH &none &none &none
             >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };
@@ -279,7 +279,7 @@
 &trans &trans &trans &trans &trans &trans &kp F1 &kp F2 &kp F3 &kp F4 &kp F5 &kp F6
 &trans &trans &trans &trans &trans &trans &kp F7 &kp F8 &kp F9 &kp F10 &kp F11 &kp F12
 &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
-&trans &trans &trans &trans &trans &trans &trans &trans &none &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
             >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };
@@ -290,7 +290,7 @@
 &trans &trans &trans &trans &trans &trans &kp TILDE &kp AMPERSAND &kp CARET &kp RIGHT_PARENTHESIS &kp LEFT_PARENTHESIS &trans
 &trans &kp N1 &kp N2 &kp N3 &kp N4 &kp N5 &kp DOLLAR &kp HASH &kp AT_SIGN &kp EXCLAMATION &kp UNDERSCORE &trans
 &trans &kp NUMBER_6 &kp N7 &kp N8 &kp N9 &kp N0 &trans &kp PERCENT &kp BACKSLASH &kp RIGHT_BRACE &kp LEFT_BRACE &kp RIGHT_BRACKET &kp LEFT_BRACKET &trans
-&trans &trans &trans &trans &trans &trans &trans &trans &none &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
             >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };
@@ -301,7 +301,7 @@
 &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
 &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
 &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
-&trans &trans &trans &trans &trans &trans &trans &trans &none &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
             >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };
@@ -312,7 +312,7 @@
 &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
 &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
 &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
-&trans &trans &trans &trans &trans &trans &trans &trans &none &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
             >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };
@@ -323,7 +323,7 @@
 &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
 &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
 &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
-&trans &trans &trans &trans &trans &trans &trans &trans &none &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
             >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };
@@ -334,7 +334,7 @@
 &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
 &trans &trans &trans &trans &trans &trans &trans &mkp MB1 &mkp MB3 &mkp MB2 &trans &trans
 &trans &trans &trans &trans &trans &trans &trans &trans &trans &mkp MB4 &mkp MB5 &trans &trans &trans
-&trans &trans &trans &trans &trans &trans &trans &trans &none &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
             >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };
@@ -345,7 +345,7 @@
 &trans &trans &trans &trans &trans &trans &bt0_mac &bt1_win &bt2_win &bt3_win &bt4_win &trans
 &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
 &trans &trans &trans &kp NUMBER_1 &kp NUMBER_2 &kp NUMBER_3 &trans &trans &bootloader &trans &trans &trans &trans &bt BT_CLR
-&trans &trans &trans &trans &trans &trans &trans &trans &none &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
             >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };

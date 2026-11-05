@@ -5,8 +5,7 @@
 #include <zephyr/logging/log.h>
 #include <zmk/event_manager.h>
 #include <zmk/events/battery_state_changed.h>
-#include <zmk/events/usb_conn_state_changed.h>
-#include <zmk/usb.h>
+#include <hal/nrf_power.h>
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
 #include <zmk/ble.h>
 #include <zmk/split/central.h>
@@ -19,7 +18,14 @@ LOG_MODULE_REGISTER(corex_led, CONFIG_ZMK_LOG_LEVEL);
 static struct status_state state = STATUS_STATE_INIT;
 K_MUTEX_DEFINE(state_lock);
 static bool ready;
+#if IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
 static int64_t next_sync;
+#endif
+/* VBUS detection also works with a charger or a charge-only cable, without
+ * USB enumeration on the peripheral. Both supported boards use nRF52840. */
+static bool usb_powered(void) {
+    return (NRF_POWER->USBREGSTATUS & POWER_USBREGSTATUS_VBUSDETECT_Msk) != 0;
+}
 
 void corex_status_receive_profile(uint32_t profile, uint32_t flags) {
     k_mutex_lock(&state_lock, K_FOREVER);
@@ -40,6 +46,7 @@ static void render(struct k_work *work) {
         next_sync = 0;
     }
 #endif
+    status_power(&state, usb_powered(), now);
     struct status_state snapshot = state;
     k_mutex_unlock(&state_lock);
     if (ready) { status_backend_write(status_render(&snapshot, now), now); }
@@ -63,7 +70,6 @@ static int status_event(const zmk_event_t *eh) {
     k_mutex_lock(&state_lock, K_FOREVER);
     const struct zmk_battery_state_changed *battery = as_zmk_battery_state_changed(eh);
     if (battery) { status_battery(&state, battery->state_of_charge, now); }
-    if (as_zmk_usb_conn_state_changed(eh)) { status_power(&state, zmk_usb_is_powered(), now); }
 #if !IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
     const struct zmk_split_peripheral_status_changed *peer = as_zmk_split_peripheral_status_changed(eh);
     if (peer) {
@@ -76,7 +82,6 @@ static int status_event(const zmk_event_t *eh) {
 }
 ZMK_LISTENER(corex_led_status, status_event);
 ZMK_SUBSCRIPTION(corex_led_status, zmk_battery_state_changed);
-ZMK_SUBSCRIPTION(corex_led_status, zmk_usb_conn_state_changed);
 #if !IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
 ZMK_SUBSCRIPTION(corex_led_status, zmk_split_peripheral_status_changed);
 #else
@@ -101,7 +106,7 @@ static int status_init(void) {
     if (rc < 0) { LOG_ERR("LED backend unavailable: %d", rc); }
     k_mutex_lock(&state_lock, K_FOREVER);
     if (!state.peer_known) { status_peer(&state, false, k_uptime_get()); }
-    status_power(&state, zmk_usb_is_powered(), k_uptime_get());
+    status_power(&state, usb_powered(), k_uptime_get());
     k_mutex_unlock(&state_lock);
     k_work_reschedule(&render_work, K_MSEC(500));
     return 0;

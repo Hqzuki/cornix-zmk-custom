@@ -174,7 +174,7 @@
             display-name = "Pair ()";
             wait-ms = <10>;
             tap-ms = <10>;
-            bindings = <&macro_tap &kp LS(N9) &kp LS(N0) &kp LEFT>;
+            bindings = <&macro_tap>, <&kp LS(N9) &kp LS(N0) &kp LEFT>;
         };
 
         pair_square: pair_square {
@@ -183,7 +183,7 @@
             display-name = "Pair []";
             wait-ms = <10>;
             tap-ms = <10>;
-            bindings = <&macro_tap &kp LBKT &kp RBKT &kp LEFT>;
+            bindings = <&macro_tap>, <&kp LBKT &kp RBKT &kp LEFT>;
         };
 
         pair_brace: pair_brace {
@@ -192,7 +192,7 @@
             display-name = "Pair {}";
             wait-ms = <10>;
             tap-ms = <10>;
-            bindings = <&macro_tap &kp LS(LBKT) &kp LS(RBKT) &kp LEFT>;
+            bindings = <&macro_tap>, <&kp LS(LBKT) &kp LS(RBKT) &kp LEFT>;
         };
 
         to_layer_0: to_layer_0 {
@@ -260,10 +260,10 @@
         WIN {
             display-name = "WIN";
             bindings = <
-&kp ESC         &kp Q         &kp W         &kp E        &kp R        &kp T                                                &kp Y      &kp U      &kp I      &kp O    &mt SEMICOLON SQT  &kp BACKSPACE
-&kp TAB         &kp A         &kp S         &kp D        &kp F        &kp G                                                &kp H      &kp J      &kp K      &kp L    &kp P              &kp ENTER
-&kp LEFT_SHIFT  &kp Z         &kp X         &kp C        &kp V        &kp B      &lt (7) LG(LS(S))  &kp LC(N0)  &kp N      &kp M      &kp COMMA  &kp DOT  &mt EQUAL MINUS    &kp SLASH
-&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &lt 2 SPACE  &lt 3 LANG1  &kp LANG1                                            &lt 5 LANG2  &kp LANG2             &none    &none              &kp DELETE
+&kp ESC         &kp Q         &kp W         &kp E        &kp R        &kp T                                 &kp Y        &kp U      &kp I      &kp O    &mt SEMICOLON SQT  &kp BACKSPACE
+&kp TAB         &kp A         &kp S         &kp D        &kp F        &kp G                                 &kp H        &kp J      &kp K      &kp L    &kp P              &kp ENTER
+&kp LEFT_SHIFT  &kp Z         &kp X         &kp C        &kp V        &kp B  &lt (7) LG(LS(S))  &kp LC(N0)  &kp N        &kp M      &kp COMMA  &kp DOT  &mt EQUAL MINUS    &kp SLASH
+&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &lt 2 SPACE  &lt 3 LANG1  &none                                 &lt 5 LANG2  &kp LANG2             &none    &none              &kp DELETE
             >;
 
             sensor-bindings =
@@ -274,10 +274,10 @@
         MAC {
             display-name = "MAC";
             bindings = <
-&kp ESC         &kp Q      &kp W         &kp E  &kp R        &kp T                                       &kp Y      &kp U      &kp I      &kp O    &mt SEMICOLON SQT  &kp BACKSPACE
-&kp TAB         &kp A      &kp S         &kp D  &kp F        &kp G                                       &kp H      &kp J      &kp K      &kp L    &kp P              &kp ENTER
-&kp LEFT_SHIFT  &kp Z      &kp X         &kp C  &kp V        &kp B      &mo 7  &kp LG(N0)  &kp N      &kp M      &kp COMMA  &kp DOT  &mt EQUAL MINUS    &kp SLASH
-&kp LEFT_GUI    &kp LCTRL  &kp LEFT_ALT  &lt 2 SPACE  &lt 4 LANG1  &kp LANG1                                   &lt 5 LANG2  &kp LANG2             &none    &none              &none
+&kp ESC         &kp Q      &kp W         &kp E        &kp R        &kp T                         &kp Y        &kp U      &kp I      &kp O    &mt SEMICOLON SQT  &kp BACKSPACE
+&kp TAB         &kp A      &kp S         &kp D        &kp F        &kp G                         &kp H        &kp J      &kp K      &kp L    &kp P              &kp ENTER
+&kp LEFT_SHIFT  &kp Z      &kp X         &kp C        &kp V        &kp B      &mo 7  &kp LG(N0)  &kp N        &kp M      &kp COMMA  &kp DOT  &mt EQUAL MINUS    &kp SLASH
+&kp LEFT_GUI    &kp LCTRL  &kp LEFT_ALT  &lt 2 SPACE  &lt 4 LANG1  &kp LANG1                     &lt 5 LANG2  &kp LANG2             &none    &none              &none
             >;
 
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
@@ -286,10 +286,10 @@
         NUM_FN {
             display-name = "NUM / FN";
             bindings = <
-&trans &trans &trans &trans &trans &trans &kp F1 &kp F2 &kp F3 &kp F4 &kp F5 &kp F6
-&trans &kp N1 &kp N2 &kp N3 &kp N4 &kp N5 &kp F7 &kp F8 &kp F9 &kp F10 &kp F11 &kp F12
-&trans &kp NUMBER_6 &kp N7 &kp N8 &kp N9 &kp N0 &trans &trans &kp BACKSLASH &pair_paren &pair_square &pair_brace &trans &trans
-&trans &trans &trans &trans &trans &trans &trans &trans &kp TILDE &kp UNDERSCORE &trans
+&trans  &trans        &trans  &trans  &trans  &trans                  &kp F1         &kp F2       &kp F3        &kp F4       &kp F5          &kp F6
+&trans  &kp N1        &kp N2  &kp N3  &kp N4  &kp N5                  &kp F7         &kp F8       &kp F9        &kp F10      &kp F11         &kp F12
+&trans  &kp NUMBER_6  &kp N7  &kp N8  &kp N9  &kp N0  &trans  &trans  &kp BACKSLASH  &pair_paren  &pair_square  &pair_brace  &trans          &trans
+&trans  &trans        &trans  &trans  &trans  &trans                  &trans         &trans                     &kp TILDE    &kp UNDERSCORE  &trans
             >;
 
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;

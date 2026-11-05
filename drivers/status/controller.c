@@ -1,4 +1,5 @@
 /* SPDX-License-Identifier: MIT */
+#include <errno.h>
 #include <zephyr/kernel.h>
 #include <zephyr/init.h>
 #include <zephyr/bluetooth/conn.h>
@@ -16,7 +17,11 @@
 #endif
 #include "backend.h"
 LOG_MODULE_REGISTER(corex_led, CONFIG_ZMK_LOG_LEVEL);
-static struct status_state state = STATUS_STATE_INIT;
+static struct status_state state = {
+    .low_since = -1, .full_since = -1,
+    .hide_peer = IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL),
+    .layer_outer = !IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL),
+};
 K_MUTEX_DEFINE(state_lock);
 static bool ready;
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
@@ -28,10 +33,11 @@ static bool usb_powered(void) {
     return (NRF_POWER->USBREGSTATUS & POWER_USBREGSTATUS_VBUSDETECT_Msk) != 0;
 }
 
-void corex_status_receive_profile(uint32_t profile, uint32_t flags) {
+int corex_status_receive(uint32_t profile, uint32_t flags) {
     k_mutex_lock(&state_lock, K_FOREVER);
-    status_profile(&state, profile, flags & 1, flags & 2, k_uptime_get());
+    bool ok = status_receive(&state, profile, flags, k_uptime_get());
     k_mutex_unlock(&state_lock);
+    return ok ? 0 : -EINVAL;
 }
 
 static void render(struct k_work *work);
@@ -46,8 +52,11 @@ static void render(struct k_work *work) {
             zmk_ble_active_profile_is_connected(), zmk_ble_active_profile_is_open(), now)) {
         next_sync = 0;
     }
-    state.layer_mode = true;
-    state.layer = zmk_keymap_layer_index_to_id(zmk_keymap_highest_layer_active());
+    uint8_t layer = zmk_keymap_layer_index_to_id(zmk_keymap_highest_layer_active());
+    if (!state.layer_valid || state.layer != layer) {
+        status_layer(&state, true, layer);
+        next_sync = 0; /* push layer changes to the left immediately */
+    }
 #endif
     status_power(&state, usb_powered(), now);
     struct status_state snapshot = state;
@@ -59,7 +68,7 @@ static void render(struct k_work *work) {
     if (snapshot.peer_connected && snapshot.profile_valid && now >= next_sync) {
         struct zmk_behavior_binding binding = {
             .behavior_dev = "ls", .param1 = snapshot.profile,
-            .param2 = snapshot.host_connected | (snapshot.host_open << 1),
+            .param2 = status_sync_flags(&snapshot),
         };
         struct zmk_behavior_binding_event event = {.timestamp = now};
         int rc = zmk_split_central_invoke_behavior(0, &binding, event, true);
@@ -77,7 +86,10 @@ static int status_event(const zmk_event_t *eh) {
     const struct zmk_split_peripheral_status_changed *peer = as_zmk_split_peripheral_status_changed(eh);
     if (peer) {
         status_peer(&state, peer->connected, now);
-        if (!peer->connected) { state.profile_valid = false; }
+        if (!peer->connected) {
+            state.profile_valid = false;
+            status_layer(&state, false, 0);
+        }
     }
 #endif
     k_mutex_unlock(&state_lock);

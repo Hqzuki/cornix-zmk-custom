@@ -16,9 +16,10 @@ struct status_state {
     uint8_t profile, battery;
     int64_t profile_since, low_since, full_since, charge_since;
     bool powered, full_shown;
-    /* CoreX right: outer LED shows the active layer and the inner LED only
-     * this half's battery/charging; the split link is shown on the left. */
-    bool layer_mode;
+    /* Roles: the CoreX right (central) shows the host profile on its outer
+     * LED and only its own battery/charging inside (hide_peer). The stock
+     * left shows the central's active layer on its outer LED (layer_outer). */
+    bool hide_peer, layer_outer, layer_valid;
     uint8_t layer;
 };
 #define STATUS_STATE_INIT {.low_since = -1, .full_since = -1}
@@ -33,6 +34,24 @@ static inline bool status_profile(struct status_state *s, uint8_t index, bool co
         s->host_open == open) { return false; }
     s->profile_valid = true; s->profile = index;
     s->host_connected = connected; s->host_open = open; s->profile_since = now;
+    return true;
+}
+static inline void status_layer(struct status_state *s, bool valid, uint8_t layer) {
+    s->layer_valid = valid; s->layer = layer;
+}
+/* Right-to-left sync payload: param2 bit0 host connected, bit1 host open,
+ * bit2 layer present, bits 8-15 layer id. */
+#define STATUS_SYNC_LAYER 4u
+#define STATUS_SYNC_MASK  0xff07u
+static inline uint32_t status_sync_flags(const struct status_state *s) {
+    return (uint32_t)s->host_connected | ((uint32_t)s->host_open << 1) |
+           (s->layer_valid ? STATUS_SYNC_LAYER | ((uint32_t)s->layer << 8) : 0);
+}
+static inline bool status_receive(struct status_state *s, uint32_t profile, uint32_t flags,
+                                  int64_t now) {
+    if (profile > 255 || (flags & ~STATUS_SYNC_MASK)) { return false; }
+    status_profile(s, profile, flags & 1, flags & 2, now);
+    status_layer(s, flags & STATUS_SYNC_LAYER, (flags >> 8) & 0xff);
     return true;
 }
 static inline void status_battery(struct status_state *s, uint8_t level, int64_t now) {
@@ -80,7 +99,7 @@ static inline struct status_frame status_render(const struct status_state *s, in
     /* Reserve the whole low-battery pattern, including its dark gaps. */
     if (s->low_since >= 0 && low >= 0 && low < 1200) {
         if (low < 400 || low >= 800) { f.inner = red; }
-    } else if (!s->layer_mode && s->peer_known && peer >= 0 &&
+    } else if (!s->hide_peer && s->peer_known && peer >= 0 &&
                peer < (s->peer_connected ? 3000 : 10000)) {
         if (s->peer_connected || peer % 1000 < 400) { f.inner = blue; }
     } else if (s->powered) {
@@ -95,8 +114,8 @@ static inline struct status_frame status_render(const struct status_state *s, in
             f.inner.g = breath[((now - s->charge_since) % 2000) * 60 / 2000];
         }
     }
-    if (s->layer_mode) {
-        f.outer = status_layer_color(s->layer);
+    if (s->layer_outer) {
+        if (s->layer_valid) { f.outer = status_layer_color(s->layer); }
     } else if (s->profile_valid) {
         int64_t host = now - s->profile_since;
         bool on = s->host_connected || !s->host_open ? host < 600 :

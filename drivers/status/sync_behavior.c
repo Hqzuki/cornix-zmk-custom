@@ -10,9 +10,8 @@ static int sync_pressed(struct zmk_behavior_binding *binding,
                         struct zmk_behavior_binding_event event) {
     (void)event;
 #if IS_ENABLED(CONFIG_COREX_LED_STATUS) && !IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
-    if (binding->param1 > 255 || (binding->param2 & ~3u)) { return -EINVAL; }
-    corex_status_receive_profile(binding->param1, binding->param2);
-    return ZMK_BEHAVIOR_OPAQUE;
+    int rc = corex_status_receive(binding->param1, binding->param2);
+    return rc < 0 ? rc : ZMK_BEHAVIOR_OPAQUE;
 #else
     (void)binding;
     return -ENOTSUP;

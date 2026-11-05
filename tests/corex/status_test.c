@@ -41,22 +41,36 @@ int main(void) {
         status_profile(&s, p, true, false, t+11000);
         dark(status_render(&s, t+11600).outer);
     }
-    /* Right half: outer = layer colour (always on), inner = own battery only. */
+    /* Right (central): outer = host profile, inner = own battery only. */
     struct status_state r = STATUS_STATE_INIT;
-    r.layer_mode = true;
+    r.hide_peer = true;
     status_peer(&r, false, 0);
     dark(status_render(&r, 0).inner);
-    status_profile(&r, 1, false, true, 0);
-    for (int l = 0; l < 9; l++) {
-        r.layer = l;
-        struct status_rgb c = status_render(&r, 100000).outer;
-        assert(c.r || c.g || c.b);
-        assert(same(c, status_layer_color(l)));
-    }
-    assert(!same(status_layer_color(0), status_layer_color(1)));
+    status_layer(&r, true, 7);
+    assert(status_profile(&r, 3, false, true, 1000));
+    assert(same(status_render(&r, 1000).outer, status_profile_color(3)));
     status_battery(&r, 15, 200000);
     assert(status_render(&r, 200000).inner.r == 16);
     status_power(&r, true, 210000);
     assert(status_render(&r, 211000).inner.g == 32);
-    puts("LED patterns: peer timing, priority, battery, charging, five profile colors, sync dedup and right layer colors passed");
+
+    /* Left (peripheral): outer = synced layer colour, always on; inner unchanged. */
+    struct status_state l = STATUS_STATE_INIT;
+    l.layer_outer = true;
+    status_peer(&l, true, 0);
+    assert(status_render(&l, 0).inner.b == 16);
+    dark(status_render(&l, 0).outer);
+    for (int k = 0; k < 9; k++) {
+        r.layer = k;
+        assert(status_receive(&l, r.profile, status_sync_flags(&r), 300000 + k));
+        struct status_rgb c = status_render(&l, 400000).outer;
+        assert(c.r || c.g || c.b);
+        assert(same(c, status_layer_color(k)));
+    }
+    assert(!same(status_layer_color(0), status_layer_color(1)));
+    assert(!status_receive(&l, 0, 1u << 16, 0));
+    assert(!status_receive(&l, 256, 0, 0));
+    assert(status_receive(&l, 0, 1, 500000));
+    dark(status_render(&l, 500000).outer);
+    puts("LED patterns: peer timing, priority, battery, charging, five profile colors, sync dedup, layer sync and left layer colors passed");
 }

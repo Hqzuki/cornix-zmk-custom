@@ -28,40 +28,8 @@ struct paw_data {
 /* Exactly one connector per image, so an empty connector cannot disturb input. */
 K_THREAD_STACK_DEFINE(paw_stack, 1536);
 
-static void send_byte(const struct paw_config *c, uint8_t value) {
-    gpio_pin_configure_dt(&c->sdio, GPIO_OUTPUT);
-    for (int bit = 7; bit >= 0; bit--) {
-        gpio_pin_set_dt(&c->sck, 0);
-        gpio_pin_set_dt(&c->sdio, !!(value & BIT(bit)));
-        k_busy_wait(1);
-        gpio_pin_set_dt(&c->sck, 1);
-        k_busy_wait(1);
-    }
-}
-static int read_reg(const struct paw_config *c, uint8_t reg) {
-    send_byte(c, reg & 0x7f);
-    int rc = gpio_pin_configure_dt(&c->sdio, GPIO_INPUT);
-    if (rc < 0) { return rc; }
-    k_busy_wait(4);
-    uint8_t value = 0;
-    for (int bit = 0; bit < 8; bit++) {
-        gpio_pin_set_dt(&c->sck, 0);
-        k_busy_wait(1);
-        gpio_pin_set_dt(&c->sck, 1);
-        k_busy_wait(1);
-        int sample = gpio_pin_get_dt(&c->sdio);
-        if (sample < 0) { return sample; }
-        value = (value << 1) | !!sample;
-    }
-    k_busy_wait(4);
-    return value;
-}
-static void write_reg(const struct paw_config *c, uint8_t reg, uint8_t value) {
-    send_byte(c, reg | 0x80);
-    send_byte(c, value);
-    gpio_pin_configure_dt(&c->sdio, GPIO_INPUT);
-    k_busy_wait(4);
-}
+#include "paw3222_wire.h"
+
 static bool configure(const struct paw_config *c) {
     if (read_reg(c, 0x00) != 0x30) { return false; }
     int cfg = read_reg(c, 0x06);

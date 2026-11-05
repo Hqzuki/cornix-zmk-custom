@@ -1,0 +1,14 @@
+name: CoreX transport checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  transport:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify PAW3222 GPIO turnaround and register protocol
+        run: |
+          cc -std=c11 -Wall -Wextra -Werror tests/corex/wire_test.c -o /tmp/corex-wire-test
+          /tmp/corex-wire-test

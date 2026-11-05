@@ -53,3 +53,10 @@
         auxiliary-gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>;
     };
 };
+
+/* Cornix's disabled WS2812 bus has no pinctrl definitions on CoreX. */
+&spi3 {
+    /delete-property/ pinctrl-0;
+    /delete-property/ pinctrl-1;
+    /delete-property/ pinctrl-names;
+};

@@ -26,6 +26,8 @@ static int battery_enable_init(void) {
 }
 SYS_INIT(battery_enable_init, POST_KERNEL, 90);
 
+#if IS_ENABLED(CONFIG_ZMK_BLE)
+
 #define LED(pin_) { .port = DEVICE_DT_GET(DT_NODELABEL(gpio0)), \
                     .pin = pin_, .dt_flags = GPIO_ACTIVE_LOW }
 /* R,G,B; source: CoreX-RMK right/src/main.rs, raytac-r-a14. */
@@ -99,3 +101,5 @@ static int status_init(void) {
     return 0;
 }
 SYS_INIT(status_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+
+#endif /* CONFIG_ZMK_BLE: settings_reset has no Bluetooth stack. */

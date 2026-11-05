@@ -68,3 +68,14 @@ J3: SCK=P0.08 / SDIO=P0.04 / MOTION=P0.06 / AUX=P1.09。
 AUXは参照実装に合わせてLowを保持します。SDIOはセンサー応答中に入力へ切り替えます。
 動作中のみ15ms間隔で読み取り、停止中はMOTION割り込みで復帰します。
 未接続・不正な製品IDではマウス入力を出さず、2秒後に再検出します。
+
+## ホスト上の通信テスト
+
+```sh
+cc -std=c11 -Wall -Wextra -Werror tests/corex/wire_test.c -o /tmp/corex-wire-test
+/tmp/corex-wire-test
+```
+
+ドライバーと同じ通信コードで全256値の送受信、アドレスのRead/Writeビット、
+受信時のSDIO解放、クロックの待機レベルをGPIOモックで検証します。
+このテストは実機の信号品質・ピン配線・無線動作を保証するものではありません。

@@ -244,6 +244,38 @@
     };
 
     behaviors {
+        space_taps_win: space_taps_win {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&kp SPACE>, <&kp LG(UP)>;
+        };
+
+        space_taps_mac: space_taps_mac {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&kp SPACE>, <&kp LG(ENTER)>;
+        };
+
+        space_window_win: space_window_win {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <0>;
+            bindings = <&mo>, <&space_taps_win>;
+        };
+
+        space_window_mac: space_window_mac {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <0>;
+            bindings = <&mo>, <&space_taps_mac>;
+        };
+
         /* Consumes rotation without output; an omitted binding would fall
          * through to the WIN/MAC base layer.
          */
@@ -272,7 +304,7 @@
 &kp ESC         &kp Q         &kp W         &kp E      &kp R        &kp T                                 &kp Y  &kp U        &kp I      &kp O    &mt SEMICOLON SQT  &kp BACKSPACE
 &kp TAB         &kp A         &kp S         &kp D      &kp F        &kp G                                 &kp H  &kp J        &kp K      &kp L    &kp P              &kp ENTER
 &kp LEFT_SHIFT  &kp Z         &kp X         &kp C      &kp V        &kp B  &lt 7 PSCRN  &kp LC(N0)  &kp N  &kp M        &kp COMMA  &kp DOT  &mt EQUAL MINUS    &kp RSHFT
-&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &lt 8 SPACE  &lt 4 LANG2  &mo 5                                 &mo 3  &lt 2 LANG1             &none    &kp SLASH          &kp DELETE
+&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &space_window_win 8 0  &lt 4 LANG2  &mo 5                                 &mo 3  &lt 2 LANG1             &none    &kp SLASH          &kp DELETE
             >;
 
             sensor-bindings =
@@ -286,7 +318,7 @@
 &kp ESC         &kp Q      &kp W         &kp E      &kp R        &kp T                     &kp Y  &kp U        &kp I      &kp O    &mt SEMICOLON SQT  &kp BACKSPACE
 &kp TAB         &kp A      &kp S         &kp D      &kp F        &kp G                     &kp H  &kp J        &kp K      &kp L    &kp P              &kp ENTER
 &kp LEFT_SHIFT  &kp Z      &kp X         &kp C      &kp V        &kp B  &lt 7 LG(LS(N3))  &kp LG(N0)  &kp N  &kp M        &kp COMMA  &kp DOT  &mt EQUAL MINUS    &kp RSHFT
-&kp LEFT_GUI    &kp LCTRL  &kp LEFT_ALT  &lt 8 SPACE  &lt 4 LANG2  &mo 5                     &mo 3  &lt 2 LANG1             &none    &kp SLASH          &kp DELETE
+&kp LEFT_GUI    &kp LCTRL  &kp LEFT_ALT  &space_window_mac 8 0  &lt 4 LANG2  &mo 5                     &mo 3  &lt 2 LANG1             &none    &kp SLASH          &kp DELETE
             >;
 
             sensor-bindings = <&inc_dec_kp LG(LS(N4)) LG(LS(N9)) &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;

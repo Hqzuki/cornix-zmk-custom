@@ -133,7 +133,7 @@ cc -std=c11 -Wall -Wextra -Werror tests/corex/wire_test.c -o /tmp/corex-wire-tes
 受信時のSDIO解放、クロックの待機レベルをGPIOモックで検証します。
 このテストは実機の信号品質・ピン配線・無線動作を保証するものではありません。
 
-WIN／MAC配列の右手左下はFN専用、その右隣は短押しLANG1／長押しNUMです。左手のSpaceは短押しでSpace、長押しでWINDOWレイヤーです。
+WIN／MAC配列の右手左下はFN専用、その右隣は短押しLANG1／長押しNUMです。左手のSpaceは短押しでSpace、長押しでWINDOWレイヤー、2回押しで最大化（WIN：Win＋↑、MAC：Command＋Enter）です。
 
 通常配列（WIN／MAC）の右端下段にあった`/`は右Shiftに変更し、`/`はトラックボール横の空きキー（右Shiftの左下、位置47）へ移しています。
 
@@ -148,4 +148,4 @@ Spaceを長押ししている間、ボールで次のキー操作を送ります
 | 上 | 左のモニターへ移動（Win＋Shift＋←） | Command＋↑ |
 | 下 | 右のモニターへ移動（Win＋Shift＋→） | Command＋↓ |
 
-MACの動作はPC側のショートカット設定・アプリに従います。エンコーダー回転は無効、Space短押しは通常の空白です。既存のGESTUREによるデスクトップ切り替えも残ります。
+MACの動作はPC側のショートカット設定・アプリに従います。エンコーダー回転は無効、Space短押しは空白、200ms以内の2回押しは最大化（WIN：Win＋↑、MAC：Command＋Enter）です。2回押し判定のため、単独の空白入力には最大約200msの待ち時間が入ります。素早い2回押しは空白2文字にはなりません。MACのCommand＋Enterによる最大化はPC側の割り当てに従います。既存のGESTUREによるデスクトップ切り替えも残ります。

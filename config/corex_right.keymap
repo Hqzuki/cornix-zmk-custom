@@ -116,6 +116,18 @@
             win-bindings = <&kp LG(LS(RIGHT))>;
             mac-bindings = <&kp LG(RIGHT)>;
         };
+
+        window_maximize {
+            pattern = <GESTURE_UP>;
+            win-bindings = <&kp LG(UP)>;
+            mac-bindings = <&none>;
+        };
+
+        window_minimize {
+            pattern = <GESTURE_DOWN>;
+            win-bindings = <&window_minimize>;
+            mac-bindings = <&none>;
+        };
     };
 
     pan_direction: pan_direction {
@@ -161,6 +173,15 @@
     };
 
     macros {
+        window_minimize: window_minimize {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            display-name = "Minimize window";
+            wait-ms = <80>;
+            tap-ms = <30>;
+            bindings = <&macro_tap>, <&kp LA(SPACE) &kp N>;
+        };
+
         pair_paren: pair_paren {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;

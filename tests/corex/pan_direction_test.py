@@ -81,8 +81,13 @@ assert 'win-bindings = <&kp LG(LS(LEFT))>' in window
 assert 'win-bindings = <&kp LG(LS(RIGHT))>' in window
 assert 'mac-bindings = <&kp LG(LEFT)>' in window
 assert 'mac-bindings = <&kp LG(RIGHT)>' in window
-assert 'GESTURE_UP' not in window and 'GESTURE_DOWN' not in window
+assert 'pattern = <GESTURE_UP>' in window
+assert 'win-bindings = <&kp LG(UP)>' in window
+assert 'pattern = <GESTURE_DOWN>' in window
+assert 'win-bindings = <&window_minimize>' in window
+assert window.count('mac-bindings = <&none>') == 2
+assert 'bindings = <&macro_tap>, <&kp LA(SPACE) &kp N>' in s
 blocks = re.findall(r'^        (\w+) \{.*?bindings = <(.*?)>;', keymap, re.M | re.S)
 for name, bindings in blocks:
     assert len(re.findall(r'&\w+', bindings)) == 49, name
-print('WINDOW: Space hold, left/right monitor shortcuts, Mac Command arrows and 49-key layers passed')
+print('WINDOW: Space hold, monitor/maximize/minimize shortcuts, Mac Command arrows and 49-key layers passed')

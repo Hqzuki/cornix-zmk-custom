@@ -62,7 +62,7 @@ int main(void) {
     status_peer(&l, true, 0);
     assert(status_render(&l, 0).inner.b == 16);
     dark(status_render(&l, 0).outer);
-    for (int k = 0; k < 9; k++) {
+    for (int k = 0; k < 8; k++) {
         r.layer = k;
         assert(status_receive(&l, r.profile, status_sync_flags(&r), 300000 + k));
         struct status_rgb c = status_render(&l, 400000).outer;
@@ -70,8 +70,8 @@ int main(void) {
         assert(same(c, status_layer_color(k)));
     }
     assert(!same(status_layer_color(0), status_layer_color(1)));
-    for (int a = 0; a < 9; a++) {
-        for (int b = a + 1; b < 9; b++) {
+    for (int a = 0; a < 8; a++) {
+        for (int b = a + 1; b < 8; b++) {
             assert(!same(status_layer_color(a), status_layer_color(b)));
         }
     }

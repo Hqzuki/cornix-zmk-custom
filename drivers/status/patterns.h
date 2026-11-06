@@ -104,9 +104,8 @@ static inline struct status_rgb status_layer_color(uint8_t layer) {
         {0,12,12},  /* 5 GESTURE: cyan */
         {0,0,0},    /* 6 MOUSE: dark */
         {10,10,10}, /* 7 BLUETOOTH: white */
-        {16,4,0},   /* 8 WINDOW: orange */
     };
-    return layer < 9 ? colors[layer] : (struct status_rgb){0};
+    return layer < 8 ? colors[layer] : (struct status_rgb){0};
 }
 static inline struct status_frame status_render(const struct status_state *s, int64_t now) {
     struct status_frame f = {0};

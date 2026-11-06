@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: MIT
+description: Send a keycode selected by the active WIN or MAC base layer
+compatible: "custom,behavior-os-key"
+include: zero_param.yaml
+properties:
+  mac-layer:
+    type: int
+    required: true
+  win-keycode:
+    type: int
+    required: true
+  mac-keycode:
+    type: int
+    required: true

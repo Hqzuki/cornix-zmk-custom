@@ -18,6 +18,8 @@ jobs:
           /tmp/corex-status-test
       - name: Verify unified PAN direction and layer references
         run: python3 tests/corex/pan_direction_test.py
+      - name: Verify WIN/MAC window key routing and release
+        run: python3 tests/corex/os_key_test.py
       - name: Verify default-layer endpoint routing and persistence
         run: |
           cc -std=c11 -Wall -Wextra -Werror tests/corex/endpoint_policy_test.c -o /tmp/corex-endpoint-test

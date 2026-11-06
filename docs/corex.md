@@ -43,11 +43,10 @@ RMKとZMKは左右通信に互換性がないため、左右とも同じZMKビ�
 | 4 | PAN | 左手LANG2長押しの間、ボールでスクロール、E／S／D／F＝↑／←／↓／→ |
 | 5 | GESTURE | 左手の最も内側の親指キーを押している間、ボールでデスクトップ操作、E／S／D／F＝↑／←／↓／→ |
 | 6 | MOUSE | ボール操作で有効、J／K／L／M／カンマ以外のキーを押すまで維持。J／K／L＝左／中／右クリック、M／カンマ＝戻る／進む |
-| 8 | WINDOW | Space長押し中、WINでは左右で画面の左右半分へ配置、上下で左右のモニターへ移動。MACではCommand＋各方向の矢印 |
 | 7 | BLUETOOTH | 左の内側スイッチを押している間、接続先選択・登録消去・ブートローダー操作 |
 
 - Iは通常の文字キーです。
-- 親指キーはWIN／MAC共通で、短押しSpace／長押しWINDOW、短押しLANG2／長押しスクロール、ジェスチャー専用、FN、短押しLANG1／長押しNUMです。
+- 親指キーはWIN／MAC共通で、Space、短押しLANG2／長押しスクロール、ジェスチャー専用、FN、短押しLANG1／長押しNUMです。
   OSごとのCtrl／GUI配置は維持しています。
 - NUM／FN共通で、右手左側の上段に`\`・`()`・`[]`、その下に`{}`・`_`・`~`、`~`の下に`` ` ``を配置しています。
   FNレイヤーは右端4行×3列に、上からF1〜F3／F4〜F6／F7〜F9／F10〜F12を配置しています。右端は上から`1 2 3`／`4 5 6`／`7 8 9`／`0 無効 元の割当`のテンキー配置です。
@@ -80,7 +79,7 @@ RMKとZMKは左右通信に互換性がないため、左右とも同じZMKビ�
     電池残量20%以下で赤400msを2回。USB給電中は緑で約2秒周期の呼吸表示を続け、残量95%以上で緑の常時点灯（90%未満で呼吸表示に戻る）。USBを外すと消灯。
     優先順位は電池低下、左右接続案内、充電表示。
   - 左・外側：右で現在有効なレイヤーの色を常時点灯（右から既存のsplit通信で送信）。
-    WIN＝赤、MAC＝青、NUM＝緑、FN＝黄、PAN＝マゼンタ、GESTURE＝水色、BLUETOOTH＝白、WINDOW＝オレンジ。MOUSE（自動マウスレイヤー）中は消灯。
+    WIN＝赤、MAC＝青、NUM＝緑、FN＝黄、PAN＝マゼンタ、GESTURE＝水色、BLUETOOTH＝白。MOUSE（自動マウスレイヤー）中は消灯。
     左右が切断中は消灯します。
   - 右・外側：PCのBluetoothプロファイル0／1／2／3／4＝緑／赤／青／黄／紫。
     接続時600ms、未接続でプロファイルがopenなら400ms／1秒を最大10回。
@@ -96,7 +95,7 @@ RMKとZMKは左右通信に互換性がないため、左右とも同じZMKビ�
 
 ZMK Studioの保存済み配列はビルド内の初期配列より優先します。
 旧9レイヤーなどの設定を保存している場合は、キー配列のリセットが必要です。Bluetoothも含めた全設定消去は任意です。
-導入後はStudioでWIN／MAC／NUM／FN／PAN／GESTURE／MOUSE／BLUETOOTH／WINDOWの9レイヤーと割り当てを確認してください。
+導入後はStudioでWIN／MAC／NUM／FN／PAN／GESTURE／MOUSE／BLUETOOTHの8レイヤーと割り当てを確認してください。
 キー・レイヤー・スクロール・ジェスチャーは`config/corex_right.keymap`、
 CPIは`boards/shields/corex_trackball/corex_trackball.overlay`内で`res-cpi = <1216>;`のように変更できます。
 CPIは608〜4826の38刻みです。
@@ -133,19 +132,19 @@ cc -std=c11 -Wall -Wextra -Werror tests/corex/wire_test.c -o /tmp/corex-wire-tes
 受信時のSDIO解放、クロックの待機レベルをGPIOモックで検証します。
 このテストは実機の信号品質・ピン配線・無線動作を保証するものではありません。
 
-WIN／MAC配列の右手左下はFN専用、その右隣は短押しLANG1／長押しNUMです。左手のSpaceは短押しでSpace、長押しでWINDOWレイヤー、Shift＋Spaceで最大化（WIN：Win＋↑、MAC：Command＋Enter）です。
+WIN／MAC配列の右手左下はFN専用、その右隣は短押しLANG1／長押しNUMです。左手のSpaceは通常の空白入力のみです。
 
 通常配列（WIN／MAC）の右端下段にあった`/`は右Shiftに変更し、`/`はトラックボール横の空きキー（右Shiftの左下、位置47）へ移しています。
 
 ### ウィンドウ操作
 
-Spaceを長押ししている間、ボールで次のキー操作を送ります。離すと元のレイヤーへ戻ります。
+レイヤー5（GESTURE）中、右手のI／J／K／Lで次のキー操作を送ります。
 
-| ボール | WIN | MAC |
+| キー | WIN | MAC |
 | --- | --- | --- |
-| 左 | 左半分へ配置（Win＋←） | Command＋← |
-| 右 | 右半分へ配置（Win＋→） | Command＋→ |
-| 上 | 左のモニターへ移動（Win＋Shift＋←） | Command＋↑ |
-| 下 | 右のモニターへ移動（Win＋Shift＋→） | Command＋↓ |
+| I | 左のモニターへ移動（Win＋Shift＋←） | Command＋↑ |
+| J | 左半分へ配置（Win＋←） | Command＋← |
+| K | 右のモニターへ移動（Win＋Shift＋→） | Command＋↓ |
+| L | 右半分へ配置（Win＋→） | Command＋→ |
 
-MACの動作はPC側のショートカット設定・アプリに従います。エンコーダー回転は無効、Space短押しは空白、長押しはWINDOW、Shiftを押しながらSpaceで最大化（WIN：Win＋↑、MAC：Command＋Enter）です。左右どちらのShiftでも有効で、最大化ショートカットにはShiftを含めません。2回押し判定はありません。MACのCommand＋Enterによる最大化はPC側の割り当てに従います。既存のGESTUREによるデスクトップ切り替えも残ります。
+MACの動作はPC側のショートカット設定・アプリに従います。Spaceは通常の空白入力のみです。GESTURE中のESDF矢印と、ボールによるデスクトップ切り替えは維持しています。

@@ -12,7 +12,6 @@
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
-#include <dt-bindings/zmk/modifiers.h>
 #include <dt-bindings/zmk/pointing.h>
 
 &zip_temp_layer { excluded-positions = <19 20 21 33 34>; };
@@ -61,15 +60,6 @@
         <&zip_xy_scaler 4 5>,
         <&zip_temp_layer 6 0>;
 
-    window_layer_gesture {
-        layers = <8>;
-        input-processors = <
-            &zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)
-            &window_gesture
-            &zip_xy_scaler 0 1
-        >;
-    };
-
     pan_scroll {
         layers = <4>;
         input-processors = <
@@ -97,40 +87,6 @@
 };
 
 / {
-    window_gesture: window_gesture {
-        compatible = "zmk,input-processor-mouse-gesture";
-        #input-processor-cells = <0>;
-        mac-layer = <1>;
-        stroke-size = <100>;
-        movement-threshold = <6>;
-        gesture-cooldown-ms = <250>;
-        enable-eager-mode;
-
-        snap_left {
-            pattern = <GESTURE_LEFT>;
-            win-bindings = <&kp LG(LEFT)>;
-            mac-bindings = <&kp LG(LEFT)>;
-        };
-
-        snap_right {
-            pattern = <GESTURE_RIGHT>;
-            win-bindings = <&kp LG(RIGHT)>;
-            mac-bindings = <&kp LG(RIGHT)>;
-        };
-
-        monitor_previous {
-            pattern = <GESTURE_UP>;
-            win-bindings = <&kp LG(LS(LEFT))>;
-            mac-bindings = <&kp LG(UP)>;
-        };
-
-        monitor_next {
-            pattern = <GESTURE_DOWN>;
-            win-bindings = <&kp LG(LS(RIGHT))>;
-            mac-bindings = <&kp LG(DOWN)>;
-        };
-    };
-
     pan_direction: pan_direction {
         compatible = "custom,input-processor-pan-direction";
         #input-processor-cells = <0>;
@@ -168,7 +124,7 @@
         compatible = "zmk,layer-listeners";
 
         desktop_gesture_auto_toggle {
-            layers = <5 8>;
+            layers = <5>;
             bindings = <&mouse_gesture_on &mouse_gesture_off>;
         };
     };
@@ -245,19 +201,38 @@
     };
 
     behaviors {
-        space_window_win: space_window_win {
-            compatible = "zmk,behavior-mod-morph";
+        window_up: window_up {
+            compatible = "custom,behavior-os-key";
             #binding-cells = <0>;
-            bindings = <&lt 8 SPACE>, <&kp LG(UP)>;
-            mods = <(MOD_LSFT | MOD_RSFT)>;
+            mac-layer = <1>;
+            win-keycode = <LG(LS(LEFT))>;
+            mac-keycode = <LG(UP)>;
         };
 
-        space_window_mac: space_window_mac {
-            compatible = "zmk,behavior-mod-morph";
+        window_left: window_left {
+            compatible = "custom,behavior-os-key";
             #binding-cells = <0>;
-            bindings = <&lt 8 SPACE>, <&kp LG(ENTER)>;
-            mods = <(MOD_LSFT | MOD_RSFT)>;
+            mac-layer = <1>;
+            win-keycode = <LG(LEFT)>;
+            mac-keycode = <LG(LEFT)>;
         };
+
+        window_down: window_down {
+            compatible = "custom,behavior-os-key";
+            #binding-cells = <0>;
+            mac-layer = <1>;
+            win-keycode = <LG(LS(RIGHT))>;
+            mac-keycode = <LG(DOWN)>;
+        };
+
+        window_right: window_right {
+            compatible = "custom,behavior-os-key";
+            #binding-cells = <0>;
+            mac-layer = <1>;
+            win-keycode = <LG(RIGHT)>;
+            mac-keycode = <LG(RIGHT)>;
+        };
+
 
         /* Consumes rotation without output; an omitted binding would fall
          * through to the WIN/MAC base layer.
@@ -287,7 +262,7 @@
 &kp ESC         &kp Q         &kp W         &kp E      &kp R        &kp T                                 &kp Y  &kp U        &kp I      &kp O    &mt SEMICOLON SQT  &kp BACKSPACE
 &kp TAB         &kp A         &kp S         &kp D      &kp F        &kp G                                 &kp H  &kp J        &kp K      &kp L    &kp P              &kp ENTER
 &kp LEFT_SHIFT  &kp Z         &kp X         &kp C      &kp V        &kp B  &lt 7 PSCRN  &kp LC(N0)  &kp N  &kp M        &kp COMMA  &kp DOT  &mt EQUAL MINUS    &kp RSHFT
-&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &space_window_win  &lt 4 LANG2  &mo 5                                 &mo 3  &lt 2 LANG1             &none    &kp SLASH          &kp DELETE
+&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &kp SPACE  &lt 4 LANG2  &mo 5                                 &mo 3  &lt 2 LANG1             &none    &kp SLASH          &kp DELETE
             >;
 
             sensor-bindings =
@@ -301,7 +276,7 @@
 &kp ESC         &kp Q      &kp W         &kp E      &kp R        &kp T                     &kp Y  &kp U        &kp I      &kp O    &mt SEMICOLON SQT  &kp BACKSPACE
 &kp TAB         &kp A      &kp S         &kp D      &kp F        &kp G                     &kp H  &kp J        &kp K      &kp L    &kp P              &kp ENTER
 &kp LEFT_SHIFT  &kp Z      &kp X         &kp C      &kp V        &kp B  &lt 7 LG(LS(N3))  &kp LG(N0)  &kp N  &kp M        &kp COMMA  &kp DOT  &mt EQUAL MINUS    &kp RSHFT
-&kp LEFT_GUI    &kp LCTRL  &kp LEFT_ALT  &space_window_mac  &lt 4 LANG2  &mo 5                     &mo 3  &lt 2 LANG1             &none    &kp SLASH          &kp DELETE
+&kp LEFT_GUI    &kp LCTRL  &kp LEFT_ALT  &kp SPACE  &lt 4 LANG2  &mo 5                     &mo 3  &lt 2 LANG1             &none    &kp SLASH          &kp DELETE
             >;
 
             sensor-bindings = <&inc_dec_kp LG(LS(N4)) LG(LS(N9)) &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
@@ -346,8 +321,8 @@
         GESTURE {
             display-name = "GESTURE";
             bindings = <
-&trans  &trans  &trans    &kp UP     &trans     &trans                  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &kp LEFT  &kp DOWN   &kp RIGHT  &trans                  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans    &kp UP     &trans     &trans                  &trans  &trans  &window_up  &trans  &trans  &trans
+&trans  &trans  &kp LEFT  &kp DOWN   &kp RIGHT  &trans                  &trans  &window_left  &window_down  &window_right  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans          &trans  &trans  &trans
             >;
@@ -379,15 +354,5 @@
             sensor-bindings = <&enc_off &enc_off>;
         };
 
-        WINDOW {
-            display-name = "WINDOW";
-            bindings = <
-&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
-&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
-&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
-&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
-            >;
-            sensor-bindings = <&enc_off &enc_off>;
-        };
     };
 };

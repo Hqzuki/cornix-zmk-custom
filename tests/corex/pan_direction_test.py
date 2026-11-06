@@ -62,37 +62,25 @@ int main(void) {
 s = (root / 'config/corex_right.keymap').read_text()
 keymap = s.split('    keymap {')[1]
 assert re.findall(r'^        (\w+) \{', keymap, re.M) == [
-    'WIN', 'MAC', 'NUM', 'FN', 'PAN', 'GESTURE', 'MOUSE', 'BLUETOOTH', 'WINDOW']
+    'WIN', 'MAC', 'NUM', 'FN', 'PAN', 'GESTURE', 'MOUSE', 'BLUETOOTH']
 assert s.count('&lt 4 LANG2') == 2
 assert s.count('&mo 5') == 2 and s.count('&lt 7 ') == 2
 assert '<&zip_temp_layer 6 0>' in s
-assert s.count('layers = <5>') == 1
-assert 'layers = <5 8>' in s
+assert s.count('layers = <5>') == 2
 assert s.count('layer = <4>') == 1
 assert s.index('&pan_direction') < s.index('&scroll_inertia')
 assert 'PAN_MAC' not in s and 'PAN_WIN' not in s
 print('PAN: OS direction, vertical/pointer passthrough and layer references passed')
 
-# WINDOW is appended so existing layer IDs and saved base layers stay valid.
-assert s.count('&space_window_win') == 1
-assert s.count('&space_window_mac') == 1
-assert 'bindings = <&lt 8 SPACE>, <&kp LG(UP)>' in s
-assert 'bindings = <&lt 8 SPACE>, <&kp LG(ENTER)>' in s
-assert s.count('mods = <(MOD_LSFT | MOD_RSFT)>') == 2
-assert 'space_taps_' not in s and 'zmk,behavior-tap-dance' not in s
-assert s.index('window_layer_gesture {') < s.index('pan_scroll {')
-window = s.split('window_gesture: window_gesture {')[1].split('    pan_direction:')[0]
-for pattern, win, mac in [
-    ('LEFT', 'LG(LEFT)', 'LG(LEFT)'),
-    ('RIGHT', 'LG(RIGHT)', 'LG(RIGHT)'),
-    ('UP', 'LG(LS(LEFT))', 'LG(UP)'),
-    ('DOWN', 'LG(LS(RIGHT))', 'LG(DOWN)'),
-]:
-    gesture = re.search(r'pattern = <GESTURE_' + pattern + r'>;(.*?)\n        };', window, re.S).group(1)
-    assert 'win-bindings = <&kp ' + win + '>' in gesture
-    assert 'mac-bindings = <&kp ' + mac + '>' in gesture
-assert 'window_minimize' not in s and 'window_maximize' not in s
+# Window commands now live on GESTURE; Space has no hold or double-tap action.
+assert s.count('&kp SPACE') == 2
+assert 'space_window_' not in s and 'WINDOW {' not in s
+assert 'window_gesture' not in s
 blocks = re.findall(r'^        (\w+) \{.*?bindings = <(.*?)>;', keymap, re.M | re.S)
 for name, bindings in blocks:
     assert len(re.findall(r'&\w+', bindings)) == 49, name
-print('WINDOW: Space hold, snap/monitor shortcuts, Mac Command arrows and 49-key layers passed')
+    if name == 'GESTURE':
+        keys = re.findall(r'&\w+(?:\s+(?!&)\S+)*', bindings)
+        assert [keys[i].strip() for i in [8,19,20,21]] == [
+            '&window_up', '&window_left', '&window_down', '&window_right']
+print('GESTURE: IJKL window commands, ordinary Space and 49-key layers passed')

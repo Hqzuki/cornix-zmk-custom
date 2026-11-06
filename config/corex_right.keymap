@@ -105,28 +105,28 @@
         gesture-cooldown-ms = <250>;
         enable-eager-mode;
 
-        monitor_left {
+        snap_left {
             pattern = <GESTURE_LEFT>;
-            win-bindings = <&kp LG(LS(LEFT))>;
+            win-bindings = <&kp LG(LEFT)>;
             mac-bindings = <&kp LG(LEFT)>;
         };
 
-        monitor_right {
+        snap_right {
             pattern = <GESTURE_RIGHT>;
-            win-bindings = <&kp LG(LS(RIGHT))>;
+            win-bindings = <&kp LG(RIGHT)>;
             mac-bindings = <&kp LG(RIGHT)>;
         };
 
-        window_maximize {
+        monitor_previous {
             pattern = <GESTURE_UP>;
-            win-bindings = <&kp LG(UP)>;
-            mac-bindings = <&none>;
+            win-bindings = <&kp LG(LS(LEFT))>;
+            mac-bindings = <&kp LG(UP)>;
         };
 
-        window_minimize {
+        monitor_next {
             pattern = <GESTURE_DOWN>;
-            win-bindings = <&window_minimize>;
-            mac-bindings = <&none>;
+            win-bindings = <&kp LG(LS(RIGHT))>;
+            mac-bindings = <&kp LG(DOWN)>;
         };
     };
 
@@ -173,15 +173,6 @@
     };
 
     macros {
-        window_minimize: window_minimize {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            display-name = "Minimize window";
-            wait-ms = <80>;
-            tap-ms = <30>;
-            bindings = <&macro_tap>, <&kp LA(SPACE) &kp N>;
-        };
-
         pair_paren: pair_paren {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;

@@ -77,17 +77,17 @@ print('PAN: OS direction, vertical/pointer passthrough and layer references pass
 assert s.count('&lt 8 SPACE') == 2
 assert s.index('window_layer_gesture {') < s.index('pan_scroll {')
 window = s.split('window_gesture: window_gesture {')[1].split('    pan_direction:')[0]
-assert 'win-bindings = <&kp LG(LS(LEFT))>' in window
-assert 'win-bindings = <&kp LG(LS(RIGHT))>' in window
-assert 'mac-bindings = <&kp LG(LEFT)>' in window
-assert 'mac-bindings = <&kp LG(RIGHT)>' in window
-assert 'pattern = <GESTURE_UP>' in window
-assert 'win-bindings = <&kp LG(UP)>' in window
-assert 'pattern = <GESTURE_DOWN>' in window
-assert 'win-bindings = <&window_minimize>' in window
-assert window.count('mac-bindings = <&none>') == 2
-assert 'bindings = <&macro_tap>, <&kp LA(SPACE) &kp N>' in s
+for pattern, win, mac in [
+    ('LEFT', 'LG(LEFT)', 'LG(LEFT)'),
+    ('RIGHT', 'LG(RIGHT)', 'LG(RIGHT)'),
+    ('UP', 'LG(LS(LEFT))', 'LG(UP)'),
+    ('DOWN', 'LG(LS(RIGHT))', 'LG(DOWN)'),
+]:
+    gesture = re.search(r'pattern = <GESTURE_' + pattern + r'>;(.*?)\n        };', window, re.S).group(1)
+    assert 'win-bindings = <&kp ' + win + '>' in gesture
+    assert 'mac-bindings = <&kp ' + mac + '>' in gesture
+assert 'window_minimize' not in s and 'window_maximize' not in s
 blocks = re.findall(r'^        (\w+) \{.*?bindings = <(.*?)>;', keymap, re.M | re.S)
 for name, bindings in blocks:
     assert len(re.findall(r'&\w+', bindings)) == 49, name
-print('WINDOW: Space hold, monitor/maximize/minimize shortcuts, Mac Command arrows and 49-key layers passed')
+print('WINDOW: Space hold, snap/monitor shortcuts, Mac Command arrows and 49-key layers passed')

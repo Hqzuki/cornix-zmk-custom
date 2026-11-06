@@ -74,12 +74,12 @@ assert 'PAN_MAC' not in s and 'PAN_WIN' not in s
 print('PAN: OS direction, vertical/pointer passthrough and layer references passed')
 
 # WINDOW is appended so existing layer IDs and saved base layers stay valid.
-assert s.count('&space_window_win 8 0') == 1
-assert s.count('&space_window_mac 8 0') == 1
-assert 'bindings = <&mo>, <&space_taps_win>' in s
-assert 'bindings = <&mo>, <&space_taps_mac>' in s
-assert 'bindings = <&kp SPACE>, <&kp LG(UP)>' in s
-assert 'bindings = <&kp SPACE>, <&kp LG(ENTER)>' in s
+assert s.count('&space_window_win') == 1
+assert s.count('&space_window_mac') == 1
+assert 'bindings = <&lt 8 SPACE>, <&kp LG(UP)>' in s
+assert 'bindings = <&lt 8 SPACE>, <&kp LG(ENTER)>' in s
+assert s.count('mods = <(MOD_LSFT | MOD_RSFT)>') == 2
+assert 'space_taps_' not in s and 'zmk,behavior-tap-dance' not in s
 assert s.index('window_layer_gesture {') < s.index('pan_scroll {')
 window = s.split('window_gesture: window_gesture {')[1].split('    pan_direction:')[0]
 for pattern, win, mac in [

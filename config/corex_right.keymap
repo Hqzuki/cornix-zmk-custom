@@ -60,6 +60,15 @@
         <&zip_xy_scaler 4 5>,
         <&zip_temp_layer 6 0>;
 
+    window_layer_gesture {
+        layers = <8>;
+        input-processors = <
+            &zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)
+            &window_gesture
+            &zip_xy_scaler 0 1
+        >;
+    };
+
     pan_scroll {
         layers = <4>;
         input-processors = <
@@ -82,9 +91,33 @@
             &zip_xy_scaler 0 1
         >;
     };
+
+
 };
 
 / {
+    window_gesture: window_gesture {
+        compatible = "zmk,input-processor-mouse-gesture";
+        #input-processor-cells = <0>;
+        mac-layer = <1>;
+        stroke-size = <100>;
+        movement-threshold = <6>;
+        gesture-cooldown-ms = <250>;
+        enable-eager-mode;
+
+        monitor_left {
+            pattern = <GESTURE_LEFT>;
+            win-bindings = <&kp LG(LS(LEFT))>;
+            mac-bindings = <&kp LG(LEFT)>;
+        };
+
+        monitor_right {
+            pattern = <GESTURE_RIGHT>;
+            win-bindings = <&kp LG(LS(RIGHT))>;
+            mac-bindings = <&kp LG(RIGHT)>;
+        };
+    };
+
     pan_direction: pan_direction {
         compatible = "custom,input-processor-pan-direction";
         #input-processor-cells = <0>;
@@ -122,7 +155,7 @@
         compatible = "zmk,layer-listeners";
 
         desktop_gesture_auto_toggle {
-            layers = <5>;
+            layers = <5 8>;
             bindings = <&mouse_gesture_on &mouse_gesture_off>;
         };
     };
@@ -227,7 +260,7 @@
 &kp ESC         &kp Q         &kp W         &kp E      &kp R        &kp T                                 &kp Y  &kp U        &kp I      &kp O    &mt SEMICOLON SQT  &kp BACKSPACE
 &kp TAB         &kp A         &kp S         &kp D      &kp F        &kp G                                 &kp H  &kp J        &kp K      &kp L    &kp P              &kp ENTER
 &kp LEFT_SHIFT  &kp Z         &kp X         &kp C      &kp V        &kp B  &lt 7 PSCRN  &kp LC(N0)  &kp N  &kp M        &kp COMMA  &kp DOT  &mt EQUAL MINUS    &kp RSHFT
-&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &kp SPACE  &lt 4 LANG2  &mo 5                                 &mo 3  &lt 2 LANG1             &none    &kp SLASH          &kp DELETE
+&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &lt 8 SPACE  &lt 4 LANG2  &mo 5                                 &mo 3  &lt 2 LANG1             &none    &kp SLASH          &kp DELETE
             >;
 
             sensor-bindings =
@@ -241,7 +274,7 @@
 &kp ESC         &kp Q      &kp W         &kp E      &kp R        &kp T                     &kp Y  &kp U        &kp I      &kp O    &mt SEMICOLON SQT  &kp BACKSPACE
 &kp TAB         &kp A      &kp S         &kp D      &kp F        &kp G                     &kp H  &kp J        &kp K      &kp L    &kp P              &kp ENTER
 &kp LEFT_SHIFT  &kp Z      &kp X         &kp C      &kp V        &kp B  &lt 7 LG(LS(N3))  &kp LG(N0)  &kp N  &kp M        &kp COMMA  &kp DOT  &mt EQUAL MINUS    &kp RSHFT
-&kp LEFT_GUI    &kp LCTRL  &kp LEFT_ALT  &kp SPACE  &lt 4 LANG2  &mo 5                     &mo 3  &lt 2 LANG1             &none    &kp SLASH          &kp DELETE
+&kp LEFT_GUI    &kp LCTRL  &kp LEFT_ALT  &lt 8 SPACE  &lt 4 LANG2  &mo 5                     &mo 3  &lt 2 LANG1             &none    &kp SLASH          &kp DELETE
             >;
 
             sensor-bindings = <&inc_dec_kp LG(LS(N4)) LG(LS(N9)) &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
@@ -316,6 +349,17 @@
 &trans       &trans  &trans  &trans  &trans  &trans                  &trans    &trans              &trans    &trans    &trans
             >;
 
+            sensor-bindings = <&enc_off &enc_off>;
+        };
+
+        WINDOW {
+            display-name = "WINDOW";
+            bindings = <
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+            >;
             sensor-bindings = <&enc_off &enc_off>;
         };
     };

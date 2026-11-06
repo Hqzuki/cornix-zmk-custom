@@ -62,12 +62,27 @@ int main(void) {
 s = (root / 'config/corex_right.keymap').read_text()
 keymap = s.split('    keymap {')[1]
 assert re.findall(r'^        (\w+) \{', keymap, re.M) == [
-    'WIN', 'MAC', 'NUM', 'FN', 'PAN', 'GESTURE', 'MOUSE', 'BLUETOOTH']
+    'WIN', 'MAC', 'NUM', 'FN', 'PAN', 'GESTURE', 'MOUSE', 'BLUETOOTH', 'WINDOW']
 assert s.count('&lt 4 LANG2') == 2
 assert s.count('&mo 5') == 2 and s.count('&lt 7 ') == 2
 assert '<&zip_temp_layer 6 0>' in s
-assert s.count('layers = <5>') == 2
+assert s.count('layers = <5>') == 1
+assert 'layers = <5 8>' in s
 assert s.count('layer = <4>') == 1
 assert s.index('&pan_direction') < s.index('&scroll_inertia')
 assert 'PAN_MAC' not in s and 'PAN_WIN' not in s
-print('PAN: OS direction, vertical/pointer passthrough and 8-layer references passed')
+print('PAN: OS direction, vertical/pointer passthrough and layer references passed')
+
+# WINDOW is appended so existing layer IDs and saved base layers stay valid.
+assert s.count('&lt 8 SPACE') == 2
+assert s.index('window_layer_gesture {') < s.index('pan_scroll {')
+window = s.split('window_gesture: window_gesture {')[1].split('    pan_direction:')[0]
+assert 'win-bindings = <&kp LG(LS(LEFT))>' in window
+assert 'win-bindings = <&kp LG(LS(RIGHT))>' in window
+assert 'mac-bindings = <&kp LG(LEFT)>' in window
+assert 'mac-bindings = <&kp LG(RIGHT)>' in window
+assert 'GESTURE_UP' not in window and 'GESTURE_DOWN' not in window
+blocks = re.findall(r'^        (\w+) \{.*?bindings = <(.*?)>;', keymap, re.M | re.S)
+for name, bindings in blocks:
+    assert len(re.findall(r'&\w+', bindings)) == 49, name
+print('WINDOW: Space hold, left/right monitor shortcuts, Mac Command arrows and 49-key layers passed')

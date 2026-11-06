@@ -43,9 +43,9 @@ static int zmk_behavior_invoke_binding(struct zmk_behavior_binding *binding,
     source += '\n#include "' + str(root / 'drivers/keymap/os_key.c') + '"\n'
     source += r'''
 int main(void) {
- const struct os_key_config cfg = {101, 202, 1};
- struct os_key_data data = {0};
- struct device dev = {&cfg, &data};
+ static const struct os_key_config cfg = {101, 202, 1};
+ static struct os_key_data data = {0};
+ static struct device dev = {&cfg, &data};
  current = &dev;
  struct zmk_behavior_binding binding = {"window_left", 0, 0};
  struct zmk_behavior_binding_event event = {19};

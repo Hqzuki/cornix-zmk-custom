@@ -58,37 +58,24 @@
     input-processors =
         <&zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)>,
         <&zip_xy_scaler 4 5>,
-        <&zip_temp_layer 7 0>;
+        <&zip_temp_layer 6 0>;
 
-    pan_win_scroll {
+    pan_scroll {
         layers = <4>;
         input-processors = <
             &zip_xy_transform INPUT_TRANSFORM_X_INVERT
             &zip_axis_lock
             &zip_xy_to_scroll_mapper
+            &pan_direction
 #if defined(CORON_SCROLL_INERTIA)
-            &scroll_inertia_win
-#endif
-            &zip_scroll_scaler 1 12
-        >;
-    };
-
-    pan_mac_scroll {
-        layers = <5>;
-        input-processors = <
-            &zip_xy_transform INPUT_TRANSFORM_X_INVERT
-            &zip_axis_lock
-            &zip_xy_to_scroll_mapper
-            &zip_scroll_transform INPUT_TRANSFORM_X_INVERT
-#if defined(CORON_SCROLL_INERTIA)
-            &scroll_inertia_mac
+            &scroll_inertia
 #endif
             &zip_scroll_scaler 1 12
         >;
     };
 
     desktop_layer_gesture {
-        layers = <6>;
+        layers = <5>;
         input-processors = <
             &zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)
             &zip_mouse_gesture
@@ -98,6 +85,12 @@
 };
 
 / {
+    pan_direction: pan_direction {
+        compatible = "custom,input-processor-pan-direction";
+        #input-processor-cells = <0>;
+        mac-layer = <1>;
+    };
+
     #if defined(CORON_SCROLL_INERTIA)
 
     /* Inertia emits directly to HID: apply direction transforms before it,
@@ -105,7 +98,7 @@
      * Only the right (central) half can emit mouse HID reports.
      */
 
-    scroll_inertia_win: scroll_inertia_win {
+    scroll_inertia: scroll_inertia {
         compatible = "zmk,input-processor-scroll-inertia";
         #input-processor-cells = <0>;
         axis = <0>;
@@ -123,28 +116,13 @@
         span = <5000>;
     };
 
-    scroll_inertia_mac: scroll_inertia_mac {
-        compatible = "zmk,input-processor-scroll-inertia";
-        #input-processor-cells = <0>;
-        axis = <0>;
-        layer = <5>;
-        scale = <1>;
-        scale-div = <12>;
-        start = <16>;
-        move = <32>;
-        stop = <1>;
-        tick = <8>;
-        release = <24>;
-        span = <5000>;
-    };
-
     #endif
 
     layer_listeners {
         compatible = "zmk,layer-listeners";
 
         desktop_gesture_auto_toggle {
-            layers = <6>;
+            layers = <5>;
             bindings = <&mouse_gesture_on &mouse_gesture_off>;
         };
     };
@@ -248,8 +226,8 @@
             bindings = <
 &kp ESC         &kp Q         &kp W         &kp E      &kp R        &kp T                                 &kp Y  &kp U        &kp I      &kp O    &mt SEMICOLON SQT  &kp BACKSPACE
 &kp TAB         &kp A         &kp S         &kp D      &kp F        &kp G                                 &kp H  &kp J        &kp K      &kp L    &kp P              &kp ENTER
-&kp LEFT_SHIFT  &kp Z         &kp X         &kp C      &kp V        &kp B  &lt 8 PSCRN  &kp LC(N0)  &kp N  &kp M        &kp COMMA  &kp DOT  &mt EQUAL MINUS    &kp RSHFT
-&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &kp SPACE  &lt 4 LANG2  &mo 6                                 &mo 3  &lt 2 LANG1             &none    &kp SLASH          &kp DELETE
+&kp LEFT_SHIFT  &kp Z         &kp X         &kp C      &kp V        &kp B  &lt 7 PSCRN  &kp LC(N0)  &kp N  &kp M        &kp COMMA  &kp DOT  &mt EQUAL MINUS    &kp RSHFT
+&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &kp SPACE  &lt 4 LANG2  &mo 5                                 &mo 3  &lt 2 LANG1             &none    &kp SLASH          &kp DELETE
             >;
 
             sensor-bindings =
@@ -262,8 +240,8 @@
             bindings = <
 &kp ESC         &kp Q      &kp W         &kp E      &kp R        &kp T                     &kp Y  &kp U        &kp I      &kp O    &mt SEMICOLON SQT  &kp BACKSPACE
 &kp TAB         &kp A      &kp S         &kp D      &kp F        &kp G                     &kp H  &kp J        &kp K      &kp L    &kp P              &kp ENTER
-&kp LEFT_SHIFT  &kp Z      &kp X         &kp C      &kp V        &kp B  &lt 8 LG(LS(N3))  &kp LG(N0)  &kp N  &kp M        &kp COMMA  &kp DOT  &mt EQUAL MINUS    &kp RSHFT
-&kp LEFT_GUI    &kp LCTRL  &kp LEFT_ALT  &kp SPACE  &lt 5 LANG2  &mo 6                     &mo 3  &lt 2 LANG1             &none    &kp SLASH          &kp DELETE
+&kp LEFT_SHIFT  &kp Z      &kp X         &kp C      &kp V        &kp B  &lt 7 LG(LS(N3))  &kp LG(N0)  &kp N  &kp M        &kp COMMA  &kp DOT  &mt EQUAL MINUS    &kp RSHFT
+&kp LEFT_GUI    &kp LCTRL  &kp LEFT_ALT  &kp SPACE  &lt 4 LANG2  &mo 5                     &mo 3  &lt 2 LANG1             &none    &kp SLASH          &kp DELETE
             >;
 
             sensor-bindings = <&inc_dec_kp LG(LS(N4)) LG(LS(N9)) &inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
@@ -293,20 +271,8 @@
             sensor-bindings = <&enc_off &enc_off>;
         };
 
-        PAN_WIN {
-            display-name = "PAN_WIN";
-            bindings = <
-&trans  &trans  &kp UP    &trans     &trans  &trans                  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &kp LEFT  &kp DOWN  &kp RIGHT  &trans  &trans                  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans          &trans  &trans  &trans
-            >;
-
-            sensor-bindings = <&enc_off &enc_off>;
-        };
-
-        PAN_MAC {
-            display-name = "PAN_MAC";
+        PAN {
+            display-name = "PAN";
             bindings = <
 &trans  &trans  &kp UP    &trans     &trans  &trans                  &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &kp LEFT  &kp DOWN  &kp RIGHT  &trans  &trans                  &trans  &trans  &trans  &trans  &trans  &trans

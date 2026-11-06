@@ -49,7 +49,7 @@ int main(void) {
     struct status_state r = STATUS_STATE_INIT_ROLE(true);
     status_peer(&r, false, 0);
     dark(status_render(&r, 0).inner);
-    status_layer(&r, true, 7);
+    status_layer(&r, true, 6);
     assert(status_profile(&r, 3, false, true, 1000));
     assert(same(status_render(&r, 1000).outer, status_profile_color(3)));
     status_battery(&r, 15, 200000);
@@ -62,17 +62,17 @@ int main(void) {
     status_peer(&l, true, 0);
     assert(status_render(&l, 0).inner.b == 16);
     dark(status_render(&l, 0).outer);
-    for (int k = 0; k < 9; k++) {
+    for (int k = 0; k < 8; k++) {
         r.layer = k;
         assert(status_receive(&l, r.profile, status_sync_flags(&r), 300000 + k));
         struct status_rgb c = status_render(&l, 400000).outer;
-        assert(k == 7 ? !(c.r || c.g || c.b) : (c.r || c.g || c.b)); /* MOUSE dark */
+        assert(k == 6 ? !(c.r || c.g || c.b) : (c.r || c.g || c.b)); /* MOUSE dark */
         assert(same(c, status_layer_color(k)));
     }
     assert(!same(status_layer_color(0), status_layer_color(1)));
-    for (int a = 0; a < 9; a++) {
-        for (int b = a + 1; b < 9; b++) {
-            if (!(a == 4 && b == 5)) { assert(!same(status_layer_color(a), status_layer_color(b))); }
+    for (int a = 0; a < 8; a++) {
+        for (int b = a + 1; b < 8; b++) {
+            assert(!same(status_layer_color(a), status_layer_color(b)));
         }
     }
     assert(!status_receive(&l, 0, 1u << 16, 0));

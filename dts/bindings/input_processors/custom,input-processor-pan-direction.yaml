@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: MIT
+description: Reverse horizontal PAN scrolling when the Mac base layer is active
+compatible: "custom,input-processor-pan-direction"
+include: ip_zero_param.yaml
+properties:
+  mac-layer:
+    type: int
+    required: true

@@ -100,13 +100,12 @@ static inline struct status_rgb status_layer_color(uint8_t layer) {
         {0,0,16},   /* 1 MAC: blue */
         {0,16,0},   /* 2 NUM: green */
         {16,10,0},  /* 3 FN: yellow */
-        {16,0,16},  /* 4 PAN_WIN: magenta */
-        {16,0,16},  /* 5 PAN_MAC: magenta */
-        {0,12,12},  /* 6 GESTURE: cyan */
-        {0,0,0},    /* 7 MOUSE: dark */
-        {10,10,10}, /* 8 BLUETOOTH: white */
+        {16,0,16},  /* 4 PAN: magenta */
+        {0,12,12},  /* 5 GESTURE: cyan */
+        {0,0,0},    /* 6 MOUSE: dark */
+        {10,10,10}, /* 7 BLUETOOTH: white */
     };
-    return layer < 9 ? colors[layer] : (struct status_rgb){0};
+    return layer < 8 ? colors[layer] : (struct status_rgb){0};
 }
 static inline struct status_frame status_render(const struct status_state *s, int64_t now) {
     struct status_frame f = {0};

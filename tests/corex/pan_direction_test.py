@@ -64,7 +64,10 @@ keymap = s.split('    keymap {')[1]
 assert re.findall(r'^        (\w+) \{', keymap, re.M) == [
     'WIN', 'MAC', 'NUM', 'FN', 'PAN', 'GESTURE', 'MOUSE', 'BLUETOOTH']
 assert s.count('&lt 4 LANG2') == 2
-assert s.count('&mo 5') == 2 and s.count('&lt 7 ') == 2
+assert s.count('&mo 5') == 2
+# Keymap Editor may wrap a numeric parameter in parentheses: both are valid DTS.
+bt_layer_taps = re.findall(r'&lt\s+(?:7|\(\s*7\s*\))\s+', s)
+assert len(bt_layer_taps) == 2
 assert '<&zip_temp_layer 6 0>' in s
 assert s.count('layers = <5>') == 2
 assert s.count('layer = <4>') == 1

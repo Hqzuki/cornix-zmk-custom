@@ -5,6 +5,8 @@
 **CoreX右基板 R A14＋PAW3222トラックボールと、純正Cornix左基板**を使うためのZMKファームウェアです。
 右をCentral、左をPeripheralとして動作させます。USB・Bluetooth・ZMK Studioの接続先は右です。
 
+**CoreXなしの純正Cornix左右構成もビルドします。** 右は`cornix_stock_right.uf2`、左は共通の`corex_stock_left.uf2`です。[純正Cornix向け導入・操作](docs/stock-cornix.md)を確認してください。
+
 ## 機能
 
 - PAW3222によるカーソル移動
@@ -26,7 +28,7 @@ pushするとGitHub Actionsでビルドします。[Actions](https://github.com/
 
 ## 開発
 
-`build.yaml`はCoreX構成に必要な成果物だけを生成します。`boards/jzf/cornix/`には純正左とCoreXから参照する共通定義を保持しています。
+`build.yaml`はCoreX構成と純正Cornix左右構成の成果物を生成します。`boards/jzf/cornix/`には純正左右とCoreXから参照する共通定義を保持しています。
 CoreXの基板定義は`boards/jzf/corex/`、センサードライバーは`drivers/corex/`、右のキーマップは`config/corex_right.keymap`です。
 
 CoreX Studio／Vialの設定通信、RMKのジェスチャー設定、トラックポイント、トラックパッドには対応していません。

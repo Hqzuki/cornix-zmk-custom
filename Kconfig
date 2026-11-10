@@ -11,7 +11,7 @@ config COREX_LED_STATUS
 
 config COREX_CORON_KEYMAP
     bool "CoronLP keymap support"
-    default y if BOARD_COREX_RIGHT && ZMK_BLE
+    default y if (BOARD_COREX_RIGHT || BOARD_CORNIX_RIGHT) && ZMK_BLE
 
 config ZMK_DEFAULT_LAYER_MIN_INDEX
     int

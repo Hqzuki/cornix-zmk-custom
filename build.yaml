@@ -27,3 +27,13 @@ include:
   - board: corex_right@7.0.0
     shield: settings_reset
     artifact-name: corex_r_a14_reset_s140v7
+
+  # Pure stock Cornix pair: share corex_stock_left with the CoreX build.
+  - board: cornix_right
+    shield: cornix_indicator
+    snippet: studio-rpc-usb-uart
+    artifact-name: cornix_stock_right
+
+  - board: cornix_right
+    shield: settings_reset
+    artifact-name: cornix_stock_right_reset

@@ -9,3 +9,4 @@ features:
   # - led
 siblings:
   - cornix_left
+  - cornix_right

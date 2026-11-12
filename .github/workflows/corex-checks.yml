@@ -25,8 +25,5 @@ jobs:
         run: python3 tests/corex/os_key_test.py
       - name: Verify pure stock Cornix layout and hardware isolation
         run: python3 tests/corex/stock_cornix_test.py
-      - name: Verify default-layer endpoint routing and persistence
-        run: |
-          cc -std=c11 -Wall -Wextra -Werror tests/corex/endpoint_policy_test.c -o /tmp/corex-endpoint-test
-          /tmp/corex-endpoint-test
-          python3 tests/corex/default_layer_test.py
+      - name: Verify automatic Bluetooth OS detection without persistence
+        run: python3 tests/corex/auto_os_test.py

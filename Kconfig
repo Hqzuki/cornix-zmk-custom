@@ -13,10 +13,14 @@ config COREX_CORON_KEYMAP
     bool "CoronLP keymap support"
     default y if (BOARD_COREX_RIGHT || BOARD_CORNIX_RIGHT) && ZMK_BLE
 
-config ZMK_DEFAULT_LAYER_MIN_INDEX
-    int
-    default 0
+config CORNIX_AUTO_OS
+    bool "Detect Bluetooth host layout automatically"
+    default y if COREX_CORON_KEYMAP && ZMK_SPLIT_ROLE_CENTRAL && !SHIELD_SETTINGS_RESET
+    depends on ZMK_BLE && ZMK_SPLIT_ROLE_CENTRAL
+    select BT_GATT_AUTHORIZATION_CUSTOM
 
-config ZMK_DEFAULT_LAYER_MAX_INDEX
-    int
-    default 1
+config CORNIX_AUTO_OS_SETTLE_MS
+    int "Wait after new Bluetooth fingerprint evidence (ms)"
+    depends on CORNIX_AUTO_OS
+    range 500 5000
+    default 1000

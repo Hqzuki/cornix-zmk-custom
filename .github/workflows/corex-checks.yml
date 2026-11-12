@@ -16,6 +16,7 @@ jobs:
         run: |
           cc -std=c11 -Wall -Wextra -Werror tests/corex/status_test.c -o /tmp/corex-status-test
           /tmp/corex-status-test
+          python3 tests/corex/led_dispatch_test.py
       - name: Verify unified PAN direction and layer references
         run: |
           python3 tests/corex/keymap_checks.py

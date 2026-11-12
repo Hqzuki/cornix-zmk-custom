@@ -34,8 +34,6 @@ struct default_layer_settings_t {
 
 static struct default_layer_settings_t default_layers = {0};
 
-static struct k_work_delayable df_layers_save_work;
-
 /* Resolve after BT_SEL from the active profile directly: the selected
  * endpoint may still reference the previous link or report NONE until paired.
  * USB remains independent when it is the actual output transport. */
@@ -62,11 +60,6 @@ static int layer_endpoint_index(struct zmk_endpoint_instance endpoint) {
 static zmk_keymap_layer_id_t zmk_default_layer_get(struct zmk_endpoint_instance endpoint) {
     int index = layer_endpoint_index(endpoint);
     return index < 0 ? CONFIG_ZMK_DEFAULT_LAYER_MIN_INDEX : default_layers.endpoint_defaults[index];
-}
-
-static void zmk_default_layers_save_state_work(struct k_work *_work) {
-    settings_save_one("default_layer/settings", &default_layers,
-                      sizeof(default_layers));
 }
 
 static int apply_default_layer_config(struct zmk_endpoint_instance endpoint) {
@@ -142,9 +135,6 @@ static int default_layer_init(void) {
         return ret;
     }
 
-    k_work_init_delayable(&df_layers_save_work,
-                          zmk_default_layers_save_state_work);
-
     settings_load_subtree("default_layer");
 
     /* Endpoint events will reapply after transport initialization. */
@@ -164,22 +154,30 @@ static int zmk_default_layer_set(struct zmk_endpoint_instance endpoint,
 
     int index = layer_endpoint_index(endpoint);
     if (index < 0) { return index; }
-    default_layers.endpoint_defaults[index] = layer;
+    uint8_t previous = default_layers.endpoint_defaults[index];
+    if (previous != layer) {
+        default_layers.endpoint_defaults[index] = layer;
+        /* Layout selection is rare and must survive switching power off
+         * immediately. ZMK's general settings debounce defaults to 60 s.
+         * Save before applying; an unchanged selection needs no flash write. */
+        int ret = settings_save_one("default_layer/settings", &default_layers,
+                                    sizeof(default_layers));
+        if (ret < 0) {
+            default_layers.endpoint_defaults[index] = previous;
+            LOG_ERR("Could not save default layer (%d).", ret);
+            return ret;
+        }
+    }
 
     char endpoint_str[ZMK_ENDPOINT_STR_LEN];
     zmk_endpoint_instance_to_str(endpoint, endpoint_str, sizeof(endpoint_str));
     LOG_INF("Updated default layer (%d) for %s.", layer, endpoint_str);
 
     /* Saving a BLE profile while USB is active must not change USB's layout. */
-    int ret = 0;
     if (zmk_endpoint_instance_eq(endpoint, layer_endpoint(false))) {
-        ret = apply_default_layer_config(endpoint);
-        if (ret < 0) { return ret; }
+        return apply_default_layer_config(endpoint);
     }
-
-    ret = k_work_reschedule(&df_layers_save_work,
-                            K_MSEC(CONFIG_ZMK_SETTINGS_SAVE_DEBOUNCE));
-    return MIN(0, ret);
+    return 0;
 }
 
 static int behavior_default_layer_init(const struct device *dev) { return 0; }

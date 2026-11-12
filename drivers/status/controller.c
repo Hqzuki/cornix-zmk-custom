@@ -17,6 +17,7 @@
 #include <zmk/split/central.h>
 #include <zmk/keymap.h>
 #include <zmk/events/ble_active_profile_changed.h>
+#include <zmk/events/layer_state_changed.h>
 #else
 #include <zmk/events/split_peripheral_status_changed.h>
 #endif
@@ -42,11 +43,10 @@ static bool usb_powered(void) {
 static void wake_render(void);
 int corex_status_receive(uint32_t profile, uint32_t flags) {
     k_mutex_lock(&state_lock, K_FOREVER);
-    bool was_active = state.remote_active;
     bool ok = status_receive(&state, profile, flags, k_uptime_get());
-    bool woke = !was_active && state.remote_active;
     k_mutex_unlock(&state_lock);
-    if (woke) { wake_render(); }
+    /* A layer change while already active must also bypass the frame timer. */
+    if (ok) { wake_render(); }
     return ok ? 0 : -EINVAL;
 }
 
@@ -121,11 +121,6 @@ static void render(struct k_work *work) {
     k_mutex_lock(&state_lock, K_FOREVER);
     struct status_state snapshot = state;
     k_mutex_unlock(&state_lock);
-    struct status_frame frame = status_render(&snapshot, now);
-    if (ready) { status_backend_write(frame, now); }
-    if (frame.inner.r || frame.inner.g || frame.inner.b ||
-        frame.outer.r || frame.outer.g || frame.outer.b) { last_lit = now; }
-    bool slow = snapshot.idle && !snapshot.powered && now - last_lit >= RENDER_DARK_MS;
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
     /* Retry after discovery/encryption and resync after reconnect. The receiver
      * ignores unchanged state, so retries never restart a visible pattern. */
@@ -140,7 +135,14 @@ static void render(struct k_work *work) {
         next_sync = now + (rc < 0 ? SYNC_RETRY_MS : SYNC_REFRESH_MS);
     }
 #endif
-    k_work_reschedule(&render_work, K_MSEC(slow ? RENDER_SLOW_MS : RENDER_FAST_MS));
+    /* Send first: enabling the local LED rail may sleep for 10 ms. */
+    struct status_frame frame = status_render(&snapshot, now);
+    if (ready) { status_backend_write(frame, now); }
+    if (frame.inner.r || frame.inner.g || frame.inner.b ||
+        frame.outer.r || frame.outer.g || frame.outer.b) { last_lit = now; }
+    bool slow = snapshot.idle && !snapshot.powered && now - last_lit >= RENDER_DARK_MS;
+    /* Keep an immediate update queued by an event during this render. */
+    k_work_schedule(&render_work, K_MSEC(slow ? RENDER_SLOW_MS : RENDER_FAST_MS));
 }
 static int status_event(const zmk_event_t *eh) {
     int64_t now = k_uptime_get();
@@ -165,6 +167,12 @@ static int status_event(const zmk_event_t *eh) {
 ZMK_LISTENER(corex_led_status, status_event);
 ZMK_SUBSCRIPTION(corex_led_status, zmk_battery_state_changed);
 ZMK_SUBSCRIPTION(corex_led_status, zmk_activity_state_changed);
+#if IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
+/* Re-read the highest active layer and sync on press AND release, rather
+ * than discovering the change at the next 33 ms animation tick. */
+ZMK_SUBSCRIPTION(corex_led_status, zmk_layer_state_changed);
+ZMK_SUBSCRIPTION(corex_led_status, zmk_ble_active_profile_changed);
+#endif
 #if !IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
 ZMK_SUBSCRIPTION(corex_led_status, zmk_split_peripheral_status_changed);
 #else

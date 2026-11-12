@@ -38,12 +38,17 @@ int main(void) {
         struct status_rgb c = status_render(&s, t).outer;
         assert(same(c, status_profile_color(p)));
         for (int q = 0; q < p; q++) { assert(!same(c, status_profile_color(q))); }
-        dark(status_render(&s, t+400).outer);
+        assert(same(status_render(&s, t+400).outer, c));
         assert(!status_profile(&s, p, false, true, t+500));
         assert(s.profile_since == t);
-        dark(status_render(&s, t+10000).outer);
+        assert(same(status_render(&s, t+10000).outer, c));
         status_profile(&s, p, true, false, t+11000);
-        dark(status_render(&s, t+11600).outer);
+        assert(same(status_render(&s, t+11600).outer, c));
+        s.idle = true;
+        assert(same(status_render(&s, t+1000000).outer, c));
+        s.idle = false;
+        status_profile(&s, p, false, false, t+12000);
+        assert(same(status_render(&s, t+13000).outer, c));
     }
     /* Right (central): outer = host profile, inner = own battery only. */
     struct status_state r = STATUS_STATE_INIT_ROLE(true);
@@ -79,12 +84,12 @@ int main(void) {
     assert(!status_receive(&l, 256, 0, 0));
     assert(status_receive(&l, 0, 1, 500000));
     dark(status_render(&l, 500000).outer);
-    /* Idle: outer dark on both halves, battery/charging still shown inside;
+    /* Idle: right profile stays on, left layer goes dark; battery/charging inside;
      * the left wakes on right activity. */
     status_battery(&r, 15, 600000);
     r.idle = true;
     assert(status_render(&r, 600000).inner.r == 16);
-    dark(status_render(&r, 600000).outer);
+    assert(same(status_render(&r, 600000).outer, status_profile_color(3)));
     status_battery(&r, 50, 601200);
     assert(status_render(&r, 603000).inner.g > 0); /* still charging (powered) */
     status_peer(&l, false, 600000);
@@ -101,5 +106,5 @@ int main(void) {
     assert(l.remote_active);
     l.idle = false;
     assert(same(status_render(&l, 601000).outer, status_layer_color(2)));
-    puts("LED patterns: peer timing, priority, battery, charging (breath until full, then steady), five profile colors, sync dedup, layer sync, left layer colors and idle battery-only display passed");
+    puts("LED patterns: peer timing, battery/charging, persistent profile colors (connected, disconnected and idle), layer sync and left idle display passed");
 }

@@ -27,6 +27,7 @@ CoreXを使わず、純正Cornixの左・右で使う構成です。右がCentra
 CoreX側で保存した変更はCornixへ自動では反映されません。純正Cornixの配列を変えるときは、最初から`cornix_right`を選んで編集してください。
 
 - WIN／MAC、NUM、FN、PAN、GESTURE、MOUSE、BLUETOOTH、NAVの9レイヤーです。
+- WIN／MACともBackspaceは1回押しでBackspace、200ms以内の2度押しでDeleteです。1回押しの出力にも最大約200msの判定待ちがあります。右下端は短押しスラッシュ、長押し右Shiftです。
 - NUM／FNの数字・Fキー・記号・括弧マクロは、左手側へ移し、数字・Fキーは左から昇順、記号は元の右手側配列を左右反転して配置しています。数字は上から`1 2 3`／`4 5 6`／`7 8 9`／`透過 透過 0`、Fキーは`F1 F2 F3`／`F4 F5 F6`／`F7 F8 F9`／`F10 F11 F12`の並びです。右手の親指でレイヤーを呼び出し、左手で入力します。
 - 左LANG2、右LANG1、短押しSpaceを使えます。矢印とWindow操作はSpace長押しのNAVへまとめています。PAN／GESTUREのキーは基本配列へ透過します。
 - Space長押し中はNAV（8）です。E／S／D／Fを1回押すと↑／←／↓／→、素早く2回押すと同方向のWindow操作になります。2回押し判定は200msで、1回押しの出力にも最大約200msの待ちがあります。Shift＋矢印の範囲選択は、矢印が出るまでShiftを押し続けてください。詳細は[Space長押しのNAVレイヤー](corex.md#space長押しのnavレイヤー)を参照してください。

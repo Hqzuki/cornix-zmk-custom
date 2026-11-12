@@ -1,4 +1,5 @@
-name: Build ZMK firmware
+name: Firmware build (UF2)
+run-name: "UF2ビルド · ${{ github.ref_name }}"
 on:
   workflow_dispatch:
   push:

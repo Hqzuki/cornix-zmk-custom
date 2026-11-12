@@ -1,4 +1,5 @@
-name: CoreX transport checks
+name: Tests (no UF2)
+run-name: "テスト（UF2なし） · ${{ github.ref_name }}"
 on:
   push:
   pull_request:

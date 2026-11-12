@@ -1,4 +1,5 @@
 /* Stock Cornix, 49 keys (unused lower-right switch omitted). Right central; no trackball hardware. */
+
 #include <dt-bindings/zmk/input_transform.h>
 #include <input/processors.dtsi>
 #include <behaviors.dtsi>
@@ -49,6 +50,7 @@
 
         /* Keep legacy macro node names so existing Studio bindings resolve.
          * All five now select only a Bluetooth slot; OS is always automatic. */
+
         bt0_mac: bt0_mac {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
@@ -124,6 +126,7 @@
         };
 
         /* NAV: single tap = arrow, double tap = OS-specific Window action. */
+
         nav_up: nav_up {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
@@ -178,10 +181,10 @@
         WIN {
             display-name = "WIN";
             bindings = <
-&kp ESC         &kp Q         &kp W         &kp E      &kp R        &kp T                           &kp Y  &kp U        &kp I      &kp O    &mt SEMICOLON SQT  &kp BACKSPACE
-&kp TAB         &kp A         &kp S         &kp D      &kp F        &kp G                           &kp H  &kp J        &kp K      &kp L    &mt MINUS P         &kp ENTER
-&kp LEFT_SHIFT  &kp Z         &kp X         &kp C      &kp V        &kp B  &lt 7 PSCRN  &lt 7 LC(N0)  &kp N  &kp M        &kp COMMA  &kp DOT  &mt EQUAL UP_ARROW  &mt RSHFT SLASH
-&kp LCTRL  &kp LEFT_WIN  &kp LEFT_ALT  &lt 8 SPACE  &lt 4 LANG2  &mo 5  &mo 3  &lt 2 LANG1  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW
+&kp ESC         &kp Q         &kp W         &kp E        &kp R        &kp T                               &kp Y  &kp U        &kp I      &kp O           &mt SEMICOLON SQT   &kp BACKSPACE
+&kp TAB         &kp A         &kp S         &kp D        &kp F        &kp G                               &kp H  &kp J        &kp K      &kp L           &mt MINUS P         &kp ENTER
+&kp LEFT_SHIFT  &kp Z         &kp X         &kp C        &kp V        &kp B  &lt 7 PSCRN  &lt (7) LC(N0)  &kp N  &kp M        &kp COMMA  &kp DOT         &mt EQUAL UP_ARROW  &mt SLASH DELETE
+&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &lt 8 SPACE  &lt 4 LANG2  &mo 5                               &mo 3  &lt 2 LANG1             &kp LEFT_ARROW  &kp DOWN_ARROW      &kp RIGHT_ARROW
             >;
 
             sensor-bindings =
@@ -192,10 +195,10 @@
         MAC {
             display-name = "MAC";
             bindings = <
-&kp ESC         &kp Q      &kp W         &kp E      &kp R        &kp T                                  &kp Y  &kp U        &kp I      &kp O      &mt SEMICOLON SQT  &kp BACKSPACE
-&kp TAB         &kp A      &kp S         &kp D      &kp F        &kp G                                  &kp H  &kp J        &kp K      &kp L      &kp P              &kp ENTER
-&kp LEFT_SHIFT  &kp Z      &kp X         &kp C      &kp V        &kp B  &lt (7) LG(LS(N3))  &lt 7 LG(N0)  &kp N  &kp M        &kp COMMA  &kp DOT    &mt MINUS EQUAL    &mt RSHFT SLASH
-&kp LEFT_GUI  &kp LCTRL  &kp LEFT_ALT  &lt 8 SPACE  &lt 4 LANG2  &mo 5  &mo 3  &lt 2 LANG1  &kp MINUS  &kp EQUAL  &kp DELETE
+&kp ESC         &kp Q      &kp W         &kp E        &kp R        &kp T                                      &kp Y  &kp U        &kp I      &kp O      &mt SEMICOLON SQT  &kp BACKSPACE
+&kp TAB         &kp A      &kp S         &kp D        &kp F        &kp G                                      &kp H  &kp J        &kp K      &kp L      &kp P              &kp ENTER
+&kp LEFT_SHIFT  &kp Z      &kp X         &kp C        &kp V        &kp B  &lt (7) LG(LS(N3))  &lt (7) LG(N0)  &kp N  &kp M        &kp COMMA  &kp DOT    &mt MINUS EQUAL    &mt RSHFT SLASH
+&kp LEFT_GUI    &kp LCTRL  &kp LEFT_ALT  &lt 8 SPACE  &lt 4 LANG2  &mo 5                                      &mo 3  &lt 2 LANG1             &kp MINUS  &kp EQUAL          &kp DELETE
             >;
 
             sensor-bindings = <&inc_dec_kp LG(LS(N7)) LG(LS(N9)) &inc_dec_kp LG(LS(EQUAL)) LG(MINUS)>;
@@ -204,10 +207,10 @@
         NUM {
             display-name = "NUM";
             bindings = <
-&kp N1  &kp N2  &kp N3  &pair_square  &pair_paren  &kp BACKSLASH  &trans  &trans  &trans  &trans  &trans  &trans
-&kp N4  &kp N5  &kp N6  &kp TILDE  &kp UNDERSCORE  &pair_brace  &trans  &trans  &trans  &trans  &trans  &trans
-&kp N7  &kp N8  &kp N9  &kp GRAVE  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &kp N0  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&kp N1  &kp N2  &kp N3  &pair_square  &pair_paren     &kp BACKSLASH                  &trans  &trans  &trans  &trans  &trans  &trans
+&kp N4  &kp N5  &kp N6  &kp TILDE     &kp UNDERSCORE  &pair_brace                    &trans  &trans  &trans  &trans  &trans  &trans
+&kp N7  &kp N8  &kp N9  &kp GRAVE     &trans          &trans         &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &kp N0  &trans        &trans          &trans                         &trans  &trans          &trans  &trans  &trans
             >;
 
             sensor-bindings = <&enc_off &enc_off>;
@@ -216,10 +219,10 @@
         FN {
             display-name = "FN";
             bindings = <
-&kp F1  &kp F2  &kp F3  &pair_square  &pair_paren  &kp BACKSLASH  &trans  &trans  &trans  &trans  &trans  &trans
-&kp F4  &kp F5  &kp F6  &kp TILDE  &kp UNDERSCORE  &pair_brace  &trans  &trans  &trans  &trans  &trans  &trans
-&kp F7  &kp F8  &kp F9  &kp GRAVE  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&kp F10  &kp F11  &kp F12  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&kp F1   &kp F2   &kp F3   &pair_square  &pair_paren     &kp BACKSLASH                  &trans  &trans  &trans  &trans  &trans  &trans
+&kp F4   &kp F5   &kp F6   &kp TILDE     &kp UNDERSCORE  &pair_brace                    &trans  &trans  &trans  &trans  &trans  &trans
+&kp F7   &kp F8   &kp F9   &kp GRAVE     &trans          &trans         &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&kp F10  &kp F11  &kp F12  &trans        &trans          &trans                         &trans  &trans          &trans  &trans  &trans
             >;
 
             sensor-bindings = <&enc_off &enc_off>;
@@ -228,10 +231,10 @@
         PAN {
             display-name = "PAN";
             bindings = <
-&trans  &trans  &trans    &trans    &trans     &trans                  &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans    &trans    &trans     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans          &trans  &trans  &trans
             >;
 
             sensor-bindings = <&enc_off &enc_off>;
@@ -240,10 +243,10 @@
         GESTURE {
             display-name = "GESTURE";
             bindings = <
-&trans  &trans  &trans    &trans    &trans     &trans                  &trans  &trans        &trans    &trans         &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans    &trans    &trans     &trans  &trans  &trans  &trans  &trans        &trans        &trans         &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans          &trans  &trans  &trans
             >;
 
             sensor-bindings = <&enc_off &enc_off>;
@@ -255,7 +258,7 @@
 &trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans    &trans    &trans    &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans                  &trans  &mkp MB1  &mkp MB3  &mkp MB2  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &mkp MB4  &mkp MB5  &trans    &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans              &trans    &trans  &trans
             >;
 
             /* No sensor-bindings: knobs fall through to the WIN/MAC base layer. */
@@ -264,10 +267,10 @@
         BLUETOOTH {
             display-name = "BLUETOOTH";
             bindings = <
-&bootloader  &trans  &trans  &trans  &trans  &trans                  &bt0_mac  &bt1_win  &bt2_win  &bt3_win  &bt4_win  &bootloader
-&trans       &trans  &trans  &trans  &trans  &trans                  &trans    &trans    &trans    &trans    &trans    &trans
-&trans       &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans    &trans    &trans    &trans    &trans    &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &bt BT_CLR  &bt BT_CLR_ALL
+&bootloader  &trans  &trans  &trans  &trans  &trans                  &bt0_mac  &bt1_win  &bt2_win  &bt3_win  &bt4_win    &bootloader
+&trans       &trans  &trans  &trans  &trans  &trans                  &trans    &trans    &trans    &trans    &trans      &trans
+&trans       &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans    &trans    &trans    &trans    &trans      &trans
+&trans       &trans  &trans  &trans  &trans  &trans                  &trans    &trans              &trans    &bt BT_CLR  &bt BT_CLR_ALL
             >;
 
             sensor-bindings = <&enc_off &enc_off>;
@@ -276,10 +279,10 @@
         NAV {
             display-name = "NAV";
             bindings = <
-&trans  &trans  &trans  &nav_up  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &nav_left  &nav_down  &nav_right  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans     &nav_up    &trans      &trans                  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &nav_left  &nav_down  &nav_right  &trans                  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans     &trans     &trans      &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans     &trans     &trans      &trans                  &trans  &trans          &trans  &trans  &trans
             >;
 
             sensor-bindings = <&enc_off &enc_off>;

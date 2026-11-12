@@ -45,8 +45,9 @@ int main(void) {
         status_profile(&s, p, true, false, t+11000);
         assert(same(status_render(&s, t+11600).outer, c));
         s.idle = true;
-        assert(same(status_render(&s, t+1000000).outer, c));
+        dark(status_render(&s, t+1000000).outer);
         s.idle = false;
+        assert(same(status_render(&s, t+1000001).outer, c)); /* wake: no 600 ms cutoff */
         status_profile(&s, p, false, false, t+12000);
         assert(same(status_render(&s, t+13000).outer, c));
     }
@@ -84,12 +85,12 @@ int main(void) {
     assert(!status_receive(&l, 256, 0, 0));
     assert(status_receive(&l, 0, 1, 500000));
     dark(status_render(&l, 500000).outer);
-    /* Idle: right profile stays on, left layer goes dark; battery/charging inside;
+    /* Idle: both outer LEDs go dark; battery/charging stays inside;
      * the left wakes on right activity. */
     status_battery(&r, 15, 600000);
     r.idle = true;
     assert(status_render(&r, 600000).inner.r == 16);
-    assert(same(status_render(&r, 600000).outer, status_profile_color(3)));
+    dark(status_render(&r, 600000).outer);
     status_battery(&r, 50, 601200);
     assert(status_render(&r, 603000).inner.g > 0); /* still charging (powered) */
     status_peer(&l, false, 600000);
@@ -102,9 +103,10 @@ int main(void) {
     l.idle = true;
     dark(status_render(&l, 600000).outer);
     r.idle = false;
+    assert(same(status_render(&r, 601000).outer, status_profile_color(3)));
     assert(status_receive(&l, r.profile, status_sync_flags(&r), 601000));
     assert(l.remote_active);
     l.idle = false;
     assert(same(status_render(&l, 601000).outer, status_layer_color(2)));
-    puts("LED patterns: peer timing, battery/charging, persistent profile colors (connected, disconnected and idle), layer sync and left idle display passed");
+    puts("LED patterns: battery/charging, active profile colors, idle blackout and wake restoration on both halves passed");
 }

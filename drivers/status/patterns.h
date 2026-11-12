@@ -21,8 +21,8 @@ struct status_state {
      * left shows the central's active layer on its outer LED (layer_outer). */
     bool hide_peer, layer_outer, layer_valid;
     uint8_t layer;
-    /* ZMK idle (no keys, encoder or trackball): the left layer LED goes dark;
-     * the right profile LED stays on. The left counts as active while either half
+    /* ZMK idle (no keys, encoder or trackball): layer/profile LEDs go dark.
+     * The left counts as active while either half
      * is active (remote_active from the right). */
     bool idle, remote_active;
 };
@@ -131,8 +131,8 @@ static inline struct status_frame status_render(const struct status_state *s, in
     }
     if (s->layer_outer) {
         if (!s->idle && s->layer_valid) { f.outer = status_layer_color(s->layer); }
-    } else if (s->profile_valid) {
-        /* Show the selected slot continuously, including idle/disconnected.
+    } else if (!s->idle && s->profile_valid) {
+        /* Show the selected slot continuously while active, even disconnected.
          * This indicates selection, not whether the host link is up. */
         f.outer = status_profile_color(s->profile);
     }

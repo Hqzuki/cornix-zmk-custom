@@ -21,7 +21,11 @@
 / {
     chosen {
         zmk,kscan = &kscan0;
-		zmk,physical-layout = &layout_50;
+#if defined(CORNIX_STOCK_RIGHT)
+        zmk,physical-layout = &layout_49;
+#else
+        zmk,physical-layout = &layout_50;
+#endif
     };
 
 

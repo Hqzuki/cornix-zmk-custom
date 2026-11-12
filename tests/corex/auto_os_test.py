@@ -131,8 +131,10 @@ int main(void) {
  tick(5999); assert(!mac_active);
  inject_event=true; tick(6000); assert(mac_active && num_active);
  unsigned calls=layer_calls;
- read_attr(&apple,BT_UUID_HIDS_INFO); tick(8000); /* finalized once per connection */
- assert(mac_active && layer_calls==calls);
+ tick(7000); read_attr(&apple,BT_UUID_HIDS_INFO); /* late discovery re-arms */
+ assert(mac_active && layer_calls==calls); /* retain prior layout while waiting */
+ tick(7999); assert(mac_active);
+ tick(8000); assert(!mac_active && layer_calls==calls+1);
 
  /* Same radio object reconnects to Windows: discard Apple evidence immediately. */
  disconnect(&apple); assert(!mac_active && apple.refs==1);
@@ -158,17 +160,24 @@ int main(void) {
  disconnect(&win); assert(!mac_active && win.refs==1);
  active_conn=&win; connect(&win); tick(20000); assert(!mac_active); /* no saved guess */
 
- /* Partial reads must not be guessed as Apple; Android maps to WIN. */
+ /* Recorded Mac trace: DIS PnP ID only, no HIDS access in the capture window. */
  read_attr(&win,BT_UUID_DIS_PNP_ID); tick(21000);
- assert(!mac_active && classify(sessions[1].reads)==OS_UNKNOWN);
+ assert(mac_active && classify(sessions[1].reads)==OS_APPLE);
+ /* New evidence long after a guess must still refine it. */
+ tick(121000); read_attr(&win,BT_UUID_GAP_APPEARANCE);
+ assert(mac_active); tick(121999); assert(mac_active);
+ tick(122000); assert(!mac_active && classify(sessions[1].reads)==OS_WIN);
+ /* Appearance alone has no Apple evidence; Android maps to WIN. */
+ disconnect(&win); connect(&win); read_attr(&win,BT_UUID_GAP_APPEARANCE);
+ tick(123000); assert(!mac_active && classify(sessions[1].reads)==OS_UNKNOWN);
  disconnect(&win); connect(&win);
  read_attr(&win,BT_UUID_HIDS_REPORT_MAP); read_attr(&win,BT_UUID_HIDS_INFO);
- tick(22000); assert(!mac_active && classify(sessions[1].reads)==OS_WIN);
+ tick(124000); assert(!mac_active && classify(sessions[1].reads)==OS_WIN);
 
  /* Disconnect before settling, then reuse slot: no stale delayed Apple result. */
  disconnect(&win); connect(&win); read_attr(&win,BT_UUID_HIDS_REPORT_MAP);
- tick(22500); disconnect(&win); connect(&win);
- tick(24000); assert(!mac_active && !sessions[1].settled);
+ tick(124500); disconnect(&win); connect(&win);
+ tick(126000); assert(!mac_active && !sessions[1].settled);
  disconnect(&win); disconnect(&split);
  assert(apple.refs==1 && win.refs==1 && split.refs==1 && num_active);
  puts("Auto OS: settle timing, Apple/WIN/unknown, reconnect, host isolation, split exclusion, USB and reference lifecycle passed");

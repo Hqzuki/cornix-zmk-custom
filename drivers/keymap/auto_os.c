@@ -31,6 +31,7 @@ struct host_session {
     struct bt_conn *conn; /* retained only until disconnect */
     uint8_t reads;
     bool settled;
+    enum host_os os;
     int64_t deadline;
 };
 static struct host_session sessions[CONFIG_BT_MAX_CONN];
@@ -43,10 +44,12 @@ static enum host_os classify(uint8_t reads) {
     if ((reads & (REPORT_MAP | HID_INFO)) == (REPORT_MAP | HID_INFO)) {
         return OS_WIN; /* Android uses the same base modifier layout. */
     }
-    if (reads & REPORT_MAP) {
-        return OS_APPLE; /* macOS / iOS / iPadOS share this pattern. */
+    if (reads & (REPORT_MAP | PNP_ID)) {
+        /* Recorded macOS capture read only DIS PnP ID (no Report Map).
+         * iOS read only Report Map. Evaluate these after the WIN rules. */
+        return OS_APPLE;
     }
-    return OS_UNKNOWN; /* Partial PnP/Appearance alone is not Apple evidence. */
+    return OS_UNKNOWN;
 }
 
 static void update_layout(struct k_work *work);
@@ -58,6 +61,7 @@ static void update_layout(struct k_work *work) {
     int64_t now = k_uptime_get();
     int64_t next = INT64_MAX;
     enum host_os os = OS_UNKNOWN;
+    uint8_t finalized[CONFIG_BT_MAX_CONN] = {0};
     /* ZMK returns a reference, including when this is not the active endpoint. */
     struct bt_conn *active = zmk_ble_active_profile_conn();
     struct zmk_endpoint_instance endpoint = zmk_endpoint_get_selected();
@@ -68,17 +72,25 @@ static void update_layout(struct k_work *work) {
         if (s->reads && !s->settled) {
             if (now >= s->deadline) {
                 s->settled = true;
+                s->os = classify(s->reads);
+                finalized[i] = s->reads;
             } else if (s->deadline < next) {
                 next = s->deadline;
             }
         }
-        if (s->conn == active && s->settled &&
+        if (s->conn == active &&
             endpoint.transport == ZMK_TRANSPORT_BLE) {
-            os = classify(s->reads);
+            os = s->os;
         }
     }
     k_spin_unlock(&session_lock, key);
     if (active) { bt_conn_unref(active); }
+    for (size_t i = 0; i < ARRAY_SIZE(finalized); i++) {
+        if (finalized[i]) {
+            LOG_INF("Bluetooth OS evidence: conn=%u reads=0x%02x result=%d",
+                    (unsigned)i, (unsigned)finalized[i], classify(finalized[i]));
+        }
+    }
 
     /* WIN until there is a settled Apple fingerprint. Never save a guess. */
     bool mac = os == OS_APPLE;
@@ -140,8 +152,11 @@ static bool observe_read(struct bt_conn *conn, const struct bt_gatt_attr *attr) 
     bool changed = false;
     k_spinlock_key_t key = k_spin_lock(&session_lock);
     struct host_session *s = &sessions[index];
-    if (s->conn == conn && !s->settled && !(s->reads & bit)) {
+    if (s->conn == conn && !(s->reads & bit)) {
         s->reads |= bit;
+        /* Keep observing throughout the connection. Late discovery must be
+         * able to refine a guess, without repeated polls restarting it. */
+        s->settled = false;
         s->deadline = k_uptime_get() + CONFIG_CORNIX_AUTO_OS_SETTLE_MS;
         changed = true;
     }

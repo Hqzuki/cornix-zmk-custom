@@ -238,6 +238,7 @@
         };
 
         /* NAV: single tap = arrow, double tap = OS-specific Window action. */
+
         nav_up: nav_up {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
@@ -292,10 +293,10 @@
         WIN {
             display-name = "WIN";
             bindings = <
-&kp ESC         &kp Q         &kp W         &kp E      &kp R        &kp T                               &kp Y  &kp U        &kp I      &kp O      &mt SEMICOLON SQT  &kp BACKSPACE
-&kp TAB         &kp A         &kp S         &kp D      &kp F        &kp G                               &kp H  &kp J        &kp K      &kp L      &kp P              &kp ENTER
-&kp LEFT_SHIFT  &kp Z         &kp X         &kp C      &kp V        &kp B  &lt 7 PSCRN  &lt (7) LC(N0)  &kp N  &kp M        &kp COMMA  &kp DOT    &mt MINUS EQUAL    &mt RSHFT SLASH
-&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &lt 8 SPACE  &lt 4 LANG2  &mo 5                               &mo 3  &lt 2 LANG1             &kp MINUS  &kp EQUAL          &kp DELETE
+&kp ESC         &kp Q         &kp W         &kp E        &kp R        &kp T                               &kp Y  &kp U        &kp I      &kp O           &mt SEMICOLON SQT   &kp BACKSPACE
+&kp TAB         &kp A         &kp S         &kp D        &kp F        &kp G                               &kp H  &kp J        &kp K      &kp L           &mt MINUS P         &kp ENTER
+&kp LEFT_SHIFT  &kp Z         &kp X         &kp C        &kp V        &kp B  &lt 7 PSCRN  &lt (7) LC(N0)  &kp N  &kp M        &kp COMMA  &kp DOT         &mt EQUAL UP_ARROW  &mt RSHFT SLASH
+&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &lt 8 SPACE  &lt 4 LANG2  &mo 5                               &mo 3  &lt 2 LANG1             &kp LEFT_ARROW  &kp DOWN_ARROW      &kp RIGHT_ARROW
             >;
 
             sensor-bindings =
@@ -306,9 +307,9 @@
         MAC {
             display-name = "MAC";
             bindings = <
-&kp ESC         &kp Q      &kp W         &kp E      &kp R        &kp T                                      &kp Y  &kp U        &kp I      &kp O      &mt SEMICOLON SQT  &kp BACKSPACE
-&kp TAB         &kp A      &kp S         &kp D      &kp F        &kp G                                      &kp H  &kp J        &kp K      &kp L      &kp P              &kp ENTER
-&kp LEFT_SHIFT  &kp Z      &kp X         &kp C      &kp V        &kp B  &lt (7) LG(LS(N3))  &lt (7) LG(N0)  &kp N  &kp M        &kp COMMA  &kp DOT    &mt MINUS EQUAL    &mt RSHFT SLASH
+&kp ESC         &kp Q      &kp W         &kp E        &kp R        &kp T                                      &kp Y  &kp U        &kp I      &kp O      &mt SEMICOLON SQT  &kp BACKSPACE
+&kp TAB         &kp A      &kp S         &kp D        &kp F        &kp G                                      &kp H  &kp J        &kp K      &kp L      &kp P              &kp ENTER
+&kp LEFT_SHIFT  &kp Z      &kp X         &kp C        &kp V        &kp B  &lt (7) LG(LS(N3))  &lt (7) LG(N0)  &kp N  &kp M        &kp COMMA  &kp DOT    &mt MINUS EQUAL    &mt RSHFT SLASH
 &kp LEFT_GUI    &kp LCTRL  &kp LEFT_ALT  &lt 8 SPACE  &lt 4 LANG2  &mo 5                                      &mo 3  &lt 2 LANG1             &kp MINUS  &kp EQUAL          &kp DELETE
             >;
 
@@ -318,10 +319,10 @@
         NUM {
             display-name = "NUM";
             bindings = <
-&kp N1  &kp N2  &kp N3  &pair_square  &pair_paren  &kp BACKSLASH  &trans  &trans  &trans  &trans  &trans  &trans
-&kp N4  &kp N5  &kp N6  &kp TILDE  &kp UNDERSCORE  &pair_brace  &trans  &trans  &trans  &trans  &trans  &trans
-&kp N7  &kp N8  &kp N9  &kp GRAVE  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &kp N0  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&kp N1  &kp N2  &kp N3  &pair_square  &pair_paren     &kp BACKSLASH                  &trans  &trans  &trans  &trans  &trans  &trans
+&kp N4  &kp N5  &kp N6  &kp TILDE     &kp UNDERSCORE  &pair_brace                    &trans  &trans  &trans  &trans  &trans  &trans
+&kp N7  &kp N8  &kp N9  &kp GRAVE     &trans          &trans         &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &kp N0  &trans        &trans          &trans                         &trans  &trans          &trans  &trans  &trans
             >;
 
             sensor-bindings = <&enc_off &enc_off>;
@@ -330,10 +331,10 @@
         FN {
             display-name = "FN";
             bindings = <
-&kp F1  &kp F2  &kp F3  &pair_square  &pair_paren  &kp BACKSLASH  &trans  &trans  &trans  &trans  &trans  &trans
-&kp F4  &kp F5  &kp F6  &kp TILDE  &kp UNDERSCORE  &pair_brace  &trans  &trans  &trans  &trans  &trans  &trans
-&kp F7  &kp F8  &kp F9  &kp GRAVE  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&kp F10  &kp F11  &kp F12  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&kp F1   &kp F2   &kp F3   &pair_square  &pair_paren     &kp BACKSLASH                  &trans  &trans  &trans  &trans  &trans  &trans
+&kp F4   &kp F5   &kp F6   &kp TILDE     &kp UNDERSCORE  &pair_brace                    &trans  &trans  &trans  &trans  &trans  &trans
+&kp F7   &kp F8   &kp F9   &kp GRAVE     &trans          &trans         &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&kp F10  &kp F11  &kp F12  &trans        &trans          &trans                         &trans  &trans          &trans  &trans  &trans
             >;
 
             sensor-bindings = <&enc_off &enc_off>;
@@ -342,10 +343,10 @@
         PAN {
             display-name = "PAN";
             bindings = <
-&trans  &trans  &trans    &trans    &trans     &trans                  &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans    &trans    &trans     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans    &trans    &trans     &trans                  &trans  &trans          &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans          &trans  &trans  &trans
             >;
 
             sensor-bindings = <&enc_off &enc_off>;
@@ -354,10 +355,10 @@
         GESTURE {
             display-name = "GESTURE";
             bindings = <
-&trans  &trans  &trans    &trans    &trans     &trans                  &trans  &trans        &trans    &trans         &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans    &trans    &trans     &trans  &trans  &trans  &trans  &trans        &trans        &trans         &trans  &trans
-&trans  &trans  &trans    &trans    &trans     &trans                  &trans  &trans                      &trans         &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans                  &trans  &trans          &trans  &trans  &trans
             >;
 
             sensor-bindings = <&enc_off &enc_off>;
@@ -390,10 +391,10 @@
         NAV {
             display-name = "NAV";
             bindings = <
-&trans  &trans  &trans  &nav_up  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &nav_left  &nav_down  &nav_right  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans     &nav_up    &trans      &trans                  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &nav_left  &nav_down  &nav_right  &trans                  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans     &trans     &trans      &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans     &trans     &trans      &trans                  &trans  &trans          &trans  &trans  &trans
             >;
 
             sensor-bindings = <&enc_off &enc_off>;

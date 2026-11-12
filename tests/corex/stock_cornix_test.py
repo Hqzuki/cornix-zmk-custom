@@ -5,7 +5,7 @@ from pathlib import Path
 from keymap_checks import validate
 root = Path(__file__).resolve().parents[2]
 s = (root/'config/cornix_right.keymap').read_text()
-assert len(validate(s, positions=50)) == 8
+assert len(validate(s, positions=50)) == 9
 assert 'corex_listener' not in s and 'mouse_gesture' not in s
 assert 'zip_temp_layer' not in s and 'paw3222' not in s
 layout = (root/'boards/jzf/cornix/cornix-stock-layouts.dtsi').read_text()

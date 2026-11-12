@@ -17,7 +17,14 @@ CoreXを使わず、純正Cornixの左・右で使う構成です。右がCentra
 
 ## キー配列と操作
 
-`config/cornix_right.keymap`と同じディレクトリの`cornix_right.json`が純正50キー用です。Keymap Editorでは`cornix_right`を選びます。CoreX版とは独立して編集できます。
+`config/cornix_right.keymap`と同じディレクトリの`cornix_right.json`が純正50キー用です。CoreX版とは独立して、左右両方のキーとエンコーダーを編集できます。
+
+1. [Keymap Editor](https://nickcoutsos.github.io/keymap-editor/)を開きます。
+2. 左上の現在のリポジトリ・キーマップ名を押して選択欄を開きます。
+3. Repositoryを`cornix-zmk-custom`、Keyboardを`cornix_right`にします。`corex_right`はCoreX用です。
+4. 配列を編集してSaveすると、`config/cornix_right.keymap`へコミットされ、UF2ビルドが始まります。成功後の`cornix_stock_right.uf2`を右手に書き込みます。
+
+CoreX側で保存した変更はCornixへ自動では反映されません。純正Cornixの配列を変えるときは、最初から`cornix_right`を選んで編集してください。
 
 - WIN／MAC、NUM、FN、PAN、GESTURE、MOUSE、BLUETOOTH、NAVの9レイヤーです。
 - NUM／FNの数字・Fキー・記号・括弧マクロは、左手側へ移し、数字・Fキーは左から昇順、記号は元の右手側配列を左右反転して配置しています。数字は上から`1 2 3`／`4 5 6`／`7 8 9`／`透過 透過 0`、Fキーは`F1 F2 F3`／`F4 F5 F6`／`F7 F8 F9`／`F10 F11 F12`の並びです。右手の親指でレイヤーを呼び出し、左手で入力します。

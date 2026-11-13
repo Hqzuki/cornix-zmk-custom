@@ -86,6 +86,14 @@
     };
 
     behaviors {
+        window_maximize: window_maximize {
+            compatible = "custom,behavior-os-key";
+            #binding-cells = <0>;
+            mac-layer = <1>;
+            win-keycode = <LG(UP)>;
+            mac-keycode = <LG(ENTER)>;
+        };
+
         window_up: window_up {
             compatible = "custom,behavior-os-key";
             #binding-cells = <0>;
@@ -265,7 +273,7 @@
             display-name = "NAV";
             bindings = <
 &none  &none  &none     &nav_up    &none      &none                  &none  &none  &none  &none  &none  &none
-&none  &none  &nav_left  &nav_down  &nav_right  &none                  &none  &none  &none  &none  &none  &none
+&none  &none  &nav_left  &nav_down  &nav_right  &none                  &none  &none  &none  &none  &none  &window_maximize
 &none  &none  &none     &none     &none      &none  &none  &none  &none  &none  &none  &none  &none  &none
 &none  &none  &none     &none     &none      &none                  &none  &none          &none  &none  &none
             >;

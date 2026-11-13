@@ -40,6 +40,20 @@ NUM、FNなどの補助レイヤーはそのままで、MACレイヤー（内部
 MACにならない場合は、PC側の登録削除と該当接続先のペアリング消去後に再ペアリングし、初回の情報読み取りと再接続時の挙動を比較します。
 この処理の実機検証は未実施です。
 
+### iPadなどで誤判定するときの診断
+
+`cornix_stock_right_os_debug.uf2`は純正Cornix右専用のUSBログ診断版です。
+通常版と同じ判定ルールですが、USBはログ出力専用で、キー入力はBluetoothへ送ります。
+Studioは無効です。左手の更新やペアリング消去は不要です。
+
+1. 診断版を右手へ書き込み、右手をMacのUSBにつなぎます。
+2. Macで`ls /dev/cu.usbmodem*`を実行し、表示された右手のポートを`screen /dev/cu.usbmodemXXXXX 115200`で開きます。
+3. ログを開いたまま、iPad側でCornixの接続を一度切り、再接続します。初回登録時と再接続時の違いを調べる場合のみ、該当接続先を消去して再登録します。
+4. `Bluetooth OS host connected`、`Bluetooth OS read`、`Bluetooth OS evidence`の行を確認します。`reads`のビットは`01`=Report Map、`02`=HID Information、`04`=PnP ID、`08`=Appearanceです。`result`は`0`=不明、`1`=WIN、`2`=Appleです。接続行だけでread行がなければ、観測対象の読み取りが得られていません。
+5. 診断後は通常の`cornix_stock_right.uf2`へ戻します。
+
+ログにはBluetooth接続・判定情報が含まれます。診断版は常用せず、通常版を使ってください。
+
 ## 実装
 
 `drivers/keymap/auto_os.c`で、固定済みのZMK／Zephyrが提供するGATT読み取りコールバックを使います。

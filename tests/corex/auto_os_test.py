@@ -23,7 +23,8 @@ STUBS = r'''
 #define CONFIG_APPLICATION_INIT_PRIORITY 90
 #define LOG_MODULE_DECLARE(...)
 #define LOG_ERR(...)
-#define LOG_INF(...)
+#define LOG_INF(...) test_log(__VA_ARGS__)
+static void test_log(const char *format, ...) { (void)format; }
 #define SYS_INIT(...)
 #define K_NO_WAIT 0
 #define K_MSEC(x) (x)

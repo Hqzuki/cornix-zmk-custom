@@ -122,6 +122,7 @@ static void host_connected(struct bt_conn *conn, uint8_t err) {
     sessions[index] = (struct host_session){.conn = ref};
     k_spin_unlock(&session_lock, key);
     if (old) { bt_conn_unref(old); }
+    LOG_INF("Bluetooth OS host connected: conn=%u (waiting for read evidence)", index);
     request_update();
 }
 
@@ -150,6 +151,7 @@ static bool observe_read(struct bt_conn *conn, const struct bt_gatt_attr *attr) 
     uint8_t index = bt_conn_index(conn);
     if (index >= ARRAY_SIZE(sessions)) { return true; }
     bool changed = false;
+    uint8_t reads = 0;
     k_spinlock_key_t key = k_spin_lock(&session_lock);
     struct host_session *s = &sessions[index];
     if (s->conn == conn && !(s->reads & bit)) {
@@ -158,10 +160,15 @@ static bool observe_read(struct bt_conn *conn, const struct bt_gatt_attr *attr) 
          * able to refine a guess, without repeated polls restarting it. */
         s->settled = false;
         s->deadline = k_uptime_get() + CONFIG_CORNIX_AUTO_OS_SETTLE_MS;
+        reads = s->reads;
         changed = true;
     }
     k_spin_unlock(&session_lock, key);
-    if (changed) { request_update(); }
+    if (changed) {
+        LOG_INF("Bluetooth OS read: conn=%u signal=0x%02x reads=0x%02x",
+                index, bit, reads);
+        request_update();
+    }
     return true; /* Observe only; never reject a read. */
 }
 
@@ -174,6 +181,7 @@ BT_CONN_CB_DEFINE(auto_os_connections) = {
 static int auto_os_init(void) {
     int rc = bt_gatt_authorization_cb_register(&authorization);
     if (rc < 0) { LOG_ERR("Could not register host OS observer (%d)", rc); }
+    else { LOG_INF("Bluetooth OS observer ready"); }
     return rc;
 }
 SYS_INIT(auto_os_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);

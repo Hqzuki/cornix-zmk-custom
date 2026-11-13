@@ -40,9 +40,11 @@ NUM、FNなどの補助レイヤーはそのままで、MACレイヤー（内部
 接続先0も含め、どの番号にどのOSを登録しても自動判定します。
 切断・再接続・電源の入れ直しでも判定し直すことを確認してください。
 MACにならない場合は、PC側の登録削除と該当接続先のペアリング消去後に再ペアリングし、初回の情報読み取りと再接続時の挙動を比較します。
-読み取りの観測とiPadOS 27での誤分類は実機ログで確認済みです。ANCS／AMSによる補正はホストテスト済みで、実機での確認が必要です。
+読み取りの観測とiPadOS 27での誤分類は実機ログで確認済みです。ANCS／AMSによる補正はホストテストに加え、iPad・iPhoneでMACレイヤーへ切り替わることを実機確認済みです。
 
 ### iPadなどで誤判定するときの診断
+
+診断用UF2は通常のビルド対象から除外しています。以下は調査時の手順の記録です。再度必要になった場合のみ、`build.yaml`へ`board: cornix_right`、`shield: cornix_indicator`、`snippet: zmk-usb-logging cornix-os-debug`、`artifact-name: cornix_stock_right_os_debug`の項目を追加してビルドします。
 
 `cornix_stock_right_os_debug.uf2`は純正Cornix右専用のUSBログ診断版です。
 通常版と同じ判定ルールですが、USBはログ出力専用で、キー入力はBluetoothへ送ります。

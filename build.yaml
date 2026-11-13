@@ -37,9 +37,3 @@ include:
   - board: cornix_right
     shield: settings_reset
     artifact-name: cornix_stock_right_reset
-
-  # USB console only; keyboard/mouse output stays on BLE for host OS capture.
-  - board: cornix_right
-    shield: cornix_indicator
-    snippet: zmk-usb-logging cornix-os-debug
-    artifact-name: cornix_stock_right_os_debug

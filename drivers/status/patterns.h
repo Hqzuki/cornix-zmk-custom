@@ -86,7 +86,7 @@ static inline void status_power(struct status_state *s, bool powered, int64_t no
 /* Host BT profiles 0-4 (BLUETOOTH layer selects all five). */
 static inline struct status_rgb status_profile_color(uint8_t profile) {
     static const struct status_rgb colors[] = {
-        {0,8,0}, {8,0,0}, {0,0,8}, {8,5,0}, {6,0,8},
+        {0,0,8}, {8,0,0}, {0,8,0}, {8,5,0}, {6,0,8},
     };
     return profile < 5 ? colors[profile] : (struct status_rgb){4,4,4};
 }

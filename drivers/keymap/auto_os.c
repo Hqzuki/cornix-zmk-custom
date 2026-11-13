@@ -56,6 +56,15 @@ static enum host_os classify(uint8_t reads) {
     return OS_UNKNOWN;
 }
 
+static bool needs_apple_probe(const struct host_session *s) {
+    /* Preserve the old passive path for Mac, Windows and unknown/cached
+     * connections. Only the observed iPad/Android collision needs a query.
+     * In particular, do not query Mac while its discovery is still settling.
+     */
+    return s->settled && s->os == OS_WIN && !(s->reads & APPEARANCE) &&
+           (s->reads & (REPORT_MAP | HID_INFO)) == (REPORT_MAP | HID_INFO);
+}
+
 static void update_layout(struct k_work *work);
 K_WORK_DELAYABLE_DEFINE(update_work, update_layout);
 static void request_update(void) { k_work_reschedule(&update_work, K_NO_WAIT); }
@@ -124,7 +133,7 @@ static void probe_hosts(struct k_work *work) {
     if (!cancel) {
         for (size_t i = 0; i < ARRAY_SIZE(sessions); i++) {
             struct host_session *s = &sessions[i];
-            if (!s->conn || (s->reads & APPLE_SERVICE) || s->probe_attempts >= 3) { continue; }
+            if (!s->conn || !needs_apple_probe(s) || s->probe_attempts >= 3) { continue; }
             if (s->probe_at <= now && !start) {
                 start = bt_conn_ref(s->conn);
                 s->probe_attempts++;
@@ -169,6 +178,7 @@ static void update_layout(struct k_work *work) {
     int64_t next = INT64_MAX;
     enum host_os os = OS_UNKNOWN;
     uint8_t finalized[CONFIG_BT_MAX_CONN] = {0};
+    bool probe_candidate = false;
     /* ZMK returns a reference, including when this is not the active endpoint. */
     struct bt_conn *active = zmk_ble_active_profile_conn();
     struct zmk_endpoint_instance endpoint = zmk_endpoint_get_selected();
@@ -181,6 +191,7 @@ static void update_layout(struct k_work *work) {
                 s->settled = true;
                 s->os = classify(s->reads);
                 finalized[i] = s->reads;
+                probe_candidate |= needs_apple_probe(s);
             } else if (s->deadline < next) {
                 next = s->deadline;
             }
@@ -191,6 +202,7 @@ static void update_layout(struct k_work *work) {
         }
     }
     k_spin_unlock(&session_lock, key);
+    if (probe_candidate) { request_probe(); }
     if (active) { bt_conn_unref(active); }
     for (size_t i = 0; i < ARRAY_SIZE(finalized); i++) {
         if (finalized[i]) {

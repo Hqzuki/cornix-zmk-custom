@@ -220,6 +220,23 @@ int main(void) {
  disconnect(&win); disconnect(&split);
  assert(apple.refs==1 && win.refs==1 && split.refs==1 && num_active);
 
+ /* Regression: keep the previously-working Mac path entirely passive. */
+ unsigned before_mac=discovery_calls;
+ active_conn=&apple; connect(&apple); read_attr(&apple,BT_UUID_DIS_PNP_ID);
+ tick(now+1000); assert(mac_active);
+ tick(now+20000); assert(mac_active && discovery_calls==before_mac);
+ disconnect(&apple);
+ /* Even slow Mac discovery must not be perturbed by an early reverse query. */
+ connect(&apple); tick(now+10000); assert(!mac_active && discovery_calls==before_mac);
+ read_attr(&apple,BT_UUID_DIS_PNP_ID); tick(now+1000);
+ assert(mac_active && discovery_calls==before_mac); disconnect(&apple);
+ /* A full Windows trace also never needs an Apple query. */
+ active_conn=&win; connect(&win);
+ read_attr(&win,BT_UUID_HIDS_REPORT_MAP); read_attr(&win,BT_UUID_HIDS_INFO);
+ read_attr(&win,BT_UUID_DIS_PNP_ID); read_attr(&win,BT_UUID_GAP_APPEARANCE);
+ tick(now+20000); assert(!mac_active && discovery_calls==before_mac);
+ disconnect(&win);
+
  /* iPadOS 27 live capture: Map + Info + PnP collides with Android. */
  active_conn=&apple; connect(&apple);
  read_attr(&apple,BT_UUID_HIDS_REPORT_MAP); read_attr(&apple,BT_UUID_HIDS_INFO);
@@ -238,9 +255,13 @@ int main(void) {
  disconnect(&apple); assert(!mac_active && apple.refs==1);
 
  /* AMS is equivalent; cancelled/disconnected requests cannot affect a new host. */
- connect(&apple); tick(now+2000); assert(pending_discovery);
+ connect(&apple);
+ read_attr(&apple,BT_UUID_HIDS_REPORT_MAP); read_attr(&apple,BT_UUID_HIDS_INFO);
+ tick(now+2000); assert(pending_discovery);
  disconnect(&apple); assert(!pending_discovery && apple.refs==1);
- connect(&apple); tick(now+2000);
+ connect(&apple);
+ read_attr(&apple,BT_UUID_HIDS_REPORT_MAP); read_attr(&apple,BT_UUID_HIDS_INFO);
+ tick(now+2000);
  p=pending_discovery; pending_discovery=NULL;
  struct bt_gatt_service_val ams={&ams_uuid.uuid};
  p->func(&apple,&(struct bt_gatt_attr){.user_data=&ams},p); tick(now); assert(mac_active);
@@ -260,6 +281,7 @@ int main(void) {
 
  /* Queue errors are also bounded, with no leaked connection references. */
  connect(&win); probes=discovery_calls; discovery_error=-ENOMEM;
+ read_attr(&win,BT_UUID_HIDS_REPORT_MAP); read_attr(&win,BT_UUID_HIDS_INFO);
  for (int i=0;i<3;i++) { tick(now+4000); }
  tick(now+60000); assert(discovery_calls==probes+3 && win.refs==2);
  disconnect(&win); discovery_error=0; assert(win.refs==1);

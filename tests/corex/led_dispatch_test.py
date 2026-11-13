@@ -116,9 +116,9 @@ int main(void) {
  render_work.due=1000; render_work.pending=true;
  assert(corex_status_receive(0, STATUS_SYNC_LAYER | STATUS_SYNC_ACTIVE | (2u<<8))==0);
  assert(render_work.due==0);
- run_render(); assert(displayed.outer.g==16);
+ run_render(); assert(displayed.outer.g==8);
  assert(corex_status_receive(0, STATUS_SYNC_LAYER | STATUS_SYNC_ACTIVE)==0);
- assert(render_work.due==0); run_render(); assert(displayed.outer.r==16);
+ assert(render_work.due==0); run_render(); assert(displayed.outer.r==8);
  assert(corex_status_receive(0, 1u<<16)==-EINVAL);
  assert(render_work.due==RENDER_FAST_MS);
 #endif

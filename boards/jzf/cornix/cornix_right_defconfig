@@ -32,6 +32,11 @@ CONFIG_ZMK_USB=y
 CONFIG_ZMK_SPLIT=y
 CONFIG_ZMK_SPLIT_ROLE_CENTRAL=y
 
+# This central supplies the actual split connection parameters. The peripheral
+# does not automatically request its own preferred parameters in ZMK.
+# Do not allow skipped connection events to add variation before hold-tap starts.
+CONFIG_ZMK_SPLIT_BLE_PREF_LATENCY=0
+
 # 增加键盘的 BLE 无线电的发射功率，用解决延迟和左右通讯不佳的问题
 CONFIG_BT_CTLR_TX_PWR_PLUS_8=y
 # 更改键盘默认显示名称

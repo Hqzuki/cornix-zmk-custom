@@ -9,28 +9,28 @@ static int same(struct status_rgb a, struct status_rgb b) {
 int main(void) {
     struct status_state s = STATUS_STATE_INIT;
     status_peer(&s, false, 0);
-    assert(status_render(&s, 0).inner.b == 3);
+    assert(status_render(&s, 0).inner.b == 8);
     dark(status_render(&s, 400).inner);
     dark(status_render(&s, 10000).inner);
     status_peer(&s, true, 11000);
-    assert(status_render(&s, 13999).inner.b == 3);
+    assert(status_render(&s, 13999).inner.b == 8);
     dark(status_render(&s, 14000).inner);
     status_power(&s, true, 15000);
-    assert(status_render(&s, 16000).inner.g == 3);
+    assert(status_render(&s, 16000).inner.g == 8);
     status_battery(&s, 20, 16000);
-    assert(status_render(&s, 16000).inner.r == 3);
+    assert(status_render(&s, 16000).inner.r == 8);
     dark(status_render(&s, 16400).inner);
-    assert(status_render(&s, 16800).inner.r == 3);
+    assert(status_render(&s, 16800).inner.r == 8);
     assert(status_render(&s, 17200).inner.r == 0); /* low warning ended */
-    assert(status_render(&s, 17500).inner.g > 0); /* breathing resumed */
+    assert(status_render(&s, 17300).inner.g > 0); /* breathing resumed */
     status_battery(&s, 95, 18000);
-    assert(status_render(&s, 18000).inner.g == 3);
-    assert(status_render(&s, 21000).inner.g == 3); /* steady, no 3 s cutoff */
-    assert(status_render(&s, 900000).inner.g == 3);
+    assert(status_render(&s, 18000).inner.g == 8);
+    assert(status_render(&s, 21000).inner.g == 8); /* steady, no 3 s cutoff */
+    assert(status_render(&s, 900000).inner.g == 8);
     status_battery(&s, 94, 21500);
-    assert(status_render(&s, 21500).inner.g == 3); /* hysteresis keeps full */
+    assert(status_render(&s, 21500).inner.g == 8); /* hysteresis keeps full */
     status_battery(&s, 89, 22000);
-    assert(status_render(&s, 23000).inner.g == 3); /* back to breathing */
+    assert(status_render(&s, 23000).inner.g == 8); /* back to breathing */
     status_power(&s, false, 24000);
     dark(status_render(&s, 24000).inner);
     for (int p = 0; p < 5; p++) {
@@ -60,14 +60,14 @@ int main(void) {
     assert(status_profile(&r, 3, false, true, 1000));
     assert(same(status_render(&r, 1000).outer, status_profile_color(3)));
     status_battery(&r, 15, 200000);
-    assert(status_render(&r, 200000).inner.r == 3);
+    assert(status_render(&r, 200000).inner.r == 8);
     status_power(&r, true, 210000);
-    assert(status_render(&r, 211000).inner.g == 3);
+    assert(status_render(&r, 211000).inner.g == 8);
 
     /* Left (peripheral): outer = synced layer colour, always on; inner unchanged. */
     struct status_state l = STATUS_STATE_INIT_ROLE(false);
     status_peer(&l, true, 0);
-    assert(status_render(&l, 0).inner.b == 3);
+    assert(status_render(&l, 0).inner.b == 8);
     dark(status_render(&l, 0).outer);
     for (int k = 0; k < 9; k++) {
         r.layer = k;
@@ -90,7 +90,7 @@ int main(void) {
      * the left wakes on right activity. */
     status_battery(&r, 15, 600000);
     r.idle = true;
-    assert(status_render(&r, 600000).inner.r == 3);
+    assert(status_render(&r, 600000).inner.r == 8);
     dark(status_render(&r, 600000).outer);
     status_battery(&r, 50, 601200);
     assert(status_render(&r, 603000).inner.g > 0); /* still charging (powered) */

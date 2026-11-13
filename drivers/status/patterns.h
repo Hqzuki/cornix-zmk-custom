@@ -86,9 +86,9 @@ static inline void status_power(struct status_state *s, bool powered, int64_t no
 /* Host BT profiles 0-4 (BLUETOOTH layer selects all five). */
 static inline struct status_rgb status_profile_color(uint8_t profile) {
     static const struct status_rgb colors[] = {
-        {0,3,0}, {3,0,0}, {0,0,3}, {3,2,0}, {2,0,3},
+        {0,8,0}, {8,0,0}, {0,0,8}, {8,5,0}, {6,0,8},
     };
-    return profile < 5 ? colors[profile] : (struct status_rgb){2,2,2};
+    return profile < 5 ? colors[profile] : (struct status_rgb){4,4,4};
 }
 /* Layer ids follow config/corex_right.keymap definition order. */
 static inline struct status_rgb status_layer_color(uint8_t layer) {
@@ -96,21 +96,21 @@ static inline struct status_rgb status_layer_color(uint8_t layer) {
      * brightness. MOUSE is dark: it can persist, and dark means "mouse mode"
      * while letting the left LED rail switch off. */
     static const struct status_rgb colors[] = {
-        {3,0,0},   /* 0 WIN: red */
-        {0,0,3},   /* 1 MAC: blue */
-        {0,3,0},   /* 2 NUM: green */
-        {3,2,0},  /* 3 FN: yellow */
-        {3,0,3},  /* 4 PAN: magenta */
-        {0,2,2},  /* 5 GESTURE: cyan */
+        {8,0,0},   /* 0 WIN: red */
+        {0,0,8},   /* 1 MAC: blue */
+        {0,8,0},   /* 2 NUM: green */
+        {8,5,0},  /* 3 FN: yellow */
+        {8,0,8},  /* 4 PAN: magenta */
+        {0,6,6},  /* 5 GESTURE: cyan */
         {0,0,0},    /* 6 MOUSE: dark */
-        {2,2,2}, /* 7 BLUETOOTH: white */
-        {3,1,0},  /* 8 NAV: orange */
+        {5,5,5}, /* 7 BLUETOOTH: white */
+        {8,2,0},  /* 8 NAV: orange */
     };
     return layer < 9 ? colors[layer] : (struct status_rgb){0};
 }
 static inline struct status_frame status_render(const struct status_state *s, int64_t now) {
     struct status_frame f = {0};
-    const struct status_rgb red = {3,0,0}, blue = {0,0,3}, green = {0,3,0};
+    const struct status_rgb red = {8,0,0}, blue = {0,0,8}, green = {0,8,0};
     int64_t low = now - s->low_since, peer = now - s->peer_since;
     /* Reserve the whole low-battery pattern, including its dark gaps. */
     if (s->low_since >= 0 && low >= 0 && low < 1200) {
@@ -127,8 +127,8 @@ static inline struct status_frame status_render(const struct status_state *s, in
                 24,25,27,28,29,30,31,31,32,32,32,32,31,31,30,29,28,27,25,24,
                 23,21,19,18,16,14,13,11,9,8,7,5,4,3,2,1,1,0,0,0
             };
-            /* Scale the original 0..32 curve to a maximum of 3/255. */
-            f.inner.g = breath[((now - s->charge_since) % 2000) * 60 / 2000] * 3 / 32;
+            /* Scale the original 0..32 curve to a maximum of 8/255. */
+            f.inner.g = breath[((now - s->charge_since) % 2000) * 60 / 2000] / 4;
         }
     }
     if (s->layer_outer) {

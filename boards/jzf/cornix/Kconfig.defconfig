@@ -38,7 +38,7 @@ endif # BOARD_CORNIX_LEFT
 # Pure Cornix: stock right is the host-facing central.
 if BOARD_CORNIX_RIGHT
 config ZMK_KEYBOARD_NAME
-    default "Cornix ZMK"
+    default "Cornix"
 config ZMK_SPLIT
     default y
 config ZMK_SPLIT_ROLE_CENTRAL

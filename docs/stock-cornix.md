@@ -2,6 +2,8 @@
 
 CoreXを使わず、純正Cornixの左・右で使う構成です。右がCentral、左がPeripheralです。USB、Bluetooth、ZMK Studioは右に接続します。メーカー公式のファームウェアではありません。
 
+デバイスの表示名は`Cornix`です。以前の`Cornix ZMK`が接続先にキャッシュされていると、更新後も旧名が表示される場合があります。
+
 ## 書き込むファイル
 
 成功したGitHub Actionsの`firmware`成果物から取得します。

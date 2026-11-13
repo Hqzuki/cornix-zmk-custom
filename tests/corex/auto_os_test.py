@@ -69,7 +69,38 @@ static const int uuid_map=1, uuid_info=2, uuid_pnp=3, uuid_appearance=4, uuid_ba
 #define BT_UUID_DIS_PNP_ID (&uuid_pnp)
 #define BT_UUID_GAP_APPEARANCE (&uuid_appearance)
 static int bt_uuid_cmp(const int *a, const int *b) { return *a-*b; }
-struct bt_gatt_attr { const int *uuid; };
+#define BT_UUID_128_ENCODE(a,b,c,d,e) a
+#define BT_UUID_INIT_128(x) { .uuid = x }
+struct bt_uuid_128 { int uuid; };
+struct bt_gatt_attr { const int *uuid; void *user_data; };
+struct bt_gatt_service_val { const int *uuid; };
+struct bt_gatt_discover_params {
+ const int *uuid;
+ uint8_t (*func)(struct bt_conn *, const struct bt_gatt_attr *, struct bt_gatt_discover_params *);
+ uint8_t type;
+ uint16_t start_handle, end_handle;
+};
+#define BT_GATT_ITER_STOP 0
+#define BT_GATT_ITER_CONTINUE 1
+#define BT_GATT_DISCOVER_PRIMARY 0
+#define BT_ATT_FIRST_ATTRIBUTE_HANDLE 1
+#define BT_ATT_LAST_ATTRIBUTE_HANDLE 65535
+static struct bt_gatt_discover_params *pending_discovery;
+static struct bt_conn *discovery_conn;
+static unsigned discovery_calls;
+static int discovery_error;
+static int bt_gatt_discover(struct bt_conn *conn, struct bt_gatt_discover_params *p) {
+ assert(!pending_discovery);
+ discovery_calls++;
+ if (discovery_error) { return discovery_error; }
+ pending_discovery=p; discovery_conn=conn; return 0;
+}
+static void bt_gatt_cancel(struct bt_conn *conn, void *params) {
+ if (pending_discovery==params) {
+  struct bt_gatt_discover_params *p=pending_discovery;
+  pending_discovery=NULL; p->func(conn,NULL,p);
+ }
+}
 struct bt_gatt_authorization_cb { bool (*read_authorize)(struct bt_conn *, const struct bt_gatt_attr *); };
 static const struct bt_gatt_authorization_cb *registered;
 static int registration_error;
@@ -99,12 +130,19 @@ HARNESS = r'''
 static void tick(int64_t t) {
  now=t;
  int count=0;
- while (update_work.pending && update_work.due<=now) {
-  assert(++count<10); update_work.pending=false; update_work.fn(NULL);
+ while ((update_work.pending && update_work.due<=now) ||
+        (probe_work.pending && probe_work.due<=now)) {
+  assert(++count<30);
+  if (update_work.pending && update_work.due<=now) {
+   update_work.pending=false; update_work.fn(NULL);
+  }
+  if (probe_work.pending && probe_work.due<=now) {
+   probe_work.pending=false; probe_work.fn(NULL);
+  }
  }
 }
 static void read_attr(struct bt_conn *c, const int *uuid) {
- assert(registered->read_authorize(c,&(struct bt_gatt_attr){uuid}));
+ assert(registered->read_authorize(c,&(struct bt_gatt_attr){.uuid=uuid}));
  tick(now);
 }
 static void connect(struct bt_conn *c) {
@@ -181,7 +219,51 @@ int main(void) {
  tick(126000); assert(!mac_active && !sessions[1].settled);
  disconnect(&win); disconnect(&split);
  assert(apple.refs==1 && win.refs==1 && split.refs==1 && num_active);
- puts("Auto OS: settle timing, Apple/WIN/unknown, reconnect, host isolation, split exclusion, USB and reference lifecycle passed");
+
+ /* iPadOS 27 live capture: Map + Info + PnP collides with Android. */
+ active_conn=&apple; connect(&apple);
+ read_attr(&apple,BT_UUID_HIDS_REPORT_MAP); read_attr(&apple,BT_UUID_HIDS_INFO);
+ read_attr(&apple,BT_UUID_DIS_PNP_ID); tick(now+1000); assert(!mac_active);
+ tick(now+1000); assert(pending_discovery && discovery_conn==&apple);
+ struct bt_gatt_service_val unrelated={&uuid_battery};
+ assert(pending_discovery->func(&apple,&(struct bt_gatt_attr){.user_data=&unrelated},
+        pending_discovery)==BT_GATT_ITER_CONTINUE);
+ struct bt_gatt_discover_params *p=pending_discovery; pending_discovery=NULL;
+ struct bt_gatt_service_val ancs={&ancs_uuid.uuid};
+ assert(p->func(&apple,&(struct bt_gatt_attr){.user_data=&ancs},p)==BT_GATT_ITER_STOP);
+ tick(now); assert(mac_active && apple.refs==2);
+ unsigned probes=discovery_calls; tick(now+60000); assert(discovery_calls==probes);
+ read_attr(&apple,BT_UUID_GAP_APPEARANCE); tick(now+1000);
+ assert(mac_active); /* positive Apple service overrides ambiguous WIN reads */
+ disconnect(&apple); assert(!mac_active && apple.refs==1);
+
+ /* AMS is equivalent; cancelled/disconnected requests cannot affect a new host. */
+ connect(&apple); tick(now+2000); assert(pending_discovery);
+ disconnect(&apple); assert(!pending_discovery && apple.refs==1);
+ connect(&apple); tick(now+2000);
+ p=pending_discovery; pending_discovery=NULL;
+ struct bt_gatt_service_val ams={&ams_uuid.uuid};
+ p->func(&apple,&(struct bt_gatt_attr){.user_data=&ams},p); tick(now); assert(mac_active);
+ disconnect(&apple); assert(apple.refs==1);
+
+ /* No Apple service: keep Android/WIN and stop after three discoveries. */
+ active_conn=&win; connect(&win);
+ read_attr(&win,BT_UUID_HIDS_REPORT_MAP); read_attr(&win,BT_UUID_HIDS_INFO);
+ probes=discovery_calls;
+ for (int i=0;i<3;i++) {
+  tick(now+4000); assert(pending_discovery);
+  p=pending_discovery; pending_discovery=NULL; p->func(&win,NULL,p); tick(now);
+ }
+ assert(discovery_calls==probes+3 && !mac_active && win.refs==2);
+ tick(now+60000); assert(discovery_calls==probes+3 && !probe_work.pending);
+ disconnect(&win); assert(win.refs==1);
+
+ /* Queue errors are also bounded, with no leaked connection references. */
+ connect(&win); probes=discovery_calls; discovery_error=-ENOMEM;
+ for (int i=0;i<3;i++) { tick(now+4000); }
+ tick(now+60000); assert(discovery_calls==probes+3 && win.refs==2);
+ disconnect(&win); discovery_error=0; assert(win.refs==1);
+ puts("Auto OS: settle timing, Apple/WIN/unknown, reconnect, host isolation, split exclusion, USB, bounded Apple service probes, cancellation and reference lifecycle passed");
 }
 '''
 

@@ -21,6 +21,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 enum evidence {
     REPORT_MAP = BIT(0), HID_INFO = BIT(1), PNP_ID = BIT(2), APPEARANCE = BIT(3),
+    APPLE_SERVICE = BIT(4),
 };
 enum host_os { OS_UNKNOWN, OS_WIN, OS_APPLE };
 
@@ -33,11 +34,14 @@ struct host_session {
     bool settled;
     enum host_os os;
     int64_t deadline;
+    uint8_t probe_attempts;
+    int64_t probe_at;
 };
 static struct host_session sessions[CONFIG_BT_MAX_CONN];
 static struct k_spinlock session_lock;
 
 static enum host_os classify(uint8_t reads) {
+    if (reads & APPLE_SERVICE) { return OS_APPLE; }
     if ((reads & (PNP_ID | APPEARANCE)) == (PNP_ID | APPEARANCE)) {
         return OS_WIN; /* Also Linux/BlueZ: indistinguishable with this signal. */
     }
@@ -55,6 +59,109 @@ static enum host_os classify(uint8_t reads) {
 static void update_layout(struct k_work *work);
 K_WORK_DELAYABLE_DEFINE(update_work, update_layout);
 static void request_update(void) { k_work_reschedule(&update_work, K_NO_WAIT); }
+
+/* iPadOS 27 was observed reading Map + Info + PnP, identical to Android.
+ * Positive ANCS/AMS service discovery resolves that ambiguity. Discover only
+ * service declarations: never read notification/media values or subscribe.
+ * One retained context serializes requests, including disconnect cancellation.
+ */
+static const struct bt_uuid_128 ancs_uuid = BT_UUID_INIT_128(
+    BT_UUID_128_ENCODE(0x7905f431, 0xb5ce, 0x4e99, 0xa40f, 0x4b1e122d00d0));
+static const struct bt_uuid_128 ams_uuid = BT_UUID_INIT_128(
+    BT_UUID_128_ENCODE(0x89d3502b, 0x0f36, 0x433a, 0x8ef4, 0xc502ad55f8dc));
+static struct {
+    struct bt_conn *conn;
+    struct bt_gatt_discover_params params;
+    bool done;
+} probe;
+static void probe_hosts(struct k_work *work);
+K_WORK_DELAYABLE_DEFINE(probe_work, probe_hosts);
+static void request_probe(void) { k_work_reschedule(&probe_work, K_NO_WAIT); }
+
+static uint8_t probe_result(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+                            struct bt_gatt_discover_params *params) {
+    ARG_UNUSED(params);
+    const struct bt_gatt_service_val *service = attr ? attr->user_data : NULL;
+    bool apple = service &&
+        (!bt_uuid_cmp(service->uuid, &ancs_uuid.uuid) ||
+         !bt_uuid_cmp(service->uuid, &ams_uuid.uuid));
+    if (attr && !apple) { return BT_GATT_ITER_CONTINUE; }
+    uint8_t index = bt_conn_index(conn);
+    k_spinlock_key_t key = k_spin_lock(&session_lock);
+    bool current = index < ARRAY_SIZE(sessions) && sessions[index].conn == conn;
+    if (current && apple) {
+        sessions[index].reads |= APPLE_SERVICE;
+        sessions[index].settled = true;
+        sessions[index].os = OS_APPLE;
+    }
+    probe.done = true;
+    k_spin_unlock(&session_lock, key);
+    if (current) {
+        LOG_INF("Bluetooth OS Apple service: conn=%u found=%u", index, apple);
+        if (apple) { request_update(); }
+    }
+    request_probe();
+    return BT_GATT_ITER_STOP;
+}
+
+static void probe_hosts(struct k_work *work) {
+    ARG_UNUSED(work);
+    struct bt_conn *release = NULL, *cancel = NULL, *start = NULL;
+    int64_t now = k_uptime_get(), next = INT64_MAX;
+    k_spinlock_key_t key = k_spin_lock(&session_lock);
+    if (probe.conn) {
+        uint8_t index = bt_conn_index(probe.conn);
+        if (probe.done) {
+            release = probe.conn;
+            probe.conn = NULL;
+        } else if (index >= ARRAY_SIZE(sessions) || sessions[index].conn != probe.conn) {
+            cancel = probe.conn;
+        } else {
+            k_spin_unlock(&session_lock, key);
+            return; /* Completion or disconnect wakes this work. */
+        }
+    }
+    if (!cancel) {
+        for (size_t i = 0; i < ARRAY_SIZE(sessions); i++) {
+            struct host_session *s = &sessions[i];
+            if (!s->conn || (s->reads & APPLE_SERVICE) || s->probe_attempts >= 3) { continue; }
+            if (s->probe_at <= now && !start) {
+                start = bt_conn_ref(s->conn);
+                s->probe_attempts++;
+                s->probe_at = now + 4000;
+            } else if (s->probe_at < next) { next = s->probe_at; }
+        }
+        if (start) {
+            probe.conn = start;
+            probe.done = false;
+            probe.params = (struct bt_gatt_discover_params){
+                .func = probe_result, .type = BT_GATT_DISCOVER_PRIMARY,
+                .start_handle = BT_ATT_FIRST_ATTRIBUTE_HANDLE,
+                .end_handle = BT_ATT_LAST_ATTRIBUTE_HANDLE,
+            };
+        }
+    }
+    k_spin_unlock(&session_lock, key);
+    if (release) { bt_conn_unref(release); }
+    if (cancel) {
+        bt_gatt_cancel(cancel, &probe.params);
+        key = k_spin_lock(&session_lock);
+        probe.done = true;
+        k_spin_unlock(&session_lock, key);
+        request_probe();
+    } else if (start) {
+        int rc = bt_gatt_discover(start, &probe.params);
+        if (rc < 0) {
+            LOG_INF("Bluetooth OS Apple probe: conn=%u start failed=%d", bt_conn_index(start), rc);
+            key = k_spin_lock(&session_lock);
+            probe.done = true;
+            k_spin_unlock(&session_lock, key);
+            request_probe();
+        }
+    } else if (next != INT64_MAX) {
+        k_work_schedule(&probe_work, K_MSEC(MAX(0, next - k_uptime_get())));
+    }
+}
 
 static void update_layout(struct k_work *work) {
     ARG_UNUSED(work);
@@ -119,11 +226,12 @@ static void host_connected(struct bt_conn *conn, uint8_t err) {
     struct bt_conn *ref = bt_conn_ref(conn);
     k_spinlock_key_t key = k_spin_lock(&session_lock);
     struct bt_conn *old = sessions[index].conn;
-    sessions[index] = (struct host_session){.conn = ref};
+    sessions[index] = (struct host_session){.conn = ref, .probe_at = k_uptime_get() + 2000};
     k_spin_unlock(&session_lock, key);
     if (old) { bt_conn_unref(old); }
     LOG_INF("Bluetooth OS host connected: conn=%u (waiting for read evidence)", index);
     request_update();
+    request_probe();
 }
 
 static void host_disconnected(struct bt_conn *conn, uint8_t reason) {
@@ -137,7 +245,7 @@ static void host_disconnected(struct bt_conn *conn, uint8_t reason) {
         sessions[index] = (struct host_session){0};
     }
     k_spin_unlock(&session_lock, key);
-    if (old) { bt_conn_unref(old); request_update(); }
+    if (old) { bt_conn_unref(old); request_update(); request_probe(); }
 }
 
 static bool observe_read(struct bt_conn *conn, const struct bt_gatt_attr *attr) {

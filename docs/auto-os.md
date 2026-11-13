@@ -8,12 +8,13 @@ Bluetoothのペアリング情報とStudioのキーマップ保存は通常ど�
 ## 動作
 
 1. 起動・再接続時はWINです。古い`default_layer/settings`は読み込みません。
-2. PCが読むHID Report Map、HID Information、PnP ID、GAP Appearanceを観察します。通信内容を変更したり、読み取りを拒否したりはしません。
+2. PCが読むHID Report Map、HID Information、PnP ID、GAP Appearanceを観察します。通信内容を変更したり、読み取りを拒否したりはしません。加えて接続約2秒後から、接続先の公開GATTサービス一覧にAppleのANCS／AMSがあるか確認します。通知・メディアの内容は読まず、購読もしません。見つかればAppleを優先します。見つからない場合は約4秒間隔で最大3回まで確認し、停止します。
 3. 新しい判定材料が来なくなってから1秒待って適用します。接続中は観察を続け、後から新しい材料が来れば再判定します。その待ち時間中は直前の判定を維持します。電池残量のポーリングや同じ情報の再読では再判定しません。
 4. 選択中のBluetooth接続の判定を反映します。接続先を変えると、同時接続中の各端末の判定に追従します。左手との通信はOS判定の対象にしません。
 
 | 観察した読み取り | 使用する基本レイヤー |
 | --- | --- |
+| ANCSまたはAMSのサービス宣言が見つかった | MAC（下記の読み取りパターンより優先） |
 | PnP IDとGAP Appearance | WIN（Windows／Linux系のパターン） |
 | Report MapとHID Information | WIN（Android系のパターン） |
 | Report MapまたはPnP IDがあり、上記には該当しない | MAC（macOS／iOS／iPadOS系のパターン） |
@@ -25,10 +26,11 @@ NUM、FNなどの補助レイヤーはそのままで、MACレイヤー（内部
 ## 制限
 
 - OS名をPCから受け取るのではなく、Bluetooth接続時の通信からの推測です。全OS・全バージョンでの正確性は保証できません。
+- iPadOS 27の実機ログで、Report Map＋HID Information＋PnP ID（`reads=0x07`）を読み、従来のルールでWINと誤分類する例を確認しました。この組み合わせはAndroidとも重なるため、組み合わせだけでApple扱いにはしません。ANCS／AMSの確認で補いますが、Appleの仕様上これらのサービスは常に公開されるとは限らず、見つからなければ読み取りパターンによる従来の判定になります。
 - 参考元のMac実機記録はPnP IDのみを読む部分的な記録です。Report Mapの読み取りを必須にするとこのMacのパターンを取りこぼすため、PnP IDのみでもMAC候補とします。Windowsが情報を読み終わる前などには誤判定の可能性があります。
 - iOSとmacOSは区別せずMACにまとめます。LinuxとWindowsも区別せずWINにまとめます。
 - 接続後1秒で必ず判定できるわけではありません。OSが必要な情報を読む時刻によって変わります。
-- GATT情報がPC側にキャッシュされ、再接続時に読み直されなければ判定できずWINになります。保存しない設計なので、以前の判定で補うこともしません。
+- GATT情報がPC側にキャッシュされ、再接続時に読み直されず、ANCS／AMSも確認できなければ判定できずWINになります。保存しない設計なので、以前の判定で補うこともしません。
 - USBのOS自動判定は対象外です。充電ケーブルでつながっていても、実際の出力がBluetoothならその接続を判定します。
 - 以前の配列保存機能は削除済みです。Studioに直接`df`動作を割り当てていた場合は、そのキーを修正するかStudioでキーマップを初期状態へ戻してください。標準の接続先マクロは旧ノード名を保持し、接続先の選択だけに変更しています。
 
@@ -38,7 +40,7 @@ NUM、FNなどの補助レイヤーはそのままで、MACレイヤー（内部
 接続先0も含め、どの番号にどのOSを登録しても自動判定します。
 切断・再接続・電源の入れ直しでも判定し直すことを確認してください。
 MACにならない場合は、PC側の登録削除と該当接続先のペアリング消去後に再ペアリングし、初回の情報読み取りと再接続時の挙動を比較します。
-この処理の実機検証は未実施です。
+読み取りの観測とiPadOS 27での誤分類は実機ログで確認済みです。ANCS／AMSによる補正はホストテスト済みで、実機での確認が必要です。
 
 ### iPadなどで誤判定するときの診断
 
@@ -49,7 +51,7 @@ Studioは無効です。左手の更新やペアリング消去は不要です�
 1. 診断版を右手へ書き込み、右手をMacのUSBにつなぎます。
 2. Macで`ls /dev/cu.usbmodem*`を実行し、表示された右手のポートを`screen /dev/cu.usbmodemXXXXX 115200`で開きます。
 3. ログを開いたまま、iPad側でCornixの接続を一度切り、再接続します。初回登録時と再接続時の違いを調べる場合のみ、該当接続先を消去して再登録します。
-4. `Bluetooth OS host connected`、`Bluetooth OS read`、`Bluetooth OS evidence`の行を確認します。`reads`のビットは`01`=Report Map、`02`=HID Information、`04`=PnP ID、`08`=Appearanceです。`result`は`0`=不明、`1`=WIN、`2`=Appleです。接続行だけでread行がなければ、観測対象の読み取りが得られていません。
+4. `Bluetooth OS host connected`、`Bluetooth OS read`、`Bluetooth OS evidence`、`Bluetooth OS Apple service`の行を確認します。`reads`のビットは`01`=Report Map、`02`=HID Information、`04`=PnP ID、`08`=Appearance、`10`=Appleサービスです。`result`は`0`=不明、`1`=WIN、`2`=Appleです。`Apple service`の`found=1`ならMACへ切り替えます。接続行だけでread行がなければ、観測対象の読み取りが得られていません。
 5. 診断後は通常の`cornix_stock_right.uf2`へ戻します。
 
 ログにはBluetooth接続・判定情報が含まれます。診断版は常用せず、通常版を使ってください。
@@ -63,4 +65,5 @@ settings_reset画像と左Peripheralには判定処理を組み込みません�
 
 判定方式は[cormoran/zmk-feature-os-detection](https://github.com/cormoran/zmk-feature-os-detection)のBLE実装を参考にしています。
 分類ルールの根拠と限界は同プロジェクトの[実機記録](https://github.com/cormoran/zmk-feature-os-detection/blob/main/docs/fingerprints.md)にあります。
+Appleサービスの仕様は[ANCS](https://developer.apple.com/library/archive/documentation/CoreBluetooth/Reference/AppleNotificationCenterServiceSpecification/Specification/Specification.html)と[AMS](https://developer.apple.com/library/archive/documentation/CoreBluetooth/Reference/AppleMediaService_Reference/Specification/Specification.html)を参照してください。
 ライセンスは`drivers/keymap/auto_os.LICENSE`に保持しています。

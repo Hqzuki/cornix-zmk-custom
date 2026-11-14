@@ -68,7 +68,9 @@ static void idle_sample(struct k_work *work) {
     k_mutex_lock(&state_lock, K_FOREVER);
     /* Only a changed level is news, like ZMK's own events; otherwise a
      * low battery would re-trigger the red blink every interval. */
-    if (soc.val1 != state.battery) { status_battery(&state, soc.val1, k_uptime_get()); }
+    if (!state.battery_valid || soc.val1 != state.battery) {
+        status_battery(&state, soc.val1, k_uptime_get());
+    }
     k_mutex_unlock(&state_lock);
 }
 K_WORK_DEFINE(idle_sample_work, idle_sample);

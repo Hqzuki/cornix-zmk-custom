@@ -6,7 +6,72 @@ static void dark(struct status_rgb c) { assert(!c.r && !c.g && !c.b); }
 static int same(struct status_rgb a, struct status_rgb b) {
     return a.r == b.r && a.g == b.g && a.b == b.b;
 }
+static void bluetooth_battery(void) {
+    const uint8_t levels[] = {0, 20, 21, 50, 51, 100};
+    const struct status_rgb colors[] = {
+        {13,0,0}, {13,0,0}, {13,8,0}, {13,8,0}, {0,13,0}, {0,13,0},
+    };
+    for (int central = 0; central <= 1; central++) {
+        struct status_state s = STATUS_STATE_INIT_ROLE(central);
+        status_layer(&s, true, 7);
+        status_profile(&s, 0, true, false, 0);
+        status_peer(&s, true, 0);
+        status_power(&s, true, 0);
+        dark(status_render(&s, 1000).inner); /* Unknown, even during charging. */
+        status_battery(&s, 101, 0);
+        assert(!s.battery_valid);
+        for (unsigned i = 0; i < sizeof(levels) / sizeof(levels[0]); i++) {
+            status_battery(&s, levels[i], 0);
+            assert(s.battery_valid);
+            for (int t = 0; t <= 4000; t += 100) {
+                struct status_frame f = status_render(&s, t);
+                assert(same(f.inner, colors[i])); /* No warning/breathing gaps. */
+                assert(same(f.outer, central ? status_profile_color(0) :
+                                              status_layer_color(7)));
+            }
+        }
+        status_battery(&s, 101, 0);
+        assert(s.battery == 100); /* Invalid samples cannot overwrite a valid one. */
+        status_battery(&s, 50, 0);
+        status_layer(&s, true, 1);
+        assert(same(status_render(&s, 5000).inner, (struct status_rgb){0,13,0}));
+        status_layer(&s, true, 7);
+        assert(same(status_render(&s, 5000).inner, (struct status_rgb){13,8,0}));
+        s.idle = true;
+        assert(same(status_render(&s, 5000).inner, (struct status_rgb){0,13,0}));
+        dark(status_render(&s, 5000).outer);
+        s.idle = false;
+        status_power(&s, false, 5000);
+        assert(same(status_render(&s, 5000).inner, (struct status_rgb){13,8,0}));
+        status_layer(&s, true, 1);
+        dark(status_render(&s, 5000).inner);
+        /* Exit to normal peer/low-battery priorities, without restarting them. */
+        status_peer(&s, false, 6000);
+        status_layer(&s, true, 7);
+        assert(same(status_render(&s, 6000).inner, (struct status_rgb){13,8,0}));
+        status_layer(&s, true, 1);
+        if (central) { dark(status_render(&s, 6000).inner); }
+        else { assert(status_render(&s, 6000).inner.b == 13); }
+        status_battery(&s, 0, 7000);
+        status_layer(&s, true, 7);
+        assert(status_render(&s, 7500).inner.r == 13);
+        status_layer(&s, true, 1);
+        dark(status_render(&s, 7500).inner); /* Normal low warning's dark gap. */
+    }
+    /* Sync the layer, but never copy the central's battery to the left. */
+    struct status_state r = STATUS_STATE_INIT_ROLE(true);
+    struct status_state l = STATUS_STATE_INIT_ROLE(false);
+    status_battery(&r, 80, 0);
+    status_battery(&l, 10, 0);
+    status_layer(&r, true, 7);
+    assert(status_receive(&l, 0, status_sync_flags(&r), 0));
+    assert(status_render(&r, 500).inner.g == 13);
+    assert(status_render(&l, 500).inner.r == 13);
+    assert(status_receive(&l, 0, 0, 1000)); /* Lost layer state: no stale preview. */
+    dark(status_render(&l, 1500).inner);
+}
 int main(void) {
+    bluetooth_battery();
     struct status_state s = STATUS_STATE_INIT;
     status_peer(&s, false, 0);
     assert(status_render(&s, 0).inner.b == 13);
@@ -109,5 +174,5 @@ int main(void) {
     assert(l.remote_active);
     l.idle = false;
     assert(same(status_render(&l, 601000).outer, status_layer_color(2)));
-    puts("LED patterns: battery/charging, active profile colors, idle blackout and wake restoration on both halves passed");
+    puts("LED patterns: Bluetooth battery preview, battery/charging, active profile colors, idle blackout and wake restoration on both halves passed");
 }

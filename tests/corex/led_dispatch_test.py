@@ -110,6 +110,13 @@ int main(void) {
  assert(render_work.due==0); run_render();
  assert(sent==3 && ((sent_flags>>8)&255)==0);
  dispatch_zmk_ble_active_profile_changed(); assert(render_work.due==0);
+ /* BT-layer entry immediately shows the central's battery; exit restores it. */
+ status_battery(&state, 40, now);
+ layer=7; dispatch_zmk_layer_state_changed(); assert(render_work.due==0);
+ run_render(); assert(((sent_flags>>8)&255)==7);
+ assert(displayed.inner.r==13 && displayed.inner.g==8);
+ layer=0; dispatch_zmk_layer_state_changed(); assert(render_work.due==0);
+ run_render(); assert(!displayed.inner.r && !displayed.inner.g && !displayed.inner.b);
 #else
  /* Already-active receiver, including the one-second idle timer. */
  state.remote_active=true;
@@ -121,6 +128,15 @@ int main(void) {
  assert(render_work.due==0); run_render(); assert(displayed.outer.r==13);
  assert(corex_status_receive(0, 1u<<16)==-EINVAL);
  assert(render_work.due==RENDER_FAST_MS);
+ /* The same sync packet selects preview immediately using the left battery. */
+ status_battery(&state, 80, now);
+ assert(corex_status_receive(0, STATUS_SYNC_LAYER | STATUS_SYNC_ACTIVE | (7u<<8))==0);
+ assert(render_work.due==0); run_render();
+ assert(displayed.inner.g==13 && !displayed.inner.r);
+ assert(corex_status_receive(0, STATUS_SYNC_LAYER | STATUS_SYNC_ACTIVE)==0);
+ assert(render_work.due==0); run_render();
+ assert(displayed.inner.b==13 && !displayed.inner.r && !displayed.inner.g);
+ /* Restore the startup peer-link indication, not a stale battery color. */
 #endif
  /* An event received during SPI output must survive the periodic re-arm. */
  event_during_write=true;

@@ -14,6 +14,7 @@ struct status_state {
     int64_t peer_since;
     bool profile_valid, host_connected, host_open;
     uint8_t profile, battery;
+    bool battery_valid;
     int64_t profile_since, low_since, full_since, charge_since;
     bool powered, full_shown;
     /* Roles: the CoreX right (central) shows the host profile on its outer
@@ -67,8 +68,8 @@ static inline bool status_receive(struct status_state *s, uint32_t profile, uint
     return true;
 }
 static inline void status_battery(struct status_state *s, uint8_t level, int64_t now) {
-    if (level == 0 || level > 100) { return; }
-    s->battery = level;
+    if (level > 100) { return; }
+    s->battery = level; s->battery_valid = true;
     if (level <= 20) { s->low_since = now; }
     if (s->powered && level >= 95 && !s->full_shown) {
         s->full_shown = true; s->full_since = now;
@@ -112,8 +113,16 @@ static inline struct status_frame status_render(const struct status_state *s, in
     struct status_frame f = {0};
     const struct status_rgb red = {13,0,0}, blue = {0,0,13}, green = {0,13,0};
     int64_t low = now - s->low_since, peer = now - s->peer_since;
+    /* Each half uses its own latest battery sample. Keep the outer layer/
+     * profile indicator; temporarily replace only the inner LED while BT is
+     * the displayed layer. Unknown is dark, distinct from a measured 0%. */
+    if (!s->idle && s->layer_valid && s->layer == 7) {
+        if (s->battery_valid) {
+            f.inner = s->battery <= 20 ? red :
+                      s->battery <= 50 ? (struct status_rgb){13,8,0} : green;
+        }
     /* Reserve the whole low-battery pattern, including its dark gaps. */
-    if (s->low_since >= 0 && low >= 0 && low < 1200) {
+    } else if (s->low_since >= 0 && low >= 0 && low < 1200) {
         if (low < 400 || low >= 800) { f.inner = red; }
     } else if (!s->idle && !s->hide_peer && s->peer_known && peer >= 0 &&
                peer < (s->peer_connected ? 3000 : 10000)) {

@@ -305,7 +305,7 @@ with tempfile.TemporaryDirectory(prefix="cornix-auto-os-") as directory:
     subprocess.run([str(tmp / "test")], check=True)
 
 # Migration/configuration: neither keymap is allowed to override auto detection.
-for name in ("cornix_right", "corex_right"):
+for name in ("Cornix", "corex_right"):
     keymap = (ROOT / "config" / (name + ".keymap")).read_text()
     assert "&df" not in keymap and "default_layer.dtsi" not in keymap
     for slot in range(5):

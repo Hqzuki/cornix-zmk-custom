@@ -1,0 +1,2 @@
+/* Public editable keymap: config/Cornix.keymap. Keep the hardware board ID. */
+#include "../../../config/Cornix.keymap"

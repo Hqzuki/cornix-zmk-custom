@@ -5,9 +5,9 @@
 **CoreX右基板 R A14＋PAW3222トラックボールと、純正Cornix左基板**を使うためのZMKファームウェアです。
 右をCentral、左をPeripheralとして動作させます。USB・Bluetooth・ZMK Studioの接続先は右です。
 
-**CoreXなしの純正Cornix左右構成もビルドします。** 右は`cornix_stock_right.uf2`、左は共通の`corex_stock_left.uf2`です。[純正Cornix向け導入・操作](docs/stock-cornix.md)を確認してください。
+**CoreXなしの純正Cornix左右構成もビルドします。** 右は`Cornix.uf2`、左は共通の`corex_stock_left.uf2`です。[純正Cornix向け導入・操作](docs/stock-cornix.md)を確認してください。
 
-[Keymap Editor](https://nickcoutsos.github.io/keymap-editor/)では、Keyboardに`cornix_right`を選ぶと純正Cornixの49キー（右下の未使用1キーを除外）と左右エンコーダーを直接編集できます。CoreX用は`corex_right`です。
+[Keymap Editor](https://nickcoutsos.github.io/keymap-editor/)では、Keyboardに`Cornix`を選ぶと純正Cornixの49キー（右下の未使用1キーを除外）と左右エンコーダーを直接編集できます。CoreX用は`corex_right`です。
 
 ## 機能
 

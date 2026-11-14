@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 from keymap_checks import validate
 root = Path(__file__).resolve().parents[2]
-s = (root/'config/cornix_right.keymap').read_text()
+s = (root/'config/Cornix.keymap').read_text()
 assert len(validate(s, positions=49)) == 9
 assert 'corex_listener' not in s and 'mouse_gesture' not in s
 assert 'zip_temp_layer' not in s and 'paw3222' not in s
@@ -13,7 +13,7 @@ assert len(re.findall(r'RC\(', layout.split('map = <')[1].split('>;')[0])) == 49
 assert len(re.findall(r'&key_physical_attrs', layout)) == 49
 assert not re.search(r'RC\(3,\s*10\)', layout)
 assert 'display-name = "LAYOUT_49"' in layout
-keys = json.loads((root/'config/cornix_right.json').read_text())['layouts']['LAYOUT_49']['layout']
+keys = json.loads((root/'config/Cornix.json').read_text())['layouts']['LAYOUT_49']['layout']
 assert len(keys) == 49 and keys[46]['col'] == 11
 assert not any(k['row'] == 3 and k['col'] == 10 for k in keys)
 board = (root/'boards/jzf/cornix/cornix_right.dts').read_text()

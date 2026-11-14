@@ -11,22 +11,22 @@ CoreXを使わず、純正Cornixの左・右で使う構成です。右がCentra
 | 対象 | 通常 | 設定消去 |
 | --- | --- | --- |
 | 純正Cornix左 | `corex_stock_left.uf2` | `corex_stock_left_reset.uf2` |
-| 純正Cornix右 | `cornix_stock_right.uf2` | `cornix_stock_right_reset.uf2` |
+| 純正Cornix右 | `Cornix.uf2` | `Cornix_reset.uf2` |
 
-左のファイル名にCoreXが入っていますが、純正Cornix左のためのものです。CoreX構成と共用しています。純正右には`corex_r_a14_*`を書き込まず、`cornix_stock_right`を使ってください。
+左のファイル名にCoreXが入っていますが、純正Cornix左のためのものです。CoreX構成と共用しています。純正右には`corex_r_a14_*`を書き込まず、`Cornix`を使ってください。
 
 初めてこのZMK構成へ移行する場合は、PC側の旧Bluetooth登録を削除し、左右それぞれの設定消去UF2、通常UF2の順に書き込みます。リセットを2回押してUF2ドライブを開きます。既にこの構成でペアリング済みなら、毎回の設定消去は不要です。以前のファームウェアへ戻したい場合は、先にその復元手順・ファイルを手元に用意してください。
 
 ## キー配列と操作
 
-`config/cornix_right.keymap`と同じディレクトリの`cornix_right.json`が純正Cornixの49キー用（右下の未使用1キーを除外）です。CoreX版とは独立して、左右両方のキーとエンコーダーを編集できます。
+`config/Cornix.keymap`と同じディレクトリの`Cornix.json`が純正Cornixの49キー用（右下の未使用1キーを除外）です。CoreX版とは独立して、左右両方のキーとエンコーダーを編集できます。
 
 1. [Keymap Editor](https://nickcoutsos.github.io/keymap-editor/)を開きます。
 2. 左上の現在のリポジトリ・キーマップ名を押して選択欄を開きます。
-3. Repositoryを`cornix-zmk-custom`、Keyboardを`cornix_right`にします。`corex_right`はCoreX用です。
-4. 配列を編集してSaveすると、`config/cornix_right.keymap`へコミットされ、UF2ビルドが始まります。成功後の`cornix_stock_right.uf2`を右手に書き込みます。
+3. Repositoryを`cornix-zmk-custom`、Keyboardを`Cornix`にします。`corex_right`はCoreX用です。
+4. 配列を編集してSaveすると、`config/Cornix.keymap`へコミットされ、UF2ビルドが始まります。成功後の`Cornix.uf2`を右手に書き込みます。
 
-CoreX側で保存した変更はCornixへ自動では反映されません。純正Cornixの配列を変えるときは、最初から`cornix_right`を選んで編集してください。
+CoreX側で保存した変更はCornixへ自動では反映されません。純正Cornixの配列を変えるときは、最初から`Cornix`を選んで編集してください。
 
 - WIN／MAC、NUM、FN、PAN、GESTURE、MOUSE、BLUETOOTH、NAVの9レイヤーです。各レイヤーの未割り当てはすべて`&none`で無効にしており、下のレイヤーへ透過しません。
 - WIN／MACともBackspaceは通常のキーです。右下3キーは左から無効・無効・Deleteです。その上の記号キーは短押しマイナス／長押しイコール、右端は短押しスラッシュ／長押し右Shiftです。

@@ -32,8 +32,8 @@ include:
   - board: cornix_right
     shield: cornix_indicator
     snippet: studio-rpc-usb-uart
-    artifact-name: cornix_stock_right
+    artifact-name: Cornix
 
   - board: cornix_right
     shield: settings_reset
-    artifact-name: cornix_stock_right_reset
+    artifact-name: Cornix_reset

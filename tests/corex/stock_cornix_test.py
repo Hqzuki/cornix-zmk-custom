@@ -6,6 +6,9 @@ from keymap_checks import validate
 root = Path(__file__).resolve().parents[2]
 s = (root/'config/Cornix.keymap').read_text()
 assert len(validate(s, positions=49)) == 9
+board_keymap = (root/'boards/jzf/cornix/cornix.keymap').read_text()
+assert board_keymap.startswith('#if defined(CORNIX_STOCK_RIGHT)')
+assert '#include "../../../config/Cornix.keymap"' in board_keymap
 assert 'corex_listener' not in s and 'mouse_gesture' not in s
 assert 'zip_temp_layer' not in s and 'paw3222' not in s
 layout = (root/'boards/jzf/cornix/cornix-stock-layouts.dtsi').read_text()

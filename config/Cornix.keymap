@@ -222,26 +222,29 @@
 
         PAN {
             display-name = "PAN";
+            /* Temporary pointer control until the external trackball is ready.
+             * Match MOUSE everywhere except E/S/D/F = up/left/down/right. */
             bindings = <
-&none  &none  &none  &none  &none  &none                &none  &none  &none  &none  &none  &none
-&none  &none  &none  &none  &none  &none                &none  &none  &none  &none  &none  &none
-&none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none
-&none  &none  &none  &none  &none  &none                &none  &none         &none  &none  &none
+&none  &none  &none           &mmv MOVE_UP    &none            &none                &none  &none     &none     &none     &none  &none
+&none  &none  &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_RIGHT  &none                &none  &mkp MB1  &mkp MB3  &mkp MB2  &none  &none
+&none  &none  &none           &none           &none            &none  &none  &none  &none  &mkp MB4  &mkp MB5  &none     &none  &none
+&none  &none  &none           &none           &none            &none                &none  &none               &none     &none  &none
             >;
 
-            sensor-bindings = <&enc_off &enc_off>;
+            /* Match MOUSE: knobs fall through to the WIN/MAC base layer. */
         };
 
         GESTURE {
             display-name = "GESTURE";
+            /* Same temporary pointer layout as PAN. */
             bindings = <
-&none  &none  &none  &none  &none  &none                &none  &none  &none  &none  &none  &none
-&none  &none  &none  &none  &none  &none                &none  &none  &none  &none  &none  &none
-&none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none
-&none  &none  &none  &none  &none  &none                &none  &none         &none  &none  &none
+&none  &none  &none           &mmv MOVE_UP    &none            &none                &none  &none     &none     &none     &none  &none
+&none  &none  &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_RIGHT  &none                &none  &mkp MB1  &mkp MB3  &mkp MB2  &none  &none
+&none  &none  &none           &none           &none            &none  &none  &none  &none  &mkp MB4  &mkp MB5  &none     &none  &none
+&none  &none  &none           &none           &none            &none                &none  &none               &none     &none  &none
             >;
 
-            sensor-bindings = <&enc_off &enc_off>;
+            /* Match MOUSE: knobs fall through to the WIN/MAC base layer. */
         };
 
         MOUSE {

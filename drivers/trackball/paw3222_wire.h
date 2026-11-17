@@ -5,9 +5,8 @@
  */
 #pragma once
 
-/* ACTIVE_LOW opts into framed NCS transactions. Retain the old CoreX
- * ACTIVE_HIGH/physically-low wiring until those boards are explicitly migrated.
- * The additional 1 us NCS setup/hold gaps remain provisional pending hardware.
+/* NCS is active low. The additional 1 us NCS setup/hold gaps remain provisional
+ * pending hardware validation. Open-drain SDIO limits contention during probing.
  */
 static inline int cs_assert(const struct paw_config *c) {
     if (!(c->auxiliary.dt_flags & GPIO_ACTIVE_LOW)) { return 0; }
@@ -24,7 +23,8 @@ static inline int cs_release(const struct paw_config *c) {
     return rc;
 }
 static inline int send_byte(const struct paw_config *c, uint8_t value) {
-    int rc = gpio_pin_configure_dt(&c->sdio, GPIO_OUTPUT);
+    int rc = gpio_pin_configure_dt(&c->sdio,
+                                   GPIO_OUTPUT | GPIO_OPEN_DRAIN | GPIO_PULL_UP);
     if (rc < 0) { return rc; }
     for (int bit = 7; bit >= 0; bit--) {
         if ((rc = gpio_pin_set_dt(&c->sck, 0)) < 0 ||
@@ -39,7 +39,7 @@ static inline int send_byte(const struct paw_config *c, uint8_t value) {
 static inline int read_reg_raw(const struct paw_config *c, uint8_t reg) {
     int rc = send_byte(c, reg & 0x7f);
     if (rc < 0) { return rc; }
-    rc = gpio_pin_configure_dt(&c->sdio, GPIO_INPUT);
+    rc = gpio_pin_configure_dt(&c->sdio, GPIO_INPUT | GPIO_PULL_UP);
     if (rc < 0) { return rc; }
     k_busy_wait(4);
     uint8_t value = 0;
@@ -57,7 +57,7 @@ static inline int read_reg_raw(const struct paw_config *c, uint8_t reg) {
 }
 /* Even on a GPIO failure, release SDIO and NCS and restore idle-high SCK. */
 static inline int finish_transaction(const struct paw_config *c, int result) {
-    int rc = gpio_pin_configure_dt(&c->sdio, GPIO_INPUT);
+    int rc = gpio_pin_configure_dt(&c->sdio, GPIO_INPUT | GPIO_PULL_UP);
     if (result >= 0 && rc < 0) { result = rc; }
     rc = gpio_pin_set_dt(&c->sck, 1);
     if (result >= 0 && rc < 0) { result = rc; }

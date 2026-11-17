@@ -23,12 +23,12 @@
 
     cornix_tb_paw: paw3222 {
         compatible = "cornix,paw3222-gpio";
-        sck-gpios = <&xiao_d 10 GPIO_ACTIVE_HIGH>;
-        sdio-gpios = <&xiao_d 9 GPIO_ACTIVE_HIGH>;
-        motion-gpios = <&xiao_d 7 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
-        /* NCS is active only during a register transaction. */
-        auxiliary-gpios = <&xiao_d 8 GPIO_ACTIVE_LOW>;
-        res-cpi = <1216>;
+        /* Scan all four signal pins on every boot; keep 3V3 and GND fixed. */
+        autodetect-gpios = <&xiao_d 7 GPIO_ACTIVE_HIGH>,
+                           <&xiao_d 8 GPIO_ACTIVE_HIGH>,
+                           <&xiao_d 9 GPIO_ACTIVE_HIGH>,
+                           <&xiao_d 10 GPIO_ACTIVE_HIGH>;
+        res-cpi = <1596>;
         poll-interval-ms = <15>;
     };
 

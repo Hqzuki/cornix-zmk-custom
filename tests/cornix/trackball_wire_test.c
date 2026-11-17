@@ -10,6 +10,8 @@
 #define GPIO_ACTIVE_LOW 1
 #define GPIO_OUTPUT 1
 #define GPIO_INPUT 2
+#define GPIO_OPEN_DRAIN 4
+#define GPIO_PULL_UP 8
 struct gpio_dt_spec { int pin, dt_flags; };
 struct paw_config { struct gpio_dt_spec sck, sdio, motion, auxiliary; };
 static const struct paw_config cfg = {.sck = {1,0}, .sdio = {2,0}, .auxiliary = {3,GPIO_ACTIVE_LOW}};
@@ -19,7 +21,7 @@ static bool framed;
 static uint8_t sent[16], response[2];
 static int gpio_pin_configure_dt(const struct gpio_dt_spec *p, int flags) {
     assert(p->pin == 2);
-    if (flags == fail_direction) { fail_direction=0; return -EIO; }
+    if (fail_direction && (flags & fail_direction)) { fail_direction=0; return -EIO; }
     direction = flags; return 0;
 }
 static int gpio_pin_set_dt(const struct gpio_dt_spec *p, int value) {
@@ -28,10 +30,10 @@ static int gpio_pin_set_dt(const struct gpio_dt_spec *p, int value) {
         if (value && !cs_level) { cs_pulses++; }
         cs_level = value;
     } else if (p->pin == 2) {
-        assert((!framed || cs_level) && direction == GPIO_OUTPUT); data_level=value;
+        assert((!framed || cs_level) && (direction & GPIO_OUTPUT)); data_level=value;
     } else {
         assert(p->pin==1);
-        if (value && !clock_level && direction == GPIO_OUTPUT) {
+        if (value && !clock_level && (direction & GPIO_OUTPUT)) {
             assert(!framed || cs_level);
             sent[sent_count/8]=(sent[sent_count/8]<<1)|data_level; sent_count++;
         }
@@ -40,7 +42,7 @@ static int gpio_pin_set_dt(const struct gpio_dt_spec *p, int value) {
     return 0;
 }
 static int gpio_pin_get_dt(const struct gpio_dt_spec *p) {
-    assert(p->pin==2 && direction==GPIO_INPUT);
+    assert(p->pin==2 && (direction & GPIO_INPUT));
     assert((!framed || cs_level) && clock_level==1 && samples<16);
     if (samples==fail_sample) { fail_sample=-1; return -EIO; }
     int bit=7-samples%8, byte=samples/8; samples++;
@@ -54,7 +56,7 @@ static void reset(uint8_t value) {
     for (int i=0; i<16; i++) { sent[i]=0; }
     response[0]=response[1]=value;
 }
-static void idle(void) { assert(direction==GPIO_INPUT && clock_level==1 && cs_level==0); }
+static void idle(void) { assert((direction & GPIO_INPUT) && clock_level==1 && cs_level==0); }
 int main(void) {
     for (int value=0; value<256; value++) {
         reset(value);

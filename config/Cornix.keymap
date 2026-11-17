@@ -126,7 +126,23 @@
             mac-keycode = <LG(RIGHT)>;
         };
 
-        /* NAV: single tap = arrow, double tap = OS-specific Window action. */
+        desktop_prev: desktop_prev {
+            compatible = "custom,behavior-os-key";
+            #binding-cells = <0>;
+            mac-layer = <1>;
+            win-keycode = <LC(LG(LEFT))>;
+            mac-keycode = <LC(LEFT)>;
+        };
+
+        desktop_next: desktop_next {
+            compatible = "custom,behavior-os-key";
+            #binding-cells = <0>;
+            mac-layer = <1>;
+            win-keycode = <LC(LG(RIGHT))>;
+            mac-keycode = <LC(RIGHT)>;
+        };
+
+        /* NAV: single tap = arrow, double = existing action, triple = desktop switch. */
 
         nav_up: nav_up {
             compatible = "zmk,behavior-tap-dance";
@@ -139,7 +155,7 @@
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
             tapping-term-ms = <200>;
-            bindings = <&kp LEFT>, <&window_left>;
+            bindings = <&kp LEFT>, <&window_left>, <&desktop_prev>;
         };
 
         nav_down: nav_down {
@@ -153,7 +169,7 @@
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
             tapping-term-ms = <200>;
-            bindings = <&kp RIGHT>, <&window_right>;
+            bindings = <&kp RIGHT>, <&window_right>, <&desktop_next>;
         };
 
         /* Consumes rotation without output; an omitted binding would fall

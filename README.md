@@ -1,7 +1,5 @@
 # Cornix ZMK
 
-[English](README_en.md) | [中文](README_zh.md)
-
 純正Cornix左右分割キーボード向けのZMKファームウェアです。右がCentral、左がPeripheralです。キー配列は純正Cornixの49キー構成で、ZMK StudioとKeymap Editorから編集できます。
 
 ## 主な機能
@@ -19,6 +17,10 @@ GitHub Actionsの成功した[ビルド](https://github.com/Hqzuki/cornix-zmk-cu
 - 右：`Cornix_right.uf2` ／ 設定消去：`Cornix_right_reset.uf2`
 
 書き込み、操作、配列の編集方法は[純正Cornixのガイド](docs/stock-cornix.md)を参照してください。自動OS判定の説明は[こちら](docs/auto-os.md)です。
+
+## トラックボール用ソース
+
+PAW3222のGPIOドライバーとXIAO Central／Cornix Peripheral向けの設定はリポジトリに残していますが、通常ビルドでは使用せず、配布UF2も生成しません。構成の説明は[トラックボール用ソースの案内](docs/trackball-central.md)を参照してください。
 
 ## 開発
 

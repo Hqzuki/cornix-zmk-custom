@@ -1,7 +1,15 @@
 # SPDX-License-Identifier: MIT
 # The short-name behavior exists in normal and reset images; reset is a no-op.
 target_sources(app PRIVATE sync_behavior.c)
-if(CONFIG_COREX_LED_STATUS)
-  target_sources(app PRIVATE controller.c)
-  target_sources(app PRIVATE backend_strip.c)
+if(CONFIG_CORNIX_LED_STATUS)
+  if(CONFIG_CORNIX_TB_CENTRAL OR CONFIG_CORNIX_RIGHT_PERIPHERAL)
+    target_sources(app PRIVATE controller_tb.c)
+    if(CONFIG_CORNIX_TB_CENTRAL)
+      target_sources(app PRIVATE backend_none.c)
+    else()
+      target_sources(app PRIVATE backend_strip.c)
+    endif()
+  else()
+    target_sources(app PRIVATE controller.c backend_strip.c)
+  endif()
 endif()

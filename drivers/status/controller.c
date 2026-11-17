@@ -22,7 +22,7 @@
 #include <zmk/events/split_peripheral_status_changed.h>
 #endif
 #include "backend.h"
-LOG_MODULE_REGISTER(corex_led, CONFIG_ZMK_LOG_LEVEL);
+LOG_MODULE_REGISTER(cornix_led, CONFIG_ZMK_LOG_LEVEL);
 static struct status_state state =
     STATUS_STATE_INIT_ROLE(IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL));
 K_MUTEX_DEFINE(state_lock);
@@ -41,7 +41,7 @@ static bool usb_powered(void) {
 }
 
 static void wake_render(void);
-int corex_status_receive(uint32_t profile, uint32_t flags) {
+int cornix_status_receive(uint32_t profile, uint32_t flags) {
     k_mutex_lock(&state_lock, K_FOREVER);
     bool ok = status_receive(&state, profile, flags, k_uptime_get());
     k_mutex_unlock(&state_lock);
@@ -166,17 +166,17 @@ static int status_event(const zmk_event_t *eh) {
     wake_render(); /* battery, peer link or activity changed */
     return ZMK_EV_EVENT_BUBBLE;
 }
-ZMK_LISTENER(corex_led_status, status_event);
-ZMK_SUBSCRIPTION(corex_led_status, zmk_battery_state_changed);
-ZMK_SUBSCRIPTION(corex_led_status, zmk_activity_state_changed);
+ZMK_LISTENER(cornix_led_status, status_event);
+ZMK_SUBSCRIPTION(cornix_led_status, zmk_battery_state_changed);
+ZMK_SUBSCRIPTION(cornix_led_status, zmk_activity_state_changed);
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
 /* Re-read the highest active layer and sync on press AND release, rather
  * than discovering the change at the next 33 ms animation tick. */
-ZMK_SUBSCRIPTION(corex_led_status, zmk_layer_state_changed);
-ZMK_SUBSCRIPTION(corex_led_status, zmk_ble_active_profile_changed);
+ZMK_SUBSCRIPTION(cornix_led_status, zmk_layer_state_changed);
+ZMK_SUBSCRIPTION(cornix_led_status, zmk_ble_active_profile_changed);
 #endif
 #if !IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
-ZMK_SUBSCRIPTION(corex_led_status, zmk_split_peripheral_status_changed);
+ZMK_SUBSCRIPTION(cornix_led_status, zmk_split_peripheral_status_changed);
 #else
 static void peer_status(struct bt_conn *conn, bool connected) {
     struct bt_conn_info info;
@@ -193,7 +193,7 @@ static void peer_connected(struct bt_conn *conn, uint8_t err) {
 static void peer_disconnected(struct bt_conn *conn, uint8_t reason) {
     ARG_UNUSED(reason); peer_status(conn, false);
 }
-BT_CONN_CB_DEFINE(corex_led_peer) = {.connected = peer_connected, .disconnected = peer_disconnected};
+BT_CONN_CB_DEFINE(cornix_led_peer) = {.connected = peer_connected, .disconnected = peer_disconnected};
 #endif
 static int status_init(void) {
     int rc = status_backend_init();

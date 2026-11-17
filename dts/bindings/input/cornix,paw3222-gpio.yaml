@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: MIT
+# Three-wire half-duplex SDIO, clock idle high.
+# Each *-gpios property lists one entry per connector, in probe order;
+# input comes from the first connector whose sensor answers.
+description: Cornix PAW3222 optical sensor with GPIO three-wire transport
+compatible: "cornix,paw3222-gpio"
+include: base.yaml
+properties:
+  sck-gpios:
+    type: phandle-array
+    required: true
+  sdio-gpios:
+    type: phandle-array
+    required: true
+  motion-gpios:
+    type: phandle-array
+    required: true
+  auxiliary-gpios:
+    type: phandle-array
+    required: true
+    description: ACTIVE_LOW for framed NCS; ACTIVE_HIGH retains legacy low CS
+  poll-interval-ms:
+    type: int
+    default: 15
+  res-cpi:
+    type: int
+    default: 1216
+    description: Resolution in multiples of 38 CPI, from 608 to 4826

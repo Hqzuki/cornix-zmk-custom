@@ -6,4 +6,3 @@ build:
   settings:
     dts_root: .
     board_root: .
-    snippet_root: .

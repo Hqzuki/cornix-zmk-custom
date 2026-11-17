@@ -1,6 +1,11 @@
 #if defined(CORNIX_STOCK_RIGHT)
+#if defined(CORNIX_TB_PERIPHERAL)
+/* Multi-shield builds may still select this board-level fallback. */
+#include "../../shields/cornix_tb_peripheral/cornix_tb_peripheral.keymap"
+#else
 /* ZMK resolves the common board keymap name; the editable name is Cornix. */
 #include "../../../config/Cornix.keymap"
+#endif
 #else
 /* SPDX-License-Identifier: MIT
  * Stock left is a peripheral: the Cornix right central owns all bindings.

@@ -68,6 +68,6 @@
 
 / {
     behaviors {
-        led_sync: ls { compatible = "corex,led-sync"; #binding-cells = <2>; };
+        led_sync: ls { compatible = "cornix,led-sync"; #binding-cells = <2>; };
     };
 };

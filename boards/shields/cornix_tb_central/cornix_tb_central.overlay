@@ -1,0 +1,43 @@
+/* SPDX-License-Identifier: MIT
+ * XIAO signal allocation supplied for the user's LisM sensor wiring.
+ * GPIO half-duplex SDIO avoids connecting SPIM MOSI/MISO to the same pin.
+ * No assumed LisM FFC pin numbers: wire by verified signal names.
+ */
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include "../../jzf/cornix/cornix-stock-layouts.dtsi"
+#include "../../jzf/cornix/cornix_sensors.dtsi"
+
+/ {
+    chosen {
+        zmk,kscan = &kscan_none;
+        zmk,physical-layout = &layout_49;
+    };
+
+    /* No local keys, no fabricated GPIO matrix or periodic key events. */
+    kscan_none: kscan_none {
+        compatible = "zmk,kscan-mock";
+        rows = <4>;
+        columns = <14>;
+        events = <>;
+    };
+
+    cornix_tb_paw: paw3222 {
+        compatible = "cornix,paw3222-gpio";
+        sck-gpios = <&xiao_d 10 GPIO_ACTIVE_HIGH>;
+        sdio-gpios = <&xiao_d 9 GPIO_ACTIVE_HIGH>;
+        motion-gpios = <&xiao_d 7 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+        /* NCS is active only during a register transaction. */
+        auxiliary-gpios = <&xiao_d 8 GPIO_ACTIVE_LOW>;
+        res-cpi = <1216>;
+        poll-interval-ms = <15>;
+    };
+
+    cornix_tb_listener: cornix_tb_listener {
+        compatible = "zmk,input-listener";
+        device = <&cornix_tb_paw>;
+    };
+
+    behaviors {
+        led_sync: ls { compatible = "cornix,led-sync"; #binding-cells = <2>; };
+    };
+};

@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: MIT
  * Uses ZMK's existing encrypted split behavior channel; no extra BLE link.
  */
-#define DT_DRV_COMPAT corex_led_sync
+#define DT_DRV_COMPAT cornix_led_sync
 #include <errno.h>
 #include <drivers/behavior.h>
 #include <zmk/behavior.h>
@@ -9,8 +9,8 @@
 static int sync_pressed(struct zmk_behavior_binding *binding,
                         struct zmk_behavior_binding_event event) {
     (void)event;
-#if IS_ENABLED(CONFIG_COREX_LED_STATUS) && !IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
-    int rc = corex_status_receive(binding->param1, binding->param2);
+#if IS_ENABLED(CONFIG_CORNIX_LED_STATUS) && !IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
+    int rc = cornix_status_receive(binding->param1, binding->param2);
     return rc < 0 ? rc : ZMK_BEHAVIOR_OPAQUE;
 #else
     (void)binding;

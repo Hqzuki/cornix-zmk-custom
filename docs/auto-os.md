@@ -42,22 +42,6 @@ NUM、FNなどの補助レイヤーはそのままで、MACレイヤー（内部
 MACにならない場合は、PC側の登録削除と該当接続先のペアリング消去後に再ペアリングし、初回の情報読み取りと再接続時の挙動を比較します。
 読み取りの観測とiPadOS 27での誤分類は実機ログで確認済みです。ANCS／AMSによる補正はホストテストに加え、iPad・iPhoneでMACレイヤーへ切り替わることを実機確認済みです。
 
-### iPadなどで誤判定するときの診断
-
-診断用UF2は通常のビルド対象から除外しています。以下は調査時の手順の記録です。再度必要になった場合のみ、`build.yaml`へ`board: cornix_right`、`shield: cornix_indicator`、`snippet: zmk-usb-logging cornix-os-debug`、`artifact-name: cornix_stock_right_os_debug`の項目を追加してビルドします。
-
-`cornix_stock_right_os_debug.uf2`は純正Cornix右専用のUSBログ診断版です。
-通常版と同じ判定ルールですが、USBはログ出力専用で、キー入力はBluetoothへ送ります。
-Studioは無効です。左手の更新やペアリング消去は不要です。
-
-1. 診断版を右手へ書き込み、右手をMacのUSBにつなぎます。
-2. Macで`ls /dev/cu.usbmodem*`を実行し、表示された右手のポートを`screen /dev/cu.usbmodemXXXXX 115200`で開きます。
-3. ログを開いたまま、iPad側でCornixの接続を一度切り、再接続します。初回登録時と再接続時の違いを調べる場合のみ、該当接続先を消去して再登録します。
-4. `Bluetooth OS host connected`、`Bluetooth OS read`、`Bluetooth OS evidence`、`Bluetooth OS Apple service`の行を確認します。`reads`のビットは`01`=Report Map、`02`=HID Information、`04`=PnP ID、`08`=Appearance、`10`=Appleサービスです。`result`は`0`=不明、`1`=WIN、`2`=Appleです。`Apple service`の`found=1`ならMACへ切り替えます。接続行だけでread行がなければ、観測対象の読み取りが得られていません。
-5. 診断後は通常の`Cornix_right.uf2`へ戻します。
-
-ログにはBluetooth接続・判定情報が含まれます。診断版は常用せず、通常版を使ってください。
-
 ## 実装
 
 `drivers/keymap/auto_os.c`で、固定済みのZMK／Zephyrが提供するGATT読み取りコールバックを使います。

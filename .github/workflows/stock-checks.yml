@@ -22,5 +22,9 @@ jobs:
         run: python3 tests/cornix/os_key_test.py
       - name: Verify pure stock Cornix layout and hardware isolation
         run: python3 tests/cornix/stock_cornix_test.py
+      - name: Verify PAW3222 GPIO wire protocol
+        run: |
+          cc -std=c11 -Wall -Wextra -Werror tests/cornix/trackball_wire_test.c -o /tmp/cornix-trackball-wire-test
+          /tmp/cornix-trackball-wire-test
       - name: Verify automatic Bluetooth OS detection without persistence
         run: python3 tests/cornix/auto_os_test.py

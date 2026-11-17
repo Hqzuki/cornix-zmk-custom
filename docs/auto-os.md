@@ -1,6 +1,6 @@
 # Bluetoothの自動OS判定
 
-純正Cornix右・CoreX右のどちらも、PCとのBluetooth接続を担当する右側で判定します。
+純正Cornix右がPCとのBluetooth接続を担当し、接続先のOSを判定します。
 全接続先で自動判定のみを使い、WIN／MACの手動選択・保存・復元はありません。
 OSの判定結果は現在の接続中のRAMだけに保持し、切断すると破棄します。
 Bluetoothのペアリング情報とStudioのキーマップ保存は通常どおり残ります。
@@ -54,7 +54,7 @@ Studioは無効です。左手の更新やペアリング消去は不要です�
 2. Macで`ls /dev/cu.usbmodem*`を実行し、表示された右手のポートを`screen /dev/cu.usbmodemXXXXX 115200`で開きます。
 3. ログを開いたまま、iPad側でCornixの接続を一度切り、再接続します。初回登録時と再接続時の違いを調べる場合のみ、該当接続先を消去して再登録します。
 4. `Bluetooth OS host connected`、`Bluetooth OS read`、`Bluetooth OS evidence`、`Bluetooth OS Apple service`の行を確認します。`reads`のビットは`01`=Report Map、`02`=HID Information、`04`=PnP ID、`08`=Appearance、`10`=Appleサービスです。`result`は`0`=不明、`1`=WIN、`2`=Appleです。`Apple service`の`found=1`ならMACへ切り替えます。接続行だけでread行がなければ、観測対象の読み取りが得られていません。
-5. 診断後は通常の`Cornix.uf2`へ戻します。
+5. 診断後は通常の`Cornix_right.uf2`へ戻します。
 
 ログにはBluetooth接続・判定情報が含まれます。診断版は常用せず、通常版を使ってください。
 

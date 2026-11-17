@@ -3,7 +3,7 @@
 # Copyright (c) 2020 The ZMK Contributors
 # SPDX-License-Identifier: MIT
 
-## Stock Cornix left: split peripheral of the CoreX right central
+## Stock Cornix left: split peripheral of the Cornix right central
 if BOARD_CORNIX_LEFT
 
 config ZMK_SPLIT

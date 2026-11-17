@@ -3,7 +3,7 @@
 #include "../../../config/Cornix.keymap"
 #else
 /* SPDX-License-Identifier: MIT
- * Stock left is a peripheral: the CoreX right central owns all bindings.
+ * Stock left is a peripheral: the Cornix right central owns all bindings.
  * Keep only a placeholder for board/reset devicetree parsing.
  */
 #include <behaviors.dtsi>

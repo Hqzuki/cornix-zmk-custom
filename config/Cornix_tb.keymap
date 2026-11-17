@@ -42,47 +42,46 @@
             bindings = <&macro_tap>, <&kp LS(LBKT) &kp LS(RBKT) &kp LEFT>;
         };
 
-        /* Keep legacy macro node names so existing Studio bindings resolve.
-         * All five now select only a Bluetooth slot; OS is always automatic. */
+        /* Select a Bluetooth slot; the host OS is detected automatically. */
 
-        bt0_mac: bt0_mac {
+        bt0: bt0 {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             bindings = <&bt BT_SEL 0>;
             display-name = "BT 0";
-            label = "BT0_MAC";
+            label = "BT0";
         };
 
-        bt1_win: bt1_win {
+        bt1: bt1 {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             bindings = <&bt BT_SEL 1>;
             display-name = "BT 1";
-            label = "BT1_WIN";
+            label = "BT1";
         };
 
-        bt2_win: bt2_win {
+        bt2: bt2 {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             bindings = <&bt BT_SEL 2>;
             display-name = "BT 2";
-            label = "BT2_WIN";
+            label = "BT2";
         };
 
-        bt3_win: bt3_win {
+        bt3: bt3 {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             bindings = <&bt BT_SEL 3>;
             display-name = "BT 3";
-            label = "BT3_WIN";
+            label = "BT3";
         };
 
-        bt4_win: bt4_win {
+        bt4: bt4 {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             bindings = <&bt BT_SEL 4>;
             display-name = "BT 4";
-            label = "BT4_WIN";
+            label = "BT4";
         };
     };
 
@@ -296,7 +295,7 @@
         BLUETOOTH {
             display-name = "BLUETOOTH";
             bindings = <
-&bootloader  &none  &none  &none  &none  &none                &bt0_mac  &bt1_win  &bt2_win  &bt3_win  &bt4_win    &bootloader
+&bootloader  &none  &none  &none  &none  &none                &bt0  &bt1  &bt2  &bt3  &bt4    &bootloader
 &none        &none  &none  &none  &none  &none                &none     &none     &none     &none     &none       &none
 &none        &none  &none  &none  &none  &none  &none  &none  &none     &none     &none     &none     &none       &none
 &none        &none  &none  &none  &none  &none                &none     &none               &none     &bt BT_CLR  &bt BT_CLR_ALL

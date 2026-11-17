@@ -258,7 +258,7 @@
 &none  &none  &none  &none  &none  &none                &none  &none               &none     &none  &none
             >;
 
-            /* No sensor-bindings: knobs fall through to the WIN/MAC base layer. */
+            sensor-bindings = <&enc_off &enc_off>;
         };
 
         BLUETOOTH {

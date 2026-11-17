@@ -1,7 +1,6 @@
 /* SPDX-License-Identifier: MIT */
-/* Base layout/OS actions come from the same editable Cornix keymap.
- * Only XIAO mode overrides the temporary key-driven pointer layers. */
-#include "../../../config/Cornix.keymap"
+/* The TB-specific editable map is the source of its key layers. */
+#include "../../../config/Cornix_tb.keymap"
 #include <mouse-gesture.dtsi>
 
 &zip_mouse_gesture {
@@ -63,8 +62,6 @@
     };
 };
 
-#define CORNIX_NO_KEYS &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none
-
 / {
     pan_direction: pan_direction {
         compatible = "custom,input-processor-pan-direction";
@@ -77,27 +74,6 @@
         desktop_gesture_auto_toggle {
             layers = <5>;
             bindings = <&mouse_gesture_on &mouse_gesture_off>;
-        };
-    };
-
-    keymap {
-        /* No ESDF mouse keys or desktop tap dances in these layers. */
-        PAN {
-            bindings = <CORNIX_NO_KEYS>;
-            sensor-bindings = <&enc_off &enc_off>;
-        };
-        GESTURE {
-            bindings = <CORNIX_NO_KEYS>;
-            sensor-bindings = <&enc_off &enc_off>;
-        };
-        MOUSE {
-            /* Keep the gesture thumb reachable while AML remains active. */
-            bindings = <
-&none &none &none &none &none &none                &none &none    &none    &none    &none &none
-&none &none &none &none &none &none                &none &mkp MB1 &mkp MB3 &mkp MB2 &none &none
-&none &none &none &none &none &none &none &none  &none &mkp MB4 &mkp MB5 &none    &none &none
-&none &none &none &none &none &mo 5               &none &none              &none    &none &none
-            >;
         };
     };
 };

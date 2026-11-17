@@ -1,7 +1,6 @@
 /* SPDX-License-Identifier: Apache-2.0
- * CoreX three-wire transport follows CoreX-RMK paw_wire.rs / paw3222.rs.
- * Register protocol: Copyright 2024 Google LLC, modifications 2025 sekigon-gonnoc,
- * Rust adaptation 2026 CoreX prototype. ZMK GPIO implementation 2026.
+ * PAW3222 register protocol based on the Google LLC / sekigon-gonnoc work.
+ * Cornix ZMK GPIO integration.
  * SDIO MUST be released while the sensor responds; SPIM with MOSI and MISO
  * on the same pin does not provide that guarantee.
  */

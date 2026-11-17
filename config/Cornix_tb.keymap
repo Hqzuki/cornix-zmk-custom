@@ -1,0 +1,320 @@
+/* Cornix TB Keymap Editor map; built by the XIAO trackball central. */
+
+#define ZMK_POINTING_DEFAULT_MOVE_VAL 1200
+#include <dt-bindings/zmk/input_transform.h>
+#include <input/processors.dtsi>
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/pointing.h>
+
+&mt {
+    flavor = "balanced";
+    quick-tap-ms = <0>;
+};
+
+/ {
+    macros {
+        pair_paren: pair_paren {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            display-name = "Pair ()";
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&macro_tap>, <&kp LS(N9) &kp LS(N0) &kp LEFT>;
+        };
+
+        pair_square: pair_square {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            display-name = "Pair []";
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&macro_tap>, <&kp LBKT &kp RBKT &kp LEFT>;
+        };
+
+        pair_brace: pair_brace {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            display-name = "Pair {}";
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&macro_tap>, <&kp LS(LBKT) &kp LS(RBKT) &kp LEFT>;
+        };
+
+        /* Keep legacy macro node names so existing Studio bindings resolve.
+         * All five now select only a Bluetooth slot; OS is always automatic. */
+
+        bt0_mac: bt0_mac {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&bt BT_SEL 0>;
+            display-name = "BT 0";
+            label = "BT0_MAC";
+        };
+
+        bt1_win: bt1_win {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&bt BT_SEL 1>;
+            display-name = "BT 1";
+            label = "BT1_WIN";
+        };
+
+        bt2_win: bt2_win {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&bt BT_SEL 2>;
+            display-name = "BT 2";
+            label = "BT2_WIN";
+        };
+
+        bt3_win: bt3_win {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&bt BT_SEL 3>;
+            display-name = "BT 3";
+            label = "BT3_WIN";
+        };
+
+        bt4_win: bt4_win {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&bt BT_SEL 4>;
+            display-name = "BT 4";
+            label = "BT4_WIN";
+        };
+    };
+
+    behaviors {
+        window_maximize: window_maximize {
+            compatible = "custom,behavior-os-key";
+            #binding-cells = <0>;
+            mac-layer = <1>;
+            win-keycode = <LG(UP)>;
+            mac-keycode = <LG(ENTER)>;
+        };
+
+        window_up: window_up {
+            compatible = "custom,behavior-os-key";
+            #binding-cells = <0>;
+            mac-layer = <1>;
+            win-keycode = <LG(LS(LEFT))>;
+            mac-keycode = <LG(UP)>;
+        };
+
+        window_left: window_left {
+            compatible = "custom,behavior-os-key";
+            #binding-cells = <0>;
+            mac-layer = <1>;
+            win-keycode = <LG(LEFT)>;
+            mac-keycode = <LG(LEFT)>;
+        };
+
+        window_down: window_down {
+            compatible = "custom,behavior-os-key";
+            #binding-cells = <0>;
+            mac-layer = <1>;
+            win-keycode = <LG(LS(RIGHT))>;
+            mac-keycode = <LG(DOWN)>;
+        };
+
+        window_right: window_right {
+            compatible = "custom,behavior-os-key";
+            #binding-cells = <0>;
+            mac-layer = <1>;
+            win-keycode = <LG(RIGHT)>;
+            mac-keycode = <LG(RIGHT)>;
+        };
+
+        desktop_prev: desktop_prev {
+            compatible = "custom,behavior-os-key";
+            #binding-cells = <0>;
+            mac-layer = <1>;
+            win-keycode = <LC(LG(LEFT))>;
+            mac-keycode = <LC(LEFT)>;
+        };
+
+        desktop_next: desktop_next {
+            compatible = "custom,behavior-os-key";
+            #binding-cells = <0>;
+            mac-layer = <1>;
+            win-keycode = <LC(LG(RIGHT))>;
+            mac-keycode = <LC(RIGHT)>;
+        };
+
+        mission_control: mission_control {
+            compatible = "custom,behavior-os-key";
+            #binding-cells = <0>;
+            mac-layer = <1>;
+            win-keycode = <LG(TAB)>;
+            mac-keycode = <LC(UP)>;
+        };
+
+        app_expose: app_expose {
+            compatible = "custom,behavior-os-key";
+            #binding-cells = <0>;
+            mac-layer = <1>;
+            win-keycode = <LG(TAB)>;
+            mac-keycode = <LC(DOWN)>;
+        };
+
+        /* NAV: single tap = arrow, double = existing action, triple = OS overview. */
+
+        nav_up: nav_up {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&kp UP>, <&window_up>, <&mission_control>;
+        };
+
+        nav_left: nav_left {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&kp LEFT>, <&window_left>, <&desktop_prev>;
+        };
+
+        nav_down: nav_down {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&kp DOWN>, <&window_down>, <&app_expose>;
+        };
+
+        nav_right: nav_right {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&kp RIGHT>, <&window_right>, <&desktop_next>;
+        };
+
+        /* Consumes rotation without output; an omitted binding would fall
+         * through to the WIN/MAC base layer.
+         */
+
+        enc_off: enc_off {
+            compatible = "zmk,behavior-sensor-rotate";
+            #sensor-binding-cells = <0>;
+            bindings = <&none>, <&none>;
+        };
+    };
+
+    keymap {
+        compatible = "zmk,keymap";
+
+        WIN {
+            display-name = "WIN";
+            bindings = <
+&kp ESC         &kp Q         &kp W         &kp E        &kp R        &kp T                               &kp Y  &kp U        &kp I      &kp O    &mt SEMICOLON SQT  &kp BACKSPACE
+&kp TAB         &kp A         &kp S         &kp D        &kp F        &kp G                               &kp H  &kp J        &kp K      &kp L    &kp P              &kp ENTER
+&kp LEFT_SHIFT  &kp Z         &kp X         &kp C        &kp V        &kp B  &lt 7 PSCRN  &lt (7) LC(N0)  &kp N  &kp M        &kp COMMA  &kp DOT  &mt EQUAL MINUS    &mt RSHFT SLASH
+&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &lt 8 SPACE  &lt 4 LANG2  &mo 5                               &mo 3  &lt 2 LANG1             &none    &none              &kp DELETE
+            >;
+
+            sensor-bindings =
+                <&inc_dec_kp LG(LS(S)) LA(PSCRN)>,
+                <&inc_dec_kp C_AC_ZOOM_IN C_AC_ZOOM_OUT>;
+        };
+
+        MAC {
+            display-name = "MAC";
+            bindings = <
+&kp ESC         &kp Q      &kp W         &kp E        &kp R        &kp T                                      &kp Y  &kp U        &kp I      &kp O    &mt SEMICOLON SQT  &kp BACKSPACE
+&kp TAB         &kp A      &kp S         &kp D        &kp F        &kp G                                      &kp H  &kp J        &kp K      &kp L    &kp P              &kp ENTER
+&kp LEFT_SHIFT  &kp Z      &kp X         &kp C        &kp V        &kp B  &lt (7) LG(LS(N3))  &lt (7) LG(N0)  &kp N  &kp M        &kp COMMA  &kp DOT  &mt EQUAL MINUS    &mt RSHFT SLASH
+&kp LEFT_GUI    &kp LCTRL  &kp LEFT_ALT  &lt 8 SPACE  &lt 4 LANG2  &mo 5                                      &mo 3  &lt 2 LANG1             &none    &none              &kp DELETE
+            >;
+
+            sensor-bindings = <&inc_dec_kp LG(LS(N7)) LG(LS(N9)) &inc_dec_kp LG(LS(EQUAL)) LG(MINUS)>;
+        };
+
+        NUM {
+            display-name = "NUM";
+            bindings = <
+&kp N1  &kp N2     &kp N3      &pair_square  &pair_paren     &kp BACKSLASH                &none  &none  &none  &none  &none  &none
+&kp N4  &kp N5     &kp N6      &kp TILDE     &kp UNDERSCORE  &pair_brace                  &none  &none  &none  &none  &none  &none
+&kp N7  &kp N8     &kp N9      &kp GRAVE     &kp COMMA       &kp PERIOD     &none  &none  &none  &none  &none  &none  &none  &none
+&kp N0  &none      &none       &none         &none           &none                        &none  &none         &none  &none  &none
+            >;
+
+            sensor-bindings = <&enc_off &enc_off>;
+        };
+
+        FN {
+            display-name = "FN";
+            bindings = <
+&kp F1   &kp F2   &kp F3   &pair_square  &pair_paren     &kp BACKSLASH                &none  &none  &none  &none  &none  &none
+&kp F4   &kp F5   &kp F6   &kp TILDE     &kp UNDERSCORE  &pair_brace                  &none  &none  &none  &none  &none  &none
+&kp F7   &kp F8   &kp F9   &kp GRAVE     &kp COMMA       &kp PERIOD     &none  &none  &none  &none  &none  &none  &none  &none
+&kp F10  &kp F11  &kp F12  &none         &none           &none                        &none  &none         &none  &none  &none
+            >;
+
+            sensor-bindings = <&enc_off &enc_off>;
+        };
+
+        PAN {
+            display-name = "PAN";
+            /* Trackball central sends pointer events; this layer has no key bindings. */
+            bindings = <
+&none  &none  &none  &none  &none  &none                &none  &none  &none  &none  &none  &none
+&none  &none  &none  &none  &none  &none                &none  &none  &none  &none  &none  &none
+&none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none
+&none  &none  &none  &none  &none  &none                &none  &none       &none  &none  &none
+            >;
+
+            /* Both encoders are intentionally unassigned on this layer. */
+            sensor-bindings = <&enc_off &enc_off>;
+        };
+
+        GESTURE {
+            display-name = "GESTURE";
+            /* Trackball gesture input replaces key actions on this layer. */
+            bindings = <
+&none  &none  &none  &none  &none  &none                &none  &none  &none  &none  &none  &none
+&none  &none  &none  &none  &none  &none                &none  &none  &none  &none  &none  &none
+&none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none
+&none  &none  &none  &none  &none  &none                &none  &none       &none  &none  &none
+            >;
+
+            /* Both encoders are intentionally unassigned on this layer. */
+            sensor-bindings = <&enc_off &enc_off>;
+        };
+
+        MOUSE {
+            display-name = "MOUSE";
+            bindings = <
+&none &none &none &none &none &none                &none &none    &none    &none    &none &none
+&none &none &none &none &none &none                &none &mkp MB1 &mkp MB3 &mkp MB2 &none &none
+&none &none &none &none &none &none &none &none  &none &mkp MB4 &mkp MB5 &none    &none &none
+&none &none &none &none &none &mo 5               &none &none              &none    &none &none
+            >;
+
+            sensor-bindings = <&enc_off &enc_off>;
+        };
+
+        BLUETOOTH {
+            display-name = "BLUETOOTH";
+            bindings = <
+&bootloader  &none  &none  &none  &none  &none                &bt0_mac  &bt1_win  &bt2_win  &bt3_win  &bt4_win    &bootloader
+&none        &none  &none  &none  &none  &none                &none     &none     &none     &none     &none       &none
+&none        &none  &none  &none  &none  &none  &none  &none  &none     &none     &none     &none     &none       &none
+&none        &none  &none  &none  &none  &none                &none     &none               &none     &bt BT_CLR  &bt BT_CLR_ALL
+            >;
+
+            sensor-bindings = <&enc_off &enc_off>;
+        };
+
+        NAV {
+            display-name = "NAV";
+            bindings = <
+&none  &none  &none      &nav_up    &none       &none                &none  &none  &none  &none  &none  &none
+&none  &none  &nav_left  &nav_down  &nav_right  &none                &none  &none  &none  &none  &none  &window_maximize
+&none  &none  &none      &none      &none       &none  &none  &none  &none  &none  &none  &none  &none  &none
+&none  &none  &none      &none      &none       &none                &none  &none         &none  &none  &none
+            >;
+
+            sensor-bindings = <&enc_off &enc_off>;
+        };
+    };
+};

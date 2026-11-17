@@ -1,38 +1,25 @@
-# CoreX ZMK
+# Cornix ZMK
 
 [English](README_en.md) | [中文](README_zh.md)
 
-**CoreX右基板 R A14＋PAW3222トラックボールと、純正Cornix左基板**を使うためのZMKファームウェアです。
-右をCentral、左をPeripheralとして動作させます。USB・Bluetooth・ZMK Studioの接続先は右です。
+純正Cornix左右分割キーボード向けのZMKファームウェアです。右がCentral、左がPeripheralです。キー配列は純正Cornixの49キー構成で、ZMK StudioとKeymap Editorから編集できます。
 
-**CoreXなしの純正Cornix左右構成もビルドします。** 右は`Cornix.uf2`、左は共通の`corex_stock_left.uf2`です。[純正Cornix向け導入・操作](docs/stock-cornix.md)を確認してください。
+## 主な機能
 
-[Keymap Editor](https://nickcoutsos.github.io/keymap-editor/)では、Keyboardに`Cornix`を選ぶと純正Cornixの49キー（右下の未使用1キーを除外）と左右エンコーダーを直接編集できます。CoreX用は`corex_right`です。
+- Windows／Mac配列の自動OS判定
+- NUM、FN、PAN、GESTURE、MOUSE、BLUETOOTH、NAVレイヤー
+- 左右エンコーダー、電池・充電表示、左右のLED状態表示
+- ZMK Studioによるキー配列編集
 
-## 機能
+## ファームウェア
 
-- PAW3222によるカーソル移動
-- PAN・GESTUREとSpace長押しのNAVを含む9レイヤー、Windows／Mac配列（NAVで矢印・2度押しのWindow操作）
-- 自動マウスレイヤー：J／K／Lで左／中／右クリック、M／カンマで戻る／進む
-- 親指キー長押しで縦横スクロール、専用親指キーでデスクトップ操作ジェスチャー
-- 左右のキー、エンコーダー、電池測定、接続状態のRGB表示
-- ZMK Studioでのキー編集
-- Bluetooth接続先のWIN／MAC自動判定（配列保存なし、[仕組みと制限](docs/auto-os.md)）
+GitHub Actionsの成功した[ビルド](https://github.com/Hqzuki/cornix-zmk-custom/actions)から`firmware`成果物を取得します。
 
-## ファームウェアの取得
+- 左：`Cornix_left.uf2` ／ 設定消去：`Cornix_left_reset.uf2`
+- 右：`Cornix_right.uf2` ／ 設定消去：`Cornix_right_reset.uf2`
 
-pushするとGitHub Actionsでビルドします。[Actions](https://github.com/Hqzuki/cornix-zmk-custom/actions)の成功した実行から、Artifactsの`firmware`を取得してください。
-
-- 左：`corex_stock_left.uf2`
-- 右：`corex_r_a14_s140v6.uf2`または`corex_r_a14_s140v7.uf2`。搭載ブートローダーのS140 v6／v7に合わせて選びます（センサーのJ3／J4は自動判別）。
-- 設定消去：左は`corex_stock_left_reset.uf2`、右は対応する`corex_r_a14_reset_s140v6.uf2`または`v7`。
-
-[導入・操作・設定・配線の詳細](docs/corex.md)を確認してください。実機動作は未確認です。
+書き込み、操作、配列の編集方法は[純正Cornixのガイド](docs/stock-cornix.md)を参照してください。自動OS判定の説明は[こちら](docs/auto-os.md)です。
 
 ## 開発
 
-`build.yaml`はCoreX構成と純正Cornix左右構成の成果物を生成します。`boards/jzf/cornix/`には純正左右とCoreXから参照する共通定義を保持しています。
-CoreXの基板定義は`boards/jzf/corex/`、センサードライバーは`drivers/corex/`、右のキーマップは`config/corex_right.keymap`です。
-
-CoreX Studio／Vialの設定通信、RMKのジェスチャー設定、トラックポイント、トラックパッドには対応していません。
-CornixメーカーおよびCoreX作者による公式ZMKファームウェアではありません。
+`build.yaml`は純正Cornix左右と各設定消去用の4種類をビルドします。キーマップは`config/Cornix.keymap`、Keymap Editorの定義は`config/Cornix.json`です。

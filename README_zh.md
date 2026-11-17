@@ -1,6 +1,8 @@
-# CoreX ZMK
+# Cornix ZMK
 
-适用于CoreX R A14右侧基板＋PAW3222轨迹球，以及Cornix原装左侧基板的ZMK固件。
-右侧为主机，通过USB或蓝牙连接电脑，并支持ZMK Studio。
+适用于Cornix原装左右分体键盘的ZMK固件。右侧为中央，左侧为外设，采用49键原装布局。
 
-请参阅[日本語](README.md)／[English](README_en.md)和[安装与配置说明](docs/corex.md)。实际硬件运行尚未验证。
+- 左侧固件：`Cornix_left.uf2`；清除设置：`Cornix_left_reset.uf2`
+- 右侧固件：`Cornix_right.uf2`；清除设置：`Cornix_right_reset.uf2`
+
+请参阅[日文指南](docs/stock-cornix.md)了解刷写、操作和键位编辑。

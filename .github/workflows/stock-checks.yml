@@ -5,14 +5,10 @@ on:
   pull_request:
   workflow_dispatch:
 jobs:
-  transport:
+  stock-checks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Verify PAW3222 GPIO turnaround and register protocol
-        run: |
-          cc -std=c11 -Wall -Wextra -Werror tests/corex/wire_test.c -o /tmp/corex-wire-test
-          /tmp/corex-wire-test
       - name: Verify shared LED timing and priorities
         run: |
           cc -std=c11 -Wall -Wextra -Werror tests/corex/status_test.c -o /tmp/corex-status-test

@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: MIT
- * Shared CoreX/Cornix status patterns. Timing and breathing LUT follow the
+ * Shared Cornix status patterns. Timing and breathing LUT follow the
  * Cornix indicator, Copyright (c) 2026 numachang.
  * Pure state/render logic: also compiled by the host regression tests.
  */
@@ -17,7 +17,7 @@ struct status_state {
     bool battery_valid;
     int64_t profile_since, low_since, full_since, charge_since;
     bool powered, full_shown;
-    /* Roles: the CoreX right (central) shows the host profile on its outer
+    /* Roles: the Cornix right (central) shows the host profile on its outer
      * LED and only its own battery/charging inside (hide_peer). The stock
      * left shows the central's active layer on its outer LED (layer_outer). */
     bool hide_peer, layer_outer, layer_valid;
@@ -27,7 +27,7 @@ struct status_state {
      * is active (remote_active from the right). */
     bool idle, remote_active;
 };
-/* Single source of defaults for firmware and tests. ROLE: central = CoreX
+/* Single source of defaults for firmware and tests. ROLE: central = Cornix
  * right (host profile outside), peripheral = stock left (layer outside). */
 #define STATUS_STATE_DEFAULTS .low_since = -1, .full_since = -1
 #define STATUS_STATE_INIT {STATUS_STATE_DEFAULTS}
@@ -91,7 +91,7 @@ static inline struct status_rgb status_profile_color(uint8_t profile) {
     };
     return profile < 5 ? colors[profile] : (struct status_rgb){7,7,7};
 }
-/* Layer ids follow config/corex_right.keymap definition order. */
+/* Layer ids follow config/Cornix.keymap definition order. */
 static inline struct status_rgb status_layer_color(uint8_t layer) {
     /* Layer colours stay distinguishable at this
      * brightness. MOUSE is dark: it can persist, and dark means "mouse mode"

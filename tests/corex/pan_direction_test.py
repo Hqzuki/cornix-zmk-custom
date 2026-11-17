@@ -59,7 +59,7 @@ int main(void) {
     subprocess.run([str(tmp / 'test')], check=True)
 
 # Keymap Editor may reformat, rename layers and change assignments freely.
-# Check structure, not a snapshot of user-editable keys or whitespace.
+# Check the stock Cornix layer structure, not a snapshot of editable keys.
 from keymap_checks import validate
-layers = validate((root / 'config/corex_right.keymap').read_text())
+layers = validate((root / 'config/Cornix.keymap').read_text())
 print(f'PAN direction passed; keymap structure and layer references passed ({len(layers)} layers)')

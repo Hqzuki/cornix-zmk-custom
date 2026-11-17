@@ -1,17 +1,12 @@
 # SPDX-License-Identifier: MIT
-config COREX_PAW3222
-    bool "CoreX PAW3222 three-wire GPIO driver"
-    default y if DT_HAS_COREX_PAW3222_GPIO_ENABLED
-    depends on GPIO && INPUT
-
 config COREX_LED_STATUS
-    bool "Shared CoreX and Cornix LED status"
-    default y if SHIELD_CORNIX_INDICATOR || (BOARD_COREX_RIGHT && ZMK_BLE)
+    bool "Shared Cornix LED status"
+    default y if SHIELD_CORNIX_INDICATOR
     depends on ZMK_BLE
 
 config COREX_CORON_KEYMAP
     bool "CoronLP keymap support"
-    default y if (BOARD_COREX_RIGHT || BOARD_CORNIX_RIGHT) && ZMK_BLE
+    default y if BOARD_CORNIX_RIGHT && ZMK_BLE
 
 config CORNIX_AUTO_OS
     bool "Detect Bluetooth host layout automatically"

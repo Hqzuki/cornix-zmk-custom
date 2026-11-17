@@ -1,39 +1,19 @@
-# CoreX R A14 central + stock Cornix left peripheral.
-# Choose the right-hand UF2 matching the installed SoftDevice (J3/J4 auto-detected).
+# Stock Cornix split keyboard. Right is central; left is peripheral.
 ---
 include:
   - board: cornix_left
     shield: cornix_indicator
-    artifact-name: corex_stock_left
+    artifact-name: Cornix_left
 
   - board: cornix_left
     shield: settings_reset
-    artifact-name: corex_stock_left_reset
+    artifact-name: Cornix_left_reset
 
-  - board: corex_right@6.0.0
-    shield: corex_trackball
-    snippet: studio-rpc-usb-uart
-    artifact-name: corex_r_a14_s140v6
-
-  - board: corex_right@6.0.0
-    shield: settings_reset
-    artifact-name: corex_r_a14_reset_s140v6
-
-  - board: corex_right@7.0.0
-    shield: corex_trackball
-    snippet: studio-rpc-usb-uart
-    artifact-name: corex_r_a14_s140v7
-
-  - board: corex_right@7.0.0
-    shield: settings_reset
-    artifact-name: corex_r_a14_reset_s140v7
-
-  # Pure stock Cornix pair: share corex_stock_left with the CoreX build.
   - board: cornix_right
     shield: cornix_indicator
     snippet: studio-rpc-usb-uart
-    artifact-name: Cornix
+    artifact-name: Cornix_right
 
   - board: cornix_right
     shield: settings_reset
-    artifact-name: Cornix_reset
+    artifact-name: Cornix_right_reset

@@ -1,4 +1,4 @@
-"""Stock 49-key layout and isolation from the CoreX trackball hardware."""
+"""Stock 49-key layout and input processor checks."""
 import json
 import re
 from pathlib import Path
@@ -23,4 +23,4 @@ board = (root/'boards/jzf/cornix/cornix_right.dts').read_text()
 assert '#define CORNIX_STOCK_RIGHT 1' in board
 assert 'col-offset = <7>' in board and '&right_encoder' in board
 assert 'control-gpios = <&gpio0 24 GPIO_ACTIVE_HIGH>' in board
-print('Stock Cornix: 49 keys, layout metadata, right wiring and no CoreX input processors passed')
+print('Stock Cornix: 49 keys, layout metadata, right wiring and input processor checks passed')

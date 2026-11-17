@@ -21,6 +21,7 @@ LOG_MODULE_REGISTER(cornix_paw, CONFIG_ZMK_LOG_LEVEL);
 struct paw_config {
     struct gpio_dt_spec candidates[4];
     struct gpio_dt_spec sck, sdio, motion, auxiliary;
+    bool probing;
 };
 struct paw_dev_config {
     const struct paw_config *pins;
@@ -80,29 +81,55 @@ static bool identify_permutation(struct paw_config *candidate) {
         gpio_pin_configure_dt(&candidate->motion, GPIO_INPUT | GPIO_PULL_UP) < 0) {
         return false;
     }
-    return read_reg(candidate, 0x00) == 0x30;
+    int id1a = read_reg(candidate, 0x00);
+    int id1b = read_reg(candidate, 0x00);
+    int id2a = read_reg(candidate, 0x01);
+    int id2b = read_reg(candidate, 0x01);
+    if (id1a != 0x30 || id1a != id1b || id2a < 0 || id2a == 0x00 ||
+        id2a == 0xff || id2a != id2b) {
+        return false;
+    }
+    LOG_INF("PAW3222 candidate product IDs: 0x%02x / 0x%02x", id1a, id2a);
+    return true;
+}
+static bool activate_detected_pins(struct paw_config *c) {
+    /* Set inactive/high output values atomically when leaving open-drain probe mode. */
+    c->probing = false;
+    return gpio_pin_configure_dt(&c->sck, GPIO_OUTPUT_ACTIVE) == 0 &&
+           gpio_pin_configure_dt(&c->sdio, GPIO_INPUT | GPIO_PULL_UP) == 0 &&
+           gpio_pin_configure_dt(&c->auxiliary, GPIO_OUTPUT_INACTIVE) == 0 &&
+           gpio_pin_configure_dt(&c->motion, GPIO_INPUT | GPIO_PULL_UP) == 0;
 }
 static bool discover(struct paw_data *d, const struct paw_config *base, uint16_t cpi) {
-    /* Exhaustively try distinct SCK, SDIO and NCS roles; the fourth is MOTION. */
-    for (int sck = 0; sck < 4; sck++) {
-        for (int sdio = 0; sdio < 4; sdio++) {
+    /* Prefer the standard LisM map (D10/D9/D8/D7), then try every other map. */
+    static const int probe_order[] = {3, 2, 1, 0};
+    for (int si = 0; si < 4; si++) {
+        int sck = probe_order[si];
+        for (int di = 0; di < 4; di++) {
+            int sdio = probe_order[di];
             if (sdio == sck) { continue; }
-            for (int ncs = 0; ncs < 4; ncs++) {
+            for (int ci = 0; ci < 4; ci++) {
+                int ncs = probe_order[ci];
                 if (ncs == sck || ncs == sdio) { continue; }
                 int motion = 6 - sck - sdio - ncs;
                 struct paw_config candidate = {0};
                 memcpy(candidate.candidates, base->candidates, sizeof(candidate.candidates));
+                candidate.probing = true;
                 make_role(&candidate.sck, &base->candidates[sck], false, true);
                 make_role(&candidate.sdio, &base->candidates[sdio], false, true);
                 make_role(&candidate.auxiliary, &base->candidates[ncs], true, true);
                 make_role(&candidate.motion, &base->candidates[motion], true, true);
-                if (identify_permutation(&candidate) && configure(&candidate, cpi)) {
+                if (identify_permutation(&candidate) && activate_detected_pins(&candidate) &&
+                    configure(&candidate, cpi)) {
                     d->active_port = candidate;
                     d->port = &d->active_port;
-                    LOG_INF("PAW3222 signal map found");
+                    LOG_INF("PAW3222 map: SCK D%u, SDIO D%u, CS D%u, MOTION D%u",
+                            candidate.sck.pin, candidate.sdio.pin,
+                            candidate.auxiliary.pin, candidate.motion.pin);
                     return true;
                 }
                 release_candidates(base);
+                k_busy_wait(50);
             }
         }
     }

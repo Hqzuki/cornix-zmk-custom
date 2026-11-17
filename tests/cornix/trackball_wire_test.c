@@ -13,7 +13,7 @@
 #define GPIO_OPEN_DRAIN 4
 #define GPIO_PULL_UP 8
 struct gpio_dt_spec { int pin, dt_flags; };
-struct paw_config { struct gpio_dt_spec sck, sdio, motion, auxiliary; };
+struct paw_config { struct gpio_dt_spec sck, sdio, motion, auxiliary; bool probing; };
 static const struct paw_config cfg = {.sck = {1,0}, .sdio = {2,0}, .auxiliary = {3,GPIO_ACTIVE_LOW}};
 static int direction, data_level, clock_level, sent_count, samples, cs_level, cs_pulses;
 static int fail_sample, fail_set, fail_direction;

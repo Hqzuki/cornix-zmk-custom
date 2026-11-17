@@ -23,8 +23,9 @@ static inline int cs_release(const struct paw_config *c) {
     return rc;
 }
 static inline int send_byte(const struct paw_config *c, uint8_t value) {
-    int rc = gpio_pin_configure_dt(&c->sdio,
-                                   GPIO_OUTPUT | GPIO_OPEN_DRAIN | GPIO_PULL_UP);
+    int flags = GPIO_OUTPUT | GPIO_PULL_UP;
+    if (c->probing) { flags |= GPIO_OPEN_DRAIN; }
+    int rc = gpio_pin_configure_dt(&c->sdio, flags);
     if (rc < 0) { return rc; }
     for (int bit = 7; bit >= 0; bit--) {
         if ((rc = gpio_pin_set_dt(&c->sck, 0)) < 0 ||

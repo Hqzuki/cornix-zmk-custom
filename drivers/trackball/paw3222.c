@@ -103,6 +103,7 @@ static bool activate_detected_pins(struct paw_config *c) {
 static bool discover(struct paw_data *d, const struct paw_config *base, uint16_t cpi) {
     /* Prefer the standard LisM map (D10/D9/D8/D7), then try every other map. */
     static const int probe_order[] = {3, 2, 1, 0};
+    static const uint8_t dnum[] = {7, 8, 9, 10};
     for (int si = 0; si < 4; si++) {
         int sck = probe_order[si];
         for (int di = 0; di < 4; di++) {
@@ -124,8 +125,7 @@ static bool discover(struct paw_data *d, const struct paw_config *base, uint16_t
                     d->active_port = candidate;
                     d->port = &d->active_port;
                     LOG_INF("PAW3222 map: SCK D%u, SDIO D%u, CS D%u, MOTION D%u",
-                            candidate.sck.pin, candidate.sdio.pin,
-                            candidate.auxiliary.pin, candidate.motion.pin);
+                            dnum[sck], dnum[sdio], dnum[ncs], dnum[motion]);
                     return true;
                 }
                 release_candidates(base);

@@ -231,7 +231,8 @@
 &none  &none  &none           &none           &none            &none                &none  &none               &none     &none  &none
             >;
 
-            /* Match MOUSE: knobs fall through to the WIN/MAC base layer. */
+            /* Both encoders are intentionally unassigned on this layer. */
+            sensor-bindings = <&enc_off &enc_off>;
         };
 
         GESTURE {
@@ -244,7 +245,8 @@
 &none  &none  &none           &none           &none            &none                &none  &none               &none     &none  &none
             >;
 
-            /* Match MOUSE: knobs fall through to the WIN/MAC base layer. */
+            /* Both encoders are intentionally unassigned on this layer. */
+            sensor-bindings = <&enc_off &enc_off>;
         };
 
         MOUSE {

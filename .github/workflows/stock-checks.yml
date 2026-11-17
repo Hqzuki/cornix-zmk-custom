@@ -11,16 +11,16 @@ jobs:
       - uses: actions/checkout@v4
       - name: Verify shared LED timing and priorities
         run: |
-          cc -std=c11 -Wall -Wextra -Werror tests/corex/status_test.c -o /tmp/corex-status-test
-          /tmp/corex-status-test
-          python3 tests/corex/led_dispatch_test.py
+          cc -std=c11 -Wall -Wextra -Werror tests/cornix/status_test.c -o /tmp/cornix-status-test
+          /tmp/cornix-status-test
+          python3 tests/cornix/led_dispatch_test.py
       - name: Verify unified PAN direction and layer references
         run: |
-          python3 tests/corex/keymap_checks.py
-          python3 tests/corex/pan_direction_test.py
+          python3 tests/cornix/keymap_checks.py
+          python3 tests/cornix/pan_direction_test.py
       - name: Verify WIN/MAC window key routing and release
-        run: python3 tests/corex/os_key_test.py
+        run: python3 tests/cornix/os_key_test.py
       - name: Verify pure stock Cornix layout and hardware isolation
-        run: python3 tests/corex/stock_cornix_test.py
+        run: python3 tests/cornix/stock_cornix_test.py
       - name: Verify automatic Bluetooth OS detection without persistence
-        run: python3 tests/corex/auto_os_test.py
+        run: python3 tests/cornix/auto_os_test.py

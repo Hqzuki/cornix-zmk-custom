@@ -1,5 +1,6 @@
 /* Stock Cornix, 49 keys (unused lower-right switch omitted). Right central; no trackball hardware. */
 
+#define ZMK_POINTING_DEFAULT_MOVE_VAL 1200
 #include <dt-bindings/zmk/input_transform.h>
 #include <input/processors.dtsi>
 #include <behaviors.dtsi>
@@ -142,13 +143,29 @@
             mac-keycode = <LC(RIGHT)>;
         };
 
-        /* NAV: single tap = arrow, double = existing action, triple = desktop switch. */
+        mission_control: mission_control {
+            compatible = "custom,behavior-os-key";
+            #binding-cells = <0>;
+            mac-layer = <1>;
+            win-keycode = <LG(TAB)>;
+            mac-keycode = <LC(UP)>;
+        };
+
+        app_expose: app_expose {
+            compatible = "custom,behavior-os-key";
+            #binding-cells = <0>;
+            mac-layer = <1>;
+            win-keycode = <LG(TAB)>;
+            mac-keycode = <LC(DOWN)>;
+        };
+
+        /* NAV: single tap = arrow, double = existing action, triple = OS overview. */
 
         nav_up: nav_up {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
             tapping-term-ms = <200>;
-            bindings = <&kp UP>, <&window_up>;
+            bindings = <&kp UP>, <&window_up>, <&mission_control>;
         };
 
         nav_left: nav_left {
@@ -162,7 +179,7 @@
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
             tapping-term-ms = <200>;
-            bindings = <&kp DOWN>, <&window_down>;
+            bindings = <&kp DOWN>, <&window_down>, <&app_expose>;
         };
 
         nav_right: nav_right {

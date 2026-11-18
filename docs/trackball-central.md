@@ -22,6 +22,7 @@ XIAO BLE nRF52840をCentral、左右のCornixをPeripheralにする試作用ソ�
 - レイヤー4（GESTURE）でボールを動かすとデスクトップ操作ジェスチャーを送ります。ESDFによるカーソル移動は使いません。
 - マウスレイヤー（AML）はLANG1またはLANG2を押すと解除します。
 - BLUETOOTHレイヤー（6）では、XIAO BLE内蔵RGB LEDにCentral側の電池状態を表示します。緑＝51〜100%、黄＝21〜50%、赤＝0〜20%。
+- XIAO Centralは、5分でIdle、10分でDeep Sleepに入ります。Deep Sleep中はボールを動かすとXIAOが起きて、左右へ再接続します。
 
 ## 確認範囲
 

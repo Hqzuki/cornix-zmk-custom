@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: Apache-2.0
  * Copyright 2024 Google LLC; modifications 2025 sekigon-gonnoc.
  * Cornix GPIO integration.
- * GPIO half-duplex PAW3222 transport, shared with the host tests.
+ * GPIO half-duplex PAW3222 transport.
  */
 #pragma once
 

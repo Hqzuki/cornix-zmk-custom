@@ -85,14 +85,6 @@
     };
 
     behaviors {
-        window_maximize: window_maximize {
-            compatible = "custom,behavior-os-key";
-            #binding-cells = <0>;
-            mac-layer = <1>;
-            win-keycode = <LG(UP)>;
-            mac-keycode = <LG(ENTER)>;
-        };
-
         window_up: window_up {
             compatible = "custom,behavior-os-key";
             #binding-cells = <0>;

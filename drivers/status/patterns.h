@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: MIT
  * Shared Cornix status patterns. Timing and breathing LUT follow the
  * Cornix indicator, Copyright (c) 2026 numachang.
- * Pure state/render logic: also compiled by the host regression tests.
+ * Pure state/render logic shared by the LED controllers.
  */
 #pragma once
 #include <stdbool.h>
@@ -28,7 +28,7 @@ struct status_state {
     bool idle, remote_active;
 };
 
-/* Single source of defaults for firmware and tests. ROLE: central = Cornix
+/* Single source of defaults for firmware. ROLE: central = Cornix
  * right (host profile outside), peripheral = stock left (layer outside). */
 #define STATUS_STATE_DEFAULTS .low_since = -1, .full_since = -1
 #define STATUS_STATE_INIT {STATUS_STATE_DEFAULTS}

@@ -159,6 +159,14 @@
             mac-keycode = <LC(DOWN)>;
         };
 
+        /* Single tap = Backspace; double tap = forward Delete. */
+        bs_delete: bs_delete {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&kp BACKSPACE>, <&kp DELETE>;
+        };
+
         /* NAV: single tap = arrow, double = existing action, triple = OS overview. */
 
         nav_up: nav_up {
@@ -206,10 +214,10 @@
         WIN {
             display-name = "WIN";
             bindings = <
-&kp ESC         &kp Q         &kp W         &kp E        &kp R        &kp T                               &kp Y  &kp U        &kp I      &kp O           &mt EQUAL MINUS   &kp BACKSPACE
+&kp ESC         &kp Q         &kp W         &kp E        &kp R        &kp T                               &kp Y  &kp U        &kp I      &kp O           &mt EQUAL MINUS   &bs_delete
 &kp TAB         &kp A         &kp S         &kp D        &kp F        &kp G                               &kp H  &kp J        &kp K      &kp L           &kp P             &kp ENTER
-&kp LEFT_SHIFT  &kp Z         &kp X         &kp C        &kp V        &kp B  &lt 7 PSCRN  &lt (7) LC(N0)  &kp N  &kp M        &kp COMMA  &kp DOT         &mt SQT UP_ARROW  &mt SLASH SEMICOLON
-&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &lt 8 SPACE  &lt 4 LANG2  &mo 5                               &mo 3  &lt 2 LANG1             &kp LEFT_ARROW  &kp DOWN_ARROW    &kp RIGHT_ARROW
+&kp LEFT_SHIFT  &kp Z         &kp X         &kp C        &kp V        &kp B  &lt 7 PSCRN  &lt (7) LC(N0)  &kp N  &kp M        &kp COMMA  &kp DOT         &nav_up  &mt SLASH SEMICOLON
+&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &lt 8 SPACE  &lt 4 LANG2  &mo 5                               &mo 3  &lt 2 LANG1             &nav_left  &nav_down    &nav_right
             >;
 
             sensor-bindings =
@@ -220,10 +228,10 @@
         MAC {
             display-name = "MAC";
             bindings = <
-&kp ESC         &kp Q      &kp W         &kp E        &kp R        &kp T                                      &kp Y  &kp U        &kp I      &kp O           &mt EQUAL MINUS   &kp BACKSPACE
+&kp ESC         &kp Q      &kp W         &kp E        &kp R        &kp T                                      &kp Y  &kp U        &kp I      &kp O           &mt EQUAL MINUS   &bs_delete
 &kp TAB         &kp A      &kp S         &kp D        &kp F        &kp G                                      &kp H  &kp J        &kp K      &kp L    &kp P              &kp ENTER
-&kp LEFT_SHIFT  &kp Z      &kp X         &kp C        &kp V        &kp B  &lt (7) LG(LS(N3))  &lt (7) LG(N0)  &kp N  &kp M        &kp COMMA  &kp DOT         &mt SQT UP_ARROW  &mt SLASH SEMICOLON
-&kp LEFT_GUI    &kp LCTRL  &kp LEFT_ALT  &lt 8 SPACE  &lt 4 LANG2  &mo 5                                      &mo 3  &lt 2 LANG1             &kp LEFT_ARROW  &kp DOWN_ARROW    &kp RIGHT_ARROW
+&kp LEFT_SHIFT  &kp Z      &kp X         &kp C        &kp V        &kp B  &lt (7) LG(LS(N3))  &lt (7) LG(N0)  &kp N  &kp M        &kp COMMA  &kp DOT         &nav_up  &mt SLASH SEMICOLON
+&kp LEFT_GUI    &kp LCTRL  &kp LEFT_ALT  &lt 8 SPACE  &lt 4 LANG2  &mo 5                                      &mo 3  &lt 2 LANG1             &nav_left  &nav_down    &nav_right
             >;
 
             sensor-bindings = <&inc_dec_kp LG(LS(N7)) LG(LS(N9)) &inc_dec_kp LG(LS(EQUAL)) LG(MINUS)>;

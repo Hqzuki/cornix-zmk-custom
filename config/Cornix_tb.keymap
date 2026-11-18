@@ -335,7 +335,7 @@
             bindings = <
 &none  &none  &none  &none  &none  &none                &none  &none     &none     &none     &none  &none
 &none  &none  &none  &none  &none  &none                &none  &mkp MB1  &mkp MB3  &mkp MB2  &none  &none
-&none  &none  &none  &none  &none  &none  &none  &none  &none  &mkp MB4  &mkp MB5  &none     &none  &none
+&none  &none  &none  &none  &none  &none  &none  &none  &none  &mkp MB4  &none     &mkp MB5  &none  &none
 &none  &none  &none  &none  &none  &none                &none  &none               &none     &none  &none
             >;
 

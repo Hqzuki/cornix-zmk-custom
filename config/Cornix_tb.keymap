@@ -127,38 +127,6 @@
             mac-keycode = <LG(RIGHT)>;
         };
 
-        desktop_prev: desktop_prev {
-            compatible = "custom,behavior-os-key";
-            #binding-cells = <0>;
-            mac-layer = <1>;
-            win-keycode = <LC(LG(LEFT))>;
-            mac-keycode = <LC(LEFT)>;
-        };
-
-        desktop_next: desktop_next {
-            compatible = "custom,behavior-os-key";
-            #binding-cells = <0>;
-            mac-layer = <1>;
-            win-keycode = <LC(LG(RIGHT))>;
-            mac-keycode = <LC(RIGHT)>;
-        };
-
-        mission_control: mission_control {
-            compatible = "custom,behavior-os-key";
-            #binding-cells = <0>;
-            mac-layer = <1>;
-            win-keycode = <LG(TAB)>;
-            mac-keycode = <LC(UP)>;
-        };
-
-        app_expose: app_expose {
-            compatible = "custom,behavior-os-key";
-            #binding-cells = <0>;
-            mac-layer = <1>;
-            win-keycode = <LG(TAB)>;
-            mac-keycode = <LC(DOWN)>;
-        };
-
         /* Single tap = Backspace; double tap = forward Delete. */
 
         bs_delete: bs_delete {
@@ -181,49 +149,49 @@
         /*
          * NAV:
          * Single tap = arrow
-         * Hold = character (currently A as placeholder)
+         * Hold = character
          * Double tap = window operation
          */
 
-nav_up: nav_up {
-    compatible = "zmk,behavior-tap-dance";
-    #binding-cells = <0>;
-    tapping-term-ms = <200>;
-    bindings = <
-        &nav_hold_tap SQT UP
-        &window_up
-    >;
-};
+        nav_up: nav_up {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <
+                &nav_hold_tap A UP
+                &window_up
+            >;
+        };
 
-nav_left: nav_left {
-    compatible = "zmk,behavior-tap-dance";
-    #binding-cells = <0>;
-    tapping-term-ms = <200>;
-    bindings = <
-        &nav_hold_tap 0 LEFT
-        &window_left
-    >;
-};
+        nav_left: nav_left {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <
+                &nav_hold_tap A LEFT
+                &window_left
+            >;
+        };
 
-nav_down: nav_down {
-    compatible = "zmk,behavior-tap-dance";
-    #binding-cells = <0>;
-    tapping-term-ms = <200>;
-    bindings = <
-        &nav_hold_tap 0 DOWN
-        &window_down
-    >;
-};
+        nav_down: nav_down {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <
+                &nav_hold_tap A DOWN
+                &window_down
+            >;
+        };
 
-nav_right: nav_right {
-    compatible = "zmk,behavior-tap-dance";
-    #binding-cells = <0>;
-    tapping-term-ms = <200>;
-    bindings = <
-        &nav_hold_tap 0 RIGHT
-        &window_right
-    >;
-};
+        nav_right: nav_right {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <
+                &nav_hold_tap A RIGHT
+                &window_right
+            >;
+        };
 
         /* Consumes rotation without output. */
 

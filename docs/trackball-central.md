@@ -1,6 +1,6 @@
-# トラックボール用ソース
+# Cornix TB
 
-XIAO BLE nRF52840をCentral、左右のCornixをPeripheralにする試作用ソースを残しています。通常ビルドには含めず、`build.yaml`から生成するのは純正Cornix用UF2 4種類だけです。通常の49キー配列は`config/Cornix.keymap`です。
+XIAO BLE nRF52840をCentral、左右のCornixをPeripheralにするトラックボール構成です。キーマップは`config/Cornix_tb.keymap`、Keymap Editorの定義は`config/Cornix_tb.json`です。
 
 ## 配線案
 

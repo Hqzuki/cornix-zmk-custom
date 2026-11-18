@@ -1,6 +1,6 @@
 # Bluetoothの自動OS判定
 
-純正Cornix右がPCとのBluetooth接続を担当し、接続先のOSを判定します。
+Cornix TBのXIAO CentralがPCとのBluetooth接続を担当し、接続先のOSを判定します。
 全接続先で自動判定のみを使い、WIN／MACの手動選択・保存・復元はありません。
 OSの判定結果は現在の接続中のRAMだけに保持し、切断すると破棄します。
 Bluetoothのペアリング情報とStudioのキーマップ保存は通常どおり残ります。

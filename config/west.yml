@@ -2,12 +2,6 @@ manifest:
   remotes:
     - name: zmkfirmware
       url-base: https://github.com/zmkfirmware
-    - name: urob
-      url-base: https://github.com/urob
-    - name: Hqzuki
-      url-base: https://github.com/Hqzuki
-    - name: ssbb
-      url-base: https://github.com/ssbb
   projects:
     # Pinned: last ZMK main verified by CI (2026-10-09). Bump deliberately.
     - name: zmk
@@ -16,15 +10,5 @@ manifest:
       clone-depth: 1
       import:
         file: app/west.yml
-    - name: zmk-helpers
-      remote: urob
-      revision: 7bcba18fc8df27303eb92a435d33ea870cc51f98
-      clone-depth: 1
-    - name: zmk-mouse-gesture
-      remote: Hqzuki
-      revision: 97332d356ac07df09b68df3f4d60029388d908f5
-    - name: zmk-listeners
-      remote: ssbb
-      revision: c240ceaf353d3138bea7695eef17049b7ade995b
   self:
     path: config

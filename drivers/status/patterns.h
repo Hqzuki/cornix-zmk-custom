@@ -126,19 +126,6 @@ static inline struct status_rgb status_profile_color(uint8_t profile) {
 
 /* Layer ids follow the keymap definition order for each firmware variant. */
 static inline struct status_rgb status_layer_color(uint8_t layer) {
-#if defined(CONFIG_CORNIX_TB_CENTRAL) || defined(CONFIG_CORNIX_RIGHT_PERIPHERAL)
-    /* TB: WIN, MAC, NUMFN, PAN, GESTURE, MOUSE, BLUETOOTH. */
-    static const struct status_rgb colors[] = {
-        {13,0,0},   /* 0 WIN: red */
-        {0,0,13},   /* 1 MAC: blue */
-        {0,13,0},   /* 2 NUMFN: green */
-        {13,8,0},   /* 3 PAN: yellow */
-        {13,0,13},  /* 4 GESTURE: magenta */
-        {0,0,0},    /* 5 MOUSE: dark */
-        {8,8,8},    /* 6 BLUETOOTH: white */
-    };
-    return layer < 7 ? colors[layer] : (struct status_rgb){0};
-#else
     /* Stock: WIN, MAC, NUM, FN, PAN, GESTURE, MOUSE, BLUETOOTH, NAV. */
     static const struct status_rgb colors[] = {
         {13,0,0},   /* 0 WIN: red */
@@ -152,7 +139,6 @@ static inline struct status_rgb status_layer_color(uint8_t layer) {
         {13,3,0},   /* 8 NAV: orange */
     };
     return layer < 9 ? colors[layer] : (struct status_rgb){0};
-#endif
 }
 
 static inline struct status_frame status_render(const struct status_state *s, int64_t now) {
@@ -169,11 +155,7 @@ static inline struct status_frame status_render(const struct status_state *s, in
      * profile indicator; temporarily replace only the inner LED while BT is
      * the displayed layer. Unknown is dark, distinct from a measured 0%. */
     const uint8_t bluetooth_layer =
-#if defined(CONFIG_CORNIX_TB_CENTRAL) || defined(CONFIG_CORNIX_RIGHT_PERIPHERAL)
-        6;
-#else
         7;
-#endif
     if (s->layer_valid && s->layer == bluetooth_layer) {
         if (s->battery_valid) {
             f.inner = s->battery <= 20 ? red :

@@ -185,45 +185,45 @@
          * Double tap = window operation
          */
 
-        nav_up: nav_up {
-            compatible = "zmk,behavior-tap-dance";
-            #binding-cells = <0>;
-            tapping-term-ms = <200>;
-            bindings = <
-                &nav_hold_tap A UP
-                &window_up
-            >;
-        };
+nav_up: nav_up {
+    compatible = "zmk,behavior-tap-dance";
+    #binding-cells = <0>;
+    tapping-term-ms = <200>;
+    bindings = <
+        &nav_hold_tap SQT UP
+        &window_up
+    >;
+};
 
-        nav_left: nav_left {
-            compatible = "zmk,behavior-tap-dance";
-            #binding-cells = <0>;
-            tapping-term-ms = <200>;
-            bindings = <
-                &nav_hold_tap A LEFT
-                &window_left
-            >;
-        };
+nav_left: nav_left {
+    compatible = "zmk,behavior-tap-dance";
+    #binding-cells = <0>;
+    tapping-term-ms = <200>;
+    bindings = <
+        &nav_hold_tap 0 LEFT
+        &window_left
+    >;
+};
 
-        nav_down: nav_down {
-            compatible = "zmk,behavior-tap-dance";
-            #binding-cells = <0>;
-            tapping-term-ms = <200>;
-            bindings = <
-                &nav_hold_tap A DOWN
-                &window_down
-            >;
-        };
+nav_down: nav_down {
+    compatible = "zmk,behavior-tap-dance";
+    #binding-cells = <0>;
+    tapping-term-ms = <200>;
+    bindings = <
+        &nav_hold_tap 0 DOWN
+        &window_down
+    >;
+};
 
-        nav_right: nav_right {
-            compatible = "zmk,behavior-tap-dance";
-            #binding-cells = <0>;
-            tapping-term-ms = <200>;
-            bindings = <
-                &nav_hold_tap A RIGHT
-                &window_right
-            >;
-        };
+nav_right: nav_right {
+    compatible = "zmk,behavior-tap-dance";
+    #binding-cells = <0>;
+    tapping-term-ms = <200>;
+    bindings = <
+        &nav_hold_tap 0 RIGHT
+        &window_right
+    >;
+};
 
         /* Consumes rotation without output. */
 

@@ -279,10 +279,10 @@
         WIN {
             display-name = "WIN";
             bindings = <
-&kp ESC         &kp Q         &kp W         &kp E        &kp R        &kp T                               &kp Y  &kp U        &kp I      &kp O      &mt EQUAL MINUS  &bs_delete
-&kp TAB         &kp A         &kp S         &kp D        &kp F        &kp G                               &kp H  &kp J        &kp K      &kp L      &kp P            &kp ENTER
-&kp LEFT_SHIFT  &kp Z         &kp X         &kp C        &kp V        &kp B  &lt 6 PSCRN  &lt (6) LC(N0)  &kp N  &kp M        &kp COMMA  &kp DOT    &nav_up          &mt SLASH SEMICOLON
-&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &lt 2 SPACE  &lt 3 LANG2  &mo 4                               &mo 2  &lt 2 LANG1             &nav_left  &nav_down        &nav_right
+&kp ESC         &kp Q         &kp W         &kp E      &kp R        &kp T                               &kp Y  &kp U      &kp I      &kp O      &mt EQUAL MINUS  &bs_delete
+&kp TAB         &kp A         &kp S         &kp D      &kp F        &kp G                               &kp H  &kp J      &kp K      &kp L      &kp P            &kp ENTER
+&kp LEFT_SHIFT  &kp Z         &kp X         &kp C      &kp V        &kp B  &lt 6 PSCRN  &lt (6) LC(N0)  &kp N  &kp M      &kp COMMA  &kp DOT    &nav_up          &mt SLASH SEMICOLON
+&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &kp SPACE  &lt 3 LANG2  &mo 4                               &mo 2  &kp LANG1             &nav_left  &nav_down        &nav_right
             >;
 
             sensor-bindings =
@@ -293,10 +293,10 @@
         MAC {
             display-name = "MAC";
             bindings = <
-&kp ESC         &kp Q      &kp W         &kp E        &kp R        &kp T                                      &kp Y  &kp U        &kp I      &kp O      &mt EQUAL MINUS  &bs_delete
-&kp TAB         &kp A      &kp S         &kp D        &kp F        &kp G                                      &kp H  &kp J        &kp K      &kp L      &kp P            &kp ENTER
-&kp LEFT_SHIFT  &kp Z      &kp X         &kp C        &kp V        &kp B  &lt (6) LG(LS(N3))  &lt (6) LG(N0)  &kp N  &kp M        &kp COMMA  &kp DOT    &nav_up          &mt SLASH SEMICOLON
-&kp LEFT_GUI    &kp LCTRL  &kp LEFT_ALT  &lt 2 SPACE  &lt 3 LANG2  &mo 4                                      &mo 2  &lt 2 LANG1             &nav_left  &nav_down        &nav_right
+&kp ESC         &kp Q      &kp W         &kp E      &kp R        &kp T                                      &kp Y  &kp U      &kp I      &kp O      &mt EQUAL MINUS  &bs_delete
+&kp TAB         &kp A      &kp S         &kp D      &kp F        &kp G                                      &kp H  &kp J      &kp K      &kp L      &kp P            &kp ENTER
+&kp LEFT_SHIFT  &kp Z      &kp X         &kp C      &kp V        &kp B  &lt (6) LG(LS(N3))  &lt (6) LG(N0)  &kp N  &kp M      &kp COMMA  &kp DOT    &nav_up          &mt SLASH SEMICOLON
+&kp LEFT_GUI    &kp LCTRL  &kp LEFT_ALT  &kp SPACE  &lt 3 LANG2  &mo 4                                      &mo 2  &kp LANG1             &nav_left  &nav_down        &nav_right
             >;
 
             sensor-bindings = <&inc_dec_kp LG(LS(N7)) LG(LS(N9)) &inc_dec_kp LG(LS(EQUAL)) LG(MINUS)>;
@@ -305,10 +305,10 @@
         NUMFN {
             display-name = "NUMFN";
             bindings = <
-&numfn_1  &numfn_2  &numfn_3  &pair_square  &pair_paren     &kp BACKSLASH                &none  &none  &none  &none  &none  &none
-&numfn_4  &numfn_5  &numfn_6  &kp TILDE     &kp UNDERSCORE  &pair_brace                  &none  &none  &none  &none  &none  &none
-&numfn_7  &numfn_8  &numfn_9  &kp GRAVE     &kp COMMA       &kp PERIOD     &none  &none  &none  &none  &none  &none  &none  &none
-&numfn_0  &numfn_11 &numfn_12 &none         &none           &none                        &none  &none         &none  &none  &none
+&numfn_1  &numfn_2   &numfn_3   &pair_square  &pair_paren     &kp BACKSLASH                &none  &none  &none  &none  &none  &none
+&numfn_4  &numfn_5   &numfn_6   &kp TILDE     &kp UNDERSCORE  &pair_brace                  &none  &none  &none  &none  &none  &none
+&numfn_7  &numfn_8   &numfn_9   &kp GRAVE     &kp COMMA       &kp PERIOD     &none  &none  &none  &none  &none  &none  &none  &none
+&numfn_0  &numfn_11  &numfn_12  &none         &none           &none                        &none  &none         &none  &none  &none
             >;
 
             sensor-bindings = <&enc_off &enc_off>;

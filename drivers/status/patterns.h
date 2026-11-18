@@ -22,9 +22,8 @@ struct status_state {
      * left shows the central's active layer on its outer LED (layer_outer). */
     bool hide_peer, layer_outer, layer_valid;
     uint8_t layer;
-    /* ZMK idle (no keys, encoder or trackball): layer/profile LEDs go dark.
-     * The left counts as active while either half is active (remote_active
-     * from the right). */
+    /* ZMK activity state is still synchronized for split behavior and sleep.
+     * It does not select a separate LED mode. */
     bool idle, remote_active;
 };
 
@@ -175,7 +174,7 @@ static inline struct status_frame status_render(const struct status_state *s, in
 #else
         7;
 #endif
-    if (!s->idle && s->layer_valid && s->layer == bluetooth_layer) {
+    if (s->layer_valid && s->layer == bluetooth_layer) {
         if (s->battery_valid) {
             f.inner = s->battery <= 20 ? red :
                       s->battery <= 50 ? (struct status_rgb){13,8,0} : green;
@@ -187,7 +186,7 @@ static inline struct status_frame status_render(const struct status_state *s, in
             f.inner = red;
         }
 
-    } else if (!s->idle && !s->hide_peer && s->peer_known && peer >= 0 &&
+    } else if (!s->hide_peer && s->peer_known && peer >= 0 &&
                peer < (s->peer_connected ? 3000 : 10000)) {
         if (s->peer_connected || peer % 1000 < 400) {
             f.inner = blue;
@@ -208,7 +207,7 @@ static inline struct status_frame status_render(const struct status_state *s, in
     }
 
     if (s->layer_outer) {
-        if (!s->idle && s->layer_valid) {
+        if (s->layer_valid) {
             if (s->layer == 0 || s->layer == 1) {
                 /* WIN: red / MAC: blue, breathing over a 3-second cycle. */
                 static const uint8_t layer_breath[60] = {
@@ -229,7 +228,7 @@ static inline struct status_frame status_render(const struct status_state *s, in
                 f.outer = status_layer_color(s->layer);
             }
         }
-    } else if (!s->idle && s->profile_valid) {
+    } else if (s->profile_valid) {
         /* Show the selected slot continuously while active, even disconnected.
          * This indicates selection, not whether the host link is up. */
         f.outer = status_profile_color(s->profile);

@@ -93,13 +93,9 @@ static void sample_while_idle_charging(bool powered, int64_t now) {
 static void render(struct k_work *work);
 K_WORK_DELAYABLE_DEFINE(render_work, render);
 static void wake_render(void) { k_work_reschedule(&render_work, K_NO_WAIT); }
-/* 30 Hz while anything may be shown. Idle on battery and dark (past the 15 s
- * strip-rail timeout) drops to 1 Hz, enough to notice USB power; events wake
- * it at once. */
+/* Keep status rendering at 30 Hz until Deep Sleep. There is no separate
+ * idle LED mode; the five-minute sleep timeout ends the active display. */
 #define RENDER_FAST_MS  33
-#define RENDER_SLOW_MS  1000
-#define RENDER_DARK_MS  16000
-static int64_t last_lit;
 static void render(struct k_work *work) {
     ARG_UNUSED(work);
     int64_t now = k_uptime_get();
@@ -148,11 +144,8 @@ static void render(struct k_work *work) {
     /* Send first: enabling the local LED rail may sleep for 10 ms. */
     struct status_frame frame = status_render(&snapshot, now);
     if (ready) { status_backend_write(frame, now); }
-    if (frame.inner.r || frame.inner.g || frame.inner.b ||
-        frame.outer.r || frame.outer.g || frame.outer.b) { last_lit = now; }
-    bool slow = snapshot.idle && !snapshot.powered && now - last_lit >= RENDER_DARK_MS;
     /* Keep an immediate update queued by an event during this render. */
-    k_work_schedule(&render_work, K_MSEC(slow ? RENDER_SLOW_MS : RENDER_FAST_MS));
+    k_work_schedule(&render_work, K_MSEC(RENDER_FAST_MS));
 }
 static int status_event(const zmk_event_t *eh) {
     int64_t now = k_uptime_get();

@@ -1,6 +1,7 @@
 /* Cornix TB Keymap Editor map; built by the XIAO trackball central. */
 
 #define ZMK_POINTING_DEFAULT_MOVE_VAL 1200
+
 #include <dt-bindings/zmk/input_transform.h>
 #include <input/processors.dtsi>
 #include <behaviors.dtsi>
@@ -205,10 +206,10 @@
         WIN {
             display-name = "WIN";
             bindings = <
-&kp ESC         &kp Q         &kp W         &kp E        &kp R        &kp T                               &kp Y  &kp U        &kp I      &kp O    &mt SEMICOLON SQT  &kp BACKSPACE
-&kp TAB         &kp A         &kp S         &kp D        &kp F        &kp G                               &kp H  &kp J        &kp K      &kp L    &kp P              &kp ENTER
-&kp LEFT_SHIFT  &kp Z         &kp X         &kp C        &kp V        &kp B  &lt 7 PSCRN  &lt (7) LC(N0)  &kp N  &kp M        &kp COMMA  &kp DOT  &mt EQUAL MINUS    &mt RSHFT SLASH
-&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &lt 8 SPACE  &lt 4 LANG2  &mo 5                               &mo 3  &lt 2 LANG1             &none    &none              &kp DELETE
+&kp ESC         &kp Q         &kp W         &kp E        &kp R        &kp T                               &kp Y  &kp U        &kp I      &kp O           &mt EQUAL MINUS   &kp BACKSPACE
+&kp TAB         &kp A         &kp S         &kp D        &kp F        &kp G                               &kp H  &kp J        &kp K      &kp L           &kp P             &kp ENTER
+&kp LEFT_SHIFT  &kp Z         &kp X         &kp C        &kp V        &kp B  &lt 7 PSCRN  &lt (7) LC(N0)  &kp N  &kp M        &kp COMMA  &kp DOT         &mt SQT UP_ARROW  &mt SLASH SEMICOLON
+&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &lt 8 SPACE  &lt 4 LANG2  &mo 5                               &mo 3  &lt 2 LANG1             &kp LEFT_ARROW  &kp DOWN_ARROW    &kp RIGHT_ARROW
             >;
 
             sensor-bindings =
@@ -231,10 +232,10 @@
         NUM {
             display-name = "NUM";
             bindings = <
-&kp N1  &kp N2     &kp N3      &pair_square  &pair_paren     &kp BACKSLASH                &none  &none  &none  &none  &none  &none
-&kp N4  &kp N5     &kp N6      &kp TILDE     &kp UNDERSCORE  &pair_brace                  &none  &none  &none  &none  &none  &none
-&kp N7  &kp N8     &kp N9      &kp GRAVE     &kp COMMA       &kp PERIOD     &none  &none  &none  &none  &none  &none  &none  &none
-&kp N0  &none      &none       &none         &none           &none                        &none  &none         &none  &none  &none
+&kp N1  &kp N2  &kp N3  &pair_square  &pair_paren     &kp BACKSLASH                &none  &none  &none  &none  &none  &none
+&kp N4  &kp N5  &kp N6  &kp TILDE     &kp UNDERSCORE  &pair_brace                  &none  &none  &none  &none  &none  &none
+&kp N7  &kp N8  &kp N9  &kp GRAVE     &kp COMMA       &kp PERIOD     &none  &none  &none  &none  &none  &none  &none  &none
+&kp N0  &none   &none   &none         &none           &none                        &none  &none         &none  &none  &none
             >;
 
             sensor-bindings = <&enc_off &enc_off>;
@@ -254,39 +255,45 @@
 
         PAN {
             display-name = "PAN";
+
             /* Trackball central sends pointer events; this layer has no key bindings. */
+
             bindings = <
 &none  &none  &none  &none  &none  &none                &none  &none  &none  &none  &none  &none
 &none  &none  &none  &none  &none  &none                &none  &none  &none  &none  &none  &none
 &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none
-&none  &none  &none  &none  &none  &none                &none  &none       &none  &none  &none
+&none  &none  &none  &none  &none  &none                &none  &none         &none  &none  &none
             >;
 
             /* Both encoders are intentionally unassigned on this layer. */
+
             sensor-bindings = <&enc_off &enc_off>;
         };
 
         GESTURE {
             display-name = "GESTURE";
+
             /* Trackball gesture input replaces key actions on this layer. */
+
             bindings = <
 &none  &none  &none  &none  &none  &none                &none  &none  &none  &none  &none  &none
 &none  &none  &none  &none  &none  &none                &none  &none  &none  &none  &none  &none
 &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none
-&none  &none  &none  &none  &none  &none                &none  &none       &none  &none  &none
+&none  &none  &none  &none  &none  &none                &none  &none         &none  &none  &none
             >;
 
             /* Both encoders are intentionally unassigned on this layer. */
+
             sensor-bindings = <&enc_off &enc_off>;
         };
 
         MOUSE {
             display-name = "MOUSE";
             bindings = <
-&none &none &none &none &none &none                &none &none    &none    &none    &none &none
-&none &none &none &none &none &none                &none &mkp MB1 &mkp MB3 &mkp MB2 &none &none
-&none &none &none &none &none &none &none &none  &none &mkp MB4 &mkp MB5 &none    &none &none
-&none &none &none &none &none &mo 5               &none &none              &none    &none &none
+&none  &none  &none  &none  &none  &none                &none  &none     &none     &none     &none  &none
+&none  &none  &none  &none  &none  &none                &none  &mkp MB1  &mkp MB3  &mkp MB2  &none  &none
+&none  &none  &none  &none  &none  &none  &none  &none  &none  &mkp MB4  &mkp MB5  &none     &none  &none
+&none  &none  &none  &none  &none  &mo 5                &none  &none               &none     &none  &none
             >;
 
             sensor-bindings = <&enc_off &enc_off>;
@@ -295,10 +302,10 @@
         BLUETOOTH {
             display-name = "BLUETOOTH";
             bindings = <
-&bootloader  &none  &none  &none  &none  &none                &bt0  &bt1  &bt2  &bt3  &bt4    &bootloader
-&none        &none  &none  &none  &none  &none                &none     &none     &none     &none     &none       &none
-&none        &none  &none  &none  &none  &none  &none  &none  &none     &none     &none     &none     &none       &none
-&none        &none  &none  &none  &none  &none                &none     &none               &none     &bt BT_CLR  &bt BT_CLR_ALL
+&bootloader  &none  &none  &none  &none  &none                &bt0   &bt1   &bt2   &bt3   &bt4        &bootloader
+&none        &none  &none  &none  &none  &none                &none  &none  &none  &none  &none       &none
+&none        &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none       &none
+&none        &none  &none  &none  &none  &none                &none  &none         &none  &bt BT_CLR  &bt BT_CLR_ALL
             >;
 
             sensor-bindings = <&enc_off &enc_off>;

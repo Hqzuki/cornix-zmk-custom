@@ -43,8 +43,6 @@
             bindings = <&macro_tap>, <&kp LS(LBKT) &kp LS(RBKT) &kp LEFT>;
         };
 
-        /* Select a Bluetooth slot; the host OS is detected automatically. */
-
         bt0: bt0 {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
@@ -127,16 +125,12 @@
             mac-keycode = <LG(RIGHT)>;
         };
 
-        /* Single tap = Backspace; double tap = forward Delete. */
-
         bs_delete: bs_delete {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
             tapping-term-ms = <200>;
             bindings = <&kp BACKSPACE>, <&kp DELETE>;
         };
-
-        /* Custom Hold-Tap */
 
         nav_hold_tap: nav_hold_tap {
             compatible = "zmk,behavior-hold-tap";
@@ -145,13 +139,6 @@
             tapping-term-ms = <200>;
             bindings = <&kp>, <&kp>;
         };
-
-        /*
-         * NAV:
-         * Single tap = arrow
-         * Hold = character
-         * Double tap = window operation
-         */
 
         nav_up: nav_up {
             compatible = "zmk,behavior-tap-dance";
@@ -265,7 +252,19 @@
             bindings = <&kp N0>, <&kp F10>;
         };
 
-        /* Consumes rotation without output. */
+        numfn_11: numfn_11 {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&none>, <&kp F11>;
+        };
+
+        numfn_12: numfn_12 {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&none>, <&kp F12>;
+        };
 
         enc_off: enc_off {
             compatible = "zmk,behavior-sensor-rotate";
@@ -309,7 +308,7 @@
 &numfn_1  &numfn_2  &numfn_3  &pair_square  &pair_paren     &kp BACKSLASH                &none  &none  &none  &none  &none  &none
 &numfn_4  &numfn_5  &numfn_6  &kp TILDE     &kp UNDERSCORE  &pair_brace                  &none  &none  &none  &none  &none  &none
 &numfn_7  &numfn_8  &numfn_9  &kp GRAVE     &kp COMMA       &kp PERIOD     &none  &none  &none  &none  &none  &none  &none  &none
-&numfn_0  &none     &none     &none         &none           &none                        &none  &none         &none  &none  &none
+&numfn_0  &numfn_11 &numfn_12 &none         &none           &none                        &none  &none         &none  &none  &none
             >;
 
             sensor-bindings = <&enc_off &enc_off>;

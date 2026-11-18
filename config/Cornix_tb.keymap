@@ -136,7 +136,7 @@
             bindings = <&kp BACKSPACE>, <&kp DELETE>;
         };
 
-        /* Custom Hold-Tap: hold = arbitrary key, tap = arbitrary key. */
+        /* Custom Hold-Tap */
 
         nav_hold_tap: nav_hold_tap {
             compatible = "zmk,behavior-hold-tap";
@@ -193,6 +193,78 @@
             >;
         };
 
+        /* NUMFN: single tap = number; double tap = function key */
+
+        numfn_1: numfn_1 {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&kp N1>, <&kp F1>;
+        };
+
+        numfn_2: numfn_2 {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&kp N2>, <&kp F2>;
+        };
+
+        numfn_3: numfn_3 {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&kp N3>, <&kp F3>;
+        };
+
+        numfn_4: numfn_4 {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&kp N4>, <&kp F4>;
+        };
+
+        numfn_5: numfn_5 {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&kp N5>, <&kp F5>;
+        };
+
+        numfn_6: numfn_6 {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&kp N6>, <&kp F6>;
+        };
+
+        numfn_7: numfn_7 {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&kp N7>, <&kp F7>;
+        };
+
+        numfn_8: numfn_8 {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&kp N8>, <&kp F8>;
+        };
+
+        numfn_9: numfn_9 {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&kp N9>, <&kp F9>;
+        };
+
+        numfn_0: numfn_0 {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&kp N0>, <&kp F10>;
+        };
+
         /* Consumes rotation without output. */
 
         enc_off: enc_off {
@@ -210,8 +282,8 @@
             bindings = <
 &kp ESC         &kp Q         &kp W         &kp E      &kp R        &kp T                               &kp Y  &kp U        &kp I      &kp O      &mt EQUAL MINUS  &bs_delete
 &kp TAB         &kp A         &kp S         &kp D      &kp F        &kp G                               &kp H  &kp J        &kp K      &kp L      &kp P            &kp ENTER
-&kp LEFT_SHIFT  &kp Z         &kp X         &kp C      &kp V        &kp B  &lt 7 PSCRN  &lt (7) LC(N0)  &kp N  &kp M        &kp COMMA  &kp DOT    &nav_up          &mt SLASH SEMICOLON
-&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &kp SPACE  &lt 4 LANG2  &mo 5                               &mo 3  &lt 2 LANG1             &nav_left  &nav_down        &nav_right
+&kp LEFT_SHIFT  &kp Z         &kp X         &kp C      &kp V        &kp B  &lt 6 PSCRN  &lt (6) LC(N0)  &kp N  &kp M        &kp COMMA  &kp DOT    &nav_up          &mt SLASH SEMICOLON
+&kp LCTRL       &kp LEFT_WIN  &kp LEFT_ALT  &kp SPACE  &lt 3 LANG2  &mo 4                               &mo 2  &lt 2 LANG1             &nav_left  &nav_down        &nav_right
             >;
 
             sensor-bindings =
@@ -224,32 +296,20 @@
             bindings = <
 &kp ESC         &kp Q      &kp W         &kp E      &kp R        &kp T                                      &kp Y  &kp U        &kp I      &kp O      &mt EQUAL MINUS  &bs_delete
 &kp TAB         &kp A      &kp S         &kp D      &kp F        &kp G                                      &kp H  &kp J        &kp K      &kp L      &kp P            &kp ENTER
-&kp LEFT_SHIFT  &kp Z      &kp X         &kp C      &kp V        &kp B  &lt (7) LG(LS(N3))  &lt (7) LG(N0)  &kp N  &kp M        &kp COMMA  &kp DOT    &nav_up          &mt SLASH SEMICOLON
-&kp LEFT_GUI    &kp LCTRL  &kp LEFT_ALT  &kp SPACE  &lt 4 LANG2  &mo 5                                      &mo 3  &lt 2 LANG1             &nav_left  &nav_down        &nav_right
+&kp LEFT_SHIFT  &kp Z      &kp X         &kp C      &kp V        &kp B  &lt (6) LG(LS(N3))  &lt (6) LG(N0)  &kp N  &kp M        &kp COMMA  &kp DOT    &nav_up          &mt SLASH SEMICOLON
+&kp LEFT_GUI    &kp LCTRL  &kp LEFT_ALT  &kp SPACE  &lt 3 LANG2  &mo 4                                      &mo 2  &lt 2 LANG1             &nav_left  &nav_down        &nav_right
             >;
 
             sensor-bindings = <&inc_dec_kp LG(LS(N7)) LG(LS(N9)) &inc_dec_kp LG(LS(EQUAL)) LG(MINUS)>;
         };
 
-        NUM {
-            display-name = "NUM";
+        NUMFN {
+            display-name = "NUMFN";
             bindings = <
-&kp N1  &kp N2  &kp N3  &pair_square  &pair_paren     &kp BACKSLASH                &none  &none  &none  &none  &none  &none
-&kp N4  &kp N5  &kp N6  &kp TILDE     &kp UNDERSCORE  &pair_brace                  &none  &none  &none  &none  &none  &none
-&kp N7  &kp N8  &kp N9  &kp GRAVE     &kp COMMA       &kp PERIOD     &none  &none  &none  &none  &none  &none  &none  &none
-&kp N0  &none   &none   &none         &none           &none                        &none  &none         &none  &none  &none
-            >;
-
-            sensor-bindings = <&enc_off &enc_off>;
-        };
-
-        FN {
-            display-name = "FN";
-            bindings = <
-&kp F1   &kp F2   &kp F3   &pair_square  &pair_paren     &kp BACKSLASH                &none  &none  &none  &none  &none  &none
-&kp F4   &kp F5   &kp F6   &kp TILDE     &kp UNDERSCORE  &pair_brace                  &none  &none  &none  &none  &none  &none
-&kp F7   &kp F8   &kp F9   &kp GRAVE     &kp COMMA       &kp PERIOD     &none  &none  &none  &none  &none  &none  &none  &none
-&kp F10  &kp F11  &kp F12  &none         &none           &none                        &none  &none         &none  &none  &none
+&numfn_1  &numfn_2  &numfn_3  &pair_square  &pair_paren     &kp BACKSLASH                &none  &none  &none  &none  &none  &none
+&numfn_4  &numfn_5  &numfn_6  &kp TILDE     &kp UNDERSCORE  &pair_brace                  &none  &none  &none  &none  &none  &none
+&numfn_7  &numfn_8  &numfn_9  &kp GRAVE     &kp COMMA       &kp PERIOD     &none  &none  &none  &none  &none  &none  &none  &none
+&numfn_0  &none     &none     &none         &none           &none                        &none  &none         &none  &none  &none
             >;
 
             sensor-bindings = <&enc_off &enc_off>;
@@ -257,9 +317,6 @@
 
         PAN {
             display-name = "PAN";
-
-            /* Trackball central sends pointer events; this layer has no key bindings. */
-
             bindings = <
 &none  &none  &none  &none  &none  &none                &none  &none  &none  &none  &none  &none
 &none  &none  &none  &none  &none  &none                &none  &none  &none  &none  &none  &none
@@ -272,9 +329,6 @@
 
         GESTURE {
             display-name = "GESTURE";
-
-            /* Trackball gesture input replaces key actions on this layer. */
-
             bindings = <
 &none  &none  &none  &none  &none  &none                &none  &none  &none  &none  &none  &none
 &none  &none  &none  &none  &none  &none                &none  &none  &none  &none  &none  &none

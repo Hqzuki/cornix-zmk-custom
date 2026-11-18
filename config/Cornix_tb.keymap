@@ -1,3 +1,4 @@
+
 /* Cornix TB Keymap Editor map; built by the XIAO trackball central. */
 
 #define ZMK_POINTING_DEFAULT_MOVE_VAL 1200
@@ -160,6 +161,7 @@
         };
 
         /* Single tap = Backspace; double tap = forward Delete. */
+
         bs_delete: bs_delete {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
@@ -167,39 +169,64 @@
             bindings = <&kp BACKSPACE>, <&kp DELETE>;
         };
 
-        /* NAV: single tap = arrow, double = existing action, triple = OS overview. */
+        /* Custom Hold-Tap: hold = arbitrary key, tap = arbitrary key. */
+
+        nav_hold_tap: nav_hold_tap {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <200>;
+            bindings = <&kp>, <&kp>;
+        };
+
+        /*
+         * NAV:
+         * Single tap = arrow
+         * Hold = character (currently A as placeholder)
+         * Double tap = window operation
+         */
 
         nav_up: nav_up {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
             tapping-term-ms = <200>;
-            bindings = <&kp UP>, <&window_up>, <&mission_control>;
+            bindings = <
+                &nav_hold_tap A UP
+                &window_up
+            >;
         };
 
         nav_left: nav_left {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
             tapping-term-ms = <200>;
-            bindings = <&kp LEFT>, <&window_left>, <&desktop_prev>;
+            bindings = <
+                &nav_hold_tap A LEFT
+                &window_left
+            >;
         };
 
         nav_down: nav_down {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
             tapping-term-ms = <200>;
-            bindings = <&kp DOWN>, <&window_down>, <&app_expose>;
+            bindings = <
+                &nav_hold_tap A DOWN
+                &window_down
+            >;
         };
 
         nav_right: nav_right {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
             tapping-term-ms = <200>;
-            bindings = <&kp RIGHT>, <&window_right>, <&desktop_next>;
+            bindings = <
+                &nav_hold_tap A RIGHT
+                &window_right
+            >;
         };
 
-        /* Consumes rotation without output; an omitted binding would fall
-         * through to the WIN/MAC base layer.
-         */
+        /* Consumes rotation without output. */
 
         enc_off: enc_off {
             compatible = "zmk,behavior-sensor-rotate";
@@ -273,8 +300,6 @@
 &none  &none  &none  &none  &none  &none                &none  &none         &none  &none  &none
             >;
 
-            /* Both encoders are intentionally unassigned on this layer. */
-
             sensor-bindings = <&enc_off &enc_off>;
         };
 
@@ -289,8 +314,6 @@
 &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none
 &none  &none  &none  &none  &none  &none                &none  &none         &none  &none  &none
             >;
-
-            /* Both encoders are intentionally unassigned on this layer. */
 
             sensor-bindings = <&enc_off &enc_off>;
         };
